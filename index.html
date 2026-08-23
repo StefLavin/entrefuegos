@@ -3,40 +3,114 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EntreFuegos - POS & Catálogo</title>
+  <title>EntreFuegos - POS</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body class="bg-slate-100 font-sans text-slate-800 pb-10">
 
-  <!-- Encabezado -->
-  <header class="bg-amber-600 text-white p-4 shadow-md sticky top-0 z-10 flex justify-between items-center">
-    <h1 class="text-xl font-bold flex items-center gap-2">
-      <i class="fa-solid fa-fire"></i> EntreFuegos - POS
-    </h1>
-    <span class="text-xs bg-amber-700 px-3 py-1 rounded-full font-semibold flex items-center gap-1">
-      <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span> Firebase Conectado
-    </span>
+  <!-- Encabezado con Navegación -->
+  <header class="bg-amber-600 text-white shadow-md sticky top-0 z-10">
+    <div class="max-w-6xl mx-auto p-4 flex justify-between items-center">
+      <h1 class="text-xl font-bold flex items-center gap-2">
+        <i class="fa-solid fa-fire"></i> EntreFuegos
+      </h1>
+      <span class="text-xs bg-amber-700 px-3 py-1 rounded-full font-semibold flex items-center gap-1">
+        <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span> Firebase Conectado
+      </span>
+    </div>
+
+    <!-- Pestañas de Menú -->
+    <div class="flex bg-amber-700 max-w-6xl mx-auto px-4 gap-2">
+      <button onclick="cambiarPestana('pos')" id="tab-pos" class="py-2.5 px-4 font-bold text-sm border-b-4 border-white text-white flex items-center gap-2">
+        <i class="fa-solid fa-cash-register"></i> Ventas POS
+      </button>
+      <button onclick="cambiarPestana('admin')" id="tab-admin" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2">
+        <i class="fa-solid fa-boxes-packing"></i> Gestor de Menú
+      </button>
+    </div>
   </header>
 
-  <main class="max-w-6xl mx-auto p-4 grid grid-cols-1 md:grid-cols-3 gap-6">
+  <main class="max-w-6xl mx-auto p-4">
 
-    <!-- SECCIÓN CATÁLOGO -->
-    <section class="md:col-span-2 space-y-6">
+    <!-- PESTAÑA 1: VENTAS (POS) -->
+    <div id="vista-pos" class="grid grid-cols-1 md:grid-cols-3 gap-6">
       
-      <!-- Panel de Administración / Agregar Producto -->
-      <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-        <div class="flex justify-between items-center mb-3">
-          <h2 class="text-lg font-bold text-slate-700 flex items-center gap-2">
-            <i class="fa-solid fa-pen-to-square text-amber-600"></i> Gestor de Productos
+      <!-- Catálogo de Ventas -->
+      <section class="md:col-span-2 space-y-6">
+        
+        <!-- Empanadas -->
+        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+          <h2 class="text-lg font-bold text-slate-700 mb-3 flex items-center gap-2">
+            <i class="fa-solid fa-box-tissue text-amber-600"></i> Empanadas
           </h2>
-          <button onclick="toggleFormulario()" class="text-xs bg-slate-800 hover:bg-slate-900 text-white px-3 py-1.5 rounded-lg font-bold">
-            <i class="fa-solid fa-plus"></i> Añadir Producto
-          </button>
+          <div id="grid-empanadas" class="grid grid-cols-1 sm:grid-cols-3 gap-3"></div>
         </div>
 
-        <!-- Formulario ocultable -->
-        <form id="form-producto" onsubmit="guardarNuevoProducto(event)" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 border-t">
+        <!-- Pizzas y Viandas -->
+        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+          <h2 class="text-lg font-bold text-slate-700 mb-3 flex items-center gap-2">
+            <i class="fa-solid fa-pizza-slice text-amber-600"></i> Pizzas y Viandas
+          </h2>
+          <div id="grid-pizzas-viandas" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+        </div>
+
+        <!-- Bebidas -->
+        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+          <h2 class="text-lg font-bold text-slate-700 mb-3 flex items-center gap-2">
+            <i class="fa-solid fa-bottle-water text-amber-600"></i> Bebidas
+          </h2>
+          <div id="grid-bebidas" class="grid grid-cols-1 sm:grid-cols-3 gap-3"></div>
+        </div>
+
+      </section>
+
+      <!-- Pedido Actual -->
+      <section class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col justify-between h-fit">
+        <div>
+          <h2 class="text-lg font-bold text-slate-800 border-b pb-2 mb-4 flex justify-between items-center">
+            <span>Pedido Actual</span>
+            <button onclick="vaciarCarrito()" class="text-xs text-red-500 hover:underline">Vaciar</button>
+          </h2>
+
+          <div id="lista-pedido" class="space-y-3 min-h-[150px] max-h-[300px] overflow-y-auto mb-4">
+            <p class="text-sm text-slate-400 text-center py-8">No hay productos en el pedido.</p>
+          </div>
+        </div>
+
+        <div class="border-t pt-4 space-y-4">
+          <div class="flex justify-between items-center text-xl font-black text-slate-800">
+            <span>Total:</span>
+            <span id="total-monto" class="text-amber-600">$0</span>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-600 uppercase mb-2">Medio de Pago</label>
+            <div class="grid grid-cols-3 gap-2">
+              <button onclick="seleccionarPago('Efectivo')" id="btn-Efectivo" class="btn-pago border p-2 text-xs rounded-lg font-bold text-slate-600 border-slate-300">Efectivo</button>
+              <button onclick="seleccionarPago('Transferencia')" id="btn-Transferencia" class="btn-pago border p-2 text-xs rounded-lg font-bold text-slate-600 border-slate-300">Transf.</button>
+              <button onclick="seleccionarPago('Paga Luego')" id="btn-Paga Luego" class="btn-pago border p-2 text-xs rounded-lg font-bold text-slate-600 border-slate-300">Fiado</button>
+            </div>
+          </div>
+
+          <button id="btn-guardar" onclick="registrarVenta()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl shadow-lg transition text-center flex justify-center items-center gap-2">
+            <i class="fa-solid fa-cloud-arrow-up"></i> Registrar y Sincronizar
+          </button>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- PESTAÑA 2: GESTOR DE MENÚ -->
+    <div id="vista-admin" class="hidden space-y-6">
+      
+      <!-- Carga de Producto -->
+      <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+        <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-plus text-amber-600"></i> Agregar Producto al Menú
+        </h2>
+
+        <form onsubmit="guardarNuevoProducto(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label class="block text-xs font-bold text-slate-600 mb-1">Categoría</label>
             <select id="prod-categoria" onchange="cambiarTipoFormulario()" class="w-full border p-2 rounded-lg text-sm bg-slate-50">
@@ -49,12 +123,11 @@
 
           <div>
             <label class="block text-xs font-bold text-slate-600 mb-1">Nombre / Sabor</label>
-            <input type="text" id="prod-nombre" placeholder="Ej: Coca Cola, Carne Picante" required class="w-full border p-2 rounded-lg text-sm bg-slate-50">
+            <input type="text" id="prod-nombre" placeholder="Ej: Coca Cola, Humita" required class="w-full border p-2 rounded-lg text-sm bg-slate-50">
           </div>
 
-          <!-- Campos específicos para Bebidas -->
           <div id="campo-litros" class="hidden">
-            <label class="block text-xs font-bold text-slate-600 mb-1">Litros / Tamaño</label>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Tamaño / Litros</label>
             <input type="text" id="prod-litros" placeholder="Ej: 1.5L, 500ml" class="w-full border p-2 rounded-lg text-sm bg-slate-50">
           </div>
 
@@ -63,82 +136,25 @@
             <input type="number" id="prod-precio" placeholder="2000" required class="w-full border p-2 rounded-lg text-sm bg-slate-50">
           </div>
 
-          <div class="sm:col-span-2 flex justify-end gap-2 mt-2">
-            <button type="button" onclick="toggleFormulario()" class="px-4 py-2 text-xs font-bold text-slate-500 hover:bg-slate-100 rounded-lg">Cancelar</button>
-            <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 text-xs font-bold rounded-lg shadow">Guardar Producto</button>
+          <div class="sm:col-span-2 flex justify-end">
+            <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 text-sm font-bold rounded-lg shadow">
+              <i class="fa-solid fa-save mr-1"></i> Guardar en Menú
+            </button>
           </div>
         </form>
       </div>
 
-      <!-- Empanadas -->
-      <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-        <h2 class="text-lg font-bold text-slate-700 mb-3 flex items-center gap-2">
-          <i class="fa-solid fa-box-tissue text-amber-600"></i> Empanadas
-        </h2>
-        <div id="grid-empanadas" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <!-- Dinámico -->
-        </div>
+      <!-- Lista de Gestión -->
+      <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+        <h2 class="text-lg font-bold text-slate-800 mb-4">Productos Actuales en Catálogo</h2>
+        <div id="lista-admin-productos" class="divide-y divide-slate-100"></div>
       </div>
 
-      <!-- Pizzas y Viandas -->
-      <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-        <h2 class="text-lg font-bold text-slate-700 mb-3 flex items-center gap-2">
-          <i class="fa-solid fa-pizza-slice text-amber-600"></i> Pizzas y Viandas
-        </h2>
-        <div id="grid-pizzas-viandas" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <!-- Dinámico -->
-        </div>
-      </div>
-
-      <!-- Bebidas -->
-      <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-        <h2 class="text-lg font-bold text-slate-700 mb-3 flex items-center gap-2">
-          <i class="fa-solid fa-bottle-water text-amber-600"></i> Bebidas
-        </h2>
-        <div id="grid-bebidas" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <!-- Dinámico -->
-        </div>
-      </div>
-
-    </section>
-
-    <!-- DETALLE DE PEDIDO Y COBRO -->
-    <section class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col justify-between h-fit">
-      <div>
-        <h2 class="text-lg font-bold text-slate-800 border-b pb-2 mb-4 flex justify-between items-center">
-          <span>Pedido Actual</span>
-          <button onclick="vaciarCarrito()" class="text-xs text-red-500 hover:underline">Vaciar</button>
-        </h2>
-
-        <div id="lista-pedido" class="space-y-3 min-h-[150px] max-h-[300px] overflow-y-auto mb-4">
-          <p class="text-sm text-slate-400 text-center py-8">No hay productos en el pedido.</p>
-        </div>
-      </div>
-
-      <div class="border-t pt-4 space-y-4">
-        <div class="flex justify-between items-center text-xl font-black text-slate-800">
-          <span>Total:</span>
-          <span id="total-monto" class="text-amber-600">$0</span>
-        </div>
-
-        <div>
-          <label class="block text-xs font-bold text-slate-600 uppercase mb-2">Medio de Pago</label>
-          <div class="grid grid-cols-3 gap-2">
-            <button onclick="seleccionarPago('Efectivo')" id="btn-Efectivo" class="btn-pago border p-2 text-xs rounded-lg font-bold text-slate-600 border-slate-300">Efectivo</button>
-            <button onclick="seleccionarPago('Transferencia')" id="btn-Transferencia" class="btn-pago border p-2 text-xs rounded-lg font-bold text-slate-600 border-slate-300">Transf.</button>
-            <button onclick="seleccionarPago('Paga Luego')" id="btn-Paga Luego" class="btn-pago border p-2 text-xs rounded-lg font-bold text-slate-600 border-slate-300">Fiado</button>
-          </div>
-        </div>
-
-        <button id="btn-guardar" onclick="registrarVenta()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl shadow-lg transition text-center flex justify-center items-center gap-2">
-          <i class="fa-solid fa-cloud-arrow-up"></i> Registrar y Sincronizar
-        </button>
-      </div>
-    </section>
+    </div>
 
   </main>
 
-  <!-- LÓGICA DE FIREBASE Y FRONTEND -->
+  <!-- LÓGICA Y FIREBASE -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -156,7 +172,6 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // Catálogo Base con tus precios actualizados
     let catalogo = JSON.parse(localStorage.getItem('catalogo_entrefuegos')) || [
       { id: 1, categoria: 'Empanadas', nombre: 'Carne', precio: 2000, docena: 20000 },
       { id: 2, categoria: 'Empanadas', nombre: 'Pollo', precio: 2000, docena: 20000 },
@@ -168,14 +183,23 @@
     let carrito = [];
     let medioPagoSeleccionado = 'Efectivo';
 
-    function guardarCatalogo() {
-      localStorage.setItem('catalogo_entrefuegos', JSON.stringify(catalogo));
-      renderizarCatalogo();
-    }
+    window.cambiarPestana = function(pestana) {
+      const pos = document.getElementById('vista-pos');
+      const admin = document.getElementById('vista-admin');
+      const tabPos = document.getElementById('tab-pos');
+      const tabAdmin = document.getElementById('tab-admin');
 
-    window.toggleFormulario = function() {
-      const form = document.getElementById('form-producto');
-      form.classList.toggle('hidden');
+      if (pestana === 'pos') {
+        pos.classList.remove('hidden');
+        admin.classList.add('hidden');
+        tabPos.className = "py-2.5 px-4 font-bold text-sm border-b-4 border-white text-white flex items-center gap-2";
+        tabAdmin.className = "py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2";
+      } else {
+        pos.classList.add('hidden');
+        admin.classList.remove('hidden');
+        tabAdmin.className = "py-2.5 px-4 font-bold text-sm border-b-4 border-white text-white flex items-center gap-2";
+        tabPos.className = "py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2";
+      }
     };
 
     window.cambiarTipoFormulario = function() {
@@ -187,6 +211,11 @@
         campoLitros.classList.add('hidden');
       }
     };
+
+    function guardarCatalogo() {
+      localStorage.setItem('catalogo_entrefuegos', JSON.stringify(catalogo));
+      renderizarTodo();
+    }
 
     window.guardarNuevoProducto = function(e) {
       e.preventDefault();
@@ -200,31 +229,29 @@
         nombreFinal = `${nombre} (${litros})`;
       }
 
-      const nuevo = {
-        id: Date.now(),
-        categoria,
-        nombre: nombreFinal,
-        precio
-      };
-
-      if (categoria === 'Empanadas') {
-        nuevo.docena = precio * 10; // Promoción automática de docena
-      }
+      const nuevo = { id: Date.now(), categoria, nombre: nombreFinal, precio };
+      if (categoria === 'Empanadas') nuevo.docena = precio * 10;
 
       catalogo.push(nuevo);
       guardarCatalogo();
-      toggleFormulario();
-      document.getElementById('form-producto').reset();
+      alert('¡Producto agregado al menú!');
+      e.target.reset();
+      cambiarPestana('pos');
     };
 
     window.eliminarProducto = function(id) {
-      if (confirm('¿Quieres eliminar este producto del catálogo?')) {
+      if (confirm('¿Eliminar este producto?')) {
         catalogo = catalogo.filter(p => p.id !== id);
         guardarCatalogo();
       }
     };
 
-    function renderizarCatalogo() {
+    function renderizarTodo() {
+      renderizarPOS();
+      renderizarAdmin();
+    }
+
+    function renderizarPOS() {
       const empanadasContainer = document.getElementById('grid-empanadas');
       const pizzasViandasContainer = document.getElementById('grid-pizzas-viandas');
       const bebidasContainer = document.getElementById('grid-bebidas');
@@ -236,8 +263,7 @@
       catalogo.forEach(prod => {
         if (prod.categoria === 'Empanadas') {
           empanadasContainer.innerHTML += `
-            <div class="border rounded-lg p-3 text-center bg-slate-50 hover:bg-amber-50 border-slate-200 transition relative group">
-              <button onclick="eliminarProducto(${prod.id})" class="absolute top-1 right-2 text-slate-300 hover:text-red-500 text-xs"><i class="fa-solid fa-trash"></i></button>
+            <div class="border rounded-lg p-3 text-center bg-slate-50 border-slate-200">
               <span class="font-bold block text-slate-800">${prod.nombre}</span>
               <span class="text-xs text-slate-500">$${prod.precio.toLocaleString()} u. | $${prod.docena.toLocaleString()} doc.</span>
               <div class="mt-3 flex justify-center gap-2">
@@ -248,21 +274,17 @@
           `;
         } else if (prod.categoria === 'Pizza' || prod.categoria === 'Vianda') {
           pizzasViandasContainer.innerHTML += `
-            <div class="border p-3 rounded-lg bg-slate-50 hover:bg-amber-50 border-slate-200 flex justify-between items-center">
+            <div class="border p-3 rounded-lg bg-slate-50 border-slate-200 flex justify-between items-center">
               <div>
                 <span class="font-bold block">${prod.nombre}</span>
                 <span class="text-xs text-slate-500">$${prod.precio.toLocaleString()}</span>
               </div>
-              <div class="flex items-center gap-2">
-                <button onclick="eliminarProducto(${prod.id})" class="text-slate-300 hover:text-red-500 text-xs px-1"><i class="fa-solid fa-trash"></i></button>
-                <button onclick="agregarItem('${prod.nombre}', ${prod.precio})" class="bg-amber-600 hover:bg-amber-700 text-white px-3 py-1.5 rounded-lg font-bold text-xs">+ Agregar</button>
-              </div>
+              <button onclick="agregarItem('${prod.nombre}', ${prod.precio})" class="bg-amber-600 hover:bg-amber-700 text-white px-3 py-1.5 rounded-lg font-bold text-xs">+ Agregar</button>
             </div>
           `;
         } else if (prod.categoria === 'Bebidas') {
           bebidasContainer.innerHTML += `
-            <div class="border p-3 rounded-lg bg-slate-50 hover:bg-amber-50 border-slate-200 text-center relative">
-              <button onclick="eliminarProducto(${prod.id})" class="absolute top-1 right-2 text-slate-300 hover:text-red-500 text-xs"><i class="fa-solid fa-trash"></i></button>
+            <div class="border p-3 rounded-lg bg-slate-50 border-slate-200 text-center">
               <span class="font-bold block text-sm">${prod.nombre}</span>
               <span class="text-xs text-slate-500 block mb-2">$${prod.precio.toLocaleString()}</span>
               <button onclick="agregarItem('${prod.nombre}', ${prod.precio})" class="bg-amber-600 hover:bg-amber-700 text-white px-3 py-1.5 rounded-lg font-bold text-xs w-full">+ Agregar</button>
@@ -272,17 +294,36 @@
       });
 
       if (bebidasContainer.innerHTML === '') {
-        bebidasContainer.innerHTML = `<p class="text-xs text-slate-400 col-span-3 text-center py-4">No hay bebidas cargadas. ¡Añade una con el botón de arriba!</p>`;
+        bebidasContainer.innerHTML = `<p class="text-xs text-slate-400 col-span-3 text-center py-4">No hay bebidas cargadas. Agrégalas desde "Gestor de Menú".</p>`;
       }
+    }
+
+    function renderizarAdmin() {
+      const container = document.getElementById('lista-admin-productos');
+      container.innerHTML = '';
+
+      catalogo.forEach(p => {
+        container.innerHTML += `
+          <div class="py-3 flex justify-between items-center">
+            <div>
+              <span class="text-xs bg-slate-200 text-slate-700 px-2 py-0.5 rounded font-bold mr-2">${p.categoria}</span>
+              <span class="font-bold text-slate-800 text-sm">${p.nombre}</span>
+            </div>
+            <div class="flex items-center gap-4">
+              <span class="text-sm font-semibold text-slate-600">$${p.precio.toLocaleString()}</span>
+              <button onclick="eliminarProducto(${p.id})" class="text-red-500 hover:text-red-700 text-xs font-bold flex items-center gap-1">
+                <i class="fa-solid fa-trash"></i> Eliminar
+              </button>
+            </div>
+          </div>
+        `;
+      });
     }
 
     window.agregarItem = function(nombre, precio) {
       const existe = carrito.find(item => item.nombre === nombre);
-      if (existe) {
-        existe.cantidad += 1;
-      } else {
-        carrito.push({ nombre, precio, cantidad: 1 });
-      }
+      if (existe) existe.cantidad += 1;
+      else carrito.push({ nombre, precio, cantidad: 1 });
       renderizarPedido();
     };
 
@@ -290,9 +331,7 @@
       const item = carrito.find(i => i.nombre === nombre);
       if (item) {
         item.cantidad += cambio;
-        if (item.cantidad <= 0) {
-          carrito = carrito.filter(i => i.nombre !== nombre);
-        }
+        if (item.cantidad <= 0) carrito = carrito.filter(i => i.nombre !== nombre);
       }
       renderizarPedido();
     };
@@ -375,7 +414,7 @@
         vaciarCarrito();
       } catch (error) {
         console.error("Error al guardar venta: ", error);
-        alert('Ocurrió un error al guardar la venta. Verifica la conexión.');
+        alert('Ocurrió un error al guardar la venta.');
       } finally {
         btn.disabled = false;
         btn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Registrar y Sincronizar`;
@@ -383,7 +422,7 @@
     };
 
     window.seleccionarPago('Efectivo');
-    renderizarCatalogo();
+    renderizarTodo();
   </script>
 </body>
 </html>
