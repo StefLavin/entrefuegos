@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EntreFuegos - POS</title>
+  <title>EntreFuegos - POS & Costos</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
@@ -21,12 +21,15 @@
     </div>
 
     <!-- Pestañas de Menú -->
-    <div class="flex bg-amber-700 max-w-6xl mx-auto px-4 gap-2">
-      <button onclick="cambiarPestana('pos')" id="tab-pos" class="py-2.5 px-4 font-bold text-sm border-b-4 border-white text-white flex items-center gap-2">
+    <div class="flex bg-amber-700 max-w-6xl mx-auto px-4 gap-2 overflow-x-auto">
+      <button onclick="cambiarPestana('pos')" id="tab-pos" class="py-2.5 px-4 font-bold text-sm border-b-4 border-white text-white flex items-center gap-2 whitespace-nowrap">
         <i class="fa-solid fa-cash-register"></i> Ventas POS
       </button>
-      <button onclick="cambiarPestana('admin')" id="tab-admin" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2">
+      <button onclick="cambiarPestana('admin')" id="tab-admin" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
         <i class="fa-solid fa-boxes-packing"></i> Gestor de Menú
+      </button>
+      <button onclick="cambiarPestana('costos')" id="tab-costos" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
+        <i class="fa-solid fa-calculator"></i> Calculadora de Costos
       </button>
     </div>
   </header>
@@ -123,7 +126,7 @@
 
           <div>
             <label class="block text-xs font-bold text-slate-600 mb-1">Nombre / Sabor</label>
-            <input type="text" id="prod-nombre" placeholder="Ej: Coca Cola, Humita" required class="w-full border p-2 rounded-lg text-sm bg-slate-50">
+            <input type="text" id="prod-nombre" placeholder="Ej: Humita, Coca Cola" required class="w-full border p-2 rounded-lg text-sm bg-slate-50">
           </div>
 
           <div id="campo-litros" class="hidden">
@@ -148,6 +151,55 @@
       <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
         <h2 class="text-lg font-bold text-slate-800 mb-4">Productos Actuales en Catálogo</h2>
         <div id="lista-admin-productos" class="divide-y divide-slate-100"></div>
+      </div>
+
+    </div>
+
+    <!-- PESTAÑA 3: CALCULADORA DE COSTOS -->
+    <div id="vista-costos" class="hidden space-y-6">
+      
+      <!-- Carga de Receta / Receta de Costo -->
+      <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+        <h2 class="text-lg font-bold text-slate-800 mb-2 flex items-center gap-2">
+          <i class="fa-solid fa-calculator text-amber-600"></i> Calcular Costo de Producción (Escandallo)
+        </h2>
+        <p class="text-xs text-slate-500 mb-6">Calculá cuánto te cuesta elaborar una tanda de tapas, una receta de empanadas, pizzas o viandas.</p>
+
+        <form onsubmit="guardarCostosReceta(event)" class="space-y-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-600 mb-1">Producto / Receta</label>
+              <input type="text" id="costo-nombre-receta" placeholder="Ej: Tapa de Empanada (x100), Relleno Carne (12 docenas)" required class="w-full border p-2 rounded-lg text-sm bg-slate-50">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-600 mb-1">Unidades / Porciones producidas</label>
+              <input type="number" id="costo-rendimiento" placeholder="Ej: 100 tapas / 12 pizzas / 1 vianda" required class="w-full border p-2 rounded-lg text-sm bg-slate-50">
+            </div>
+          </div>
+
+          <!-- Tabla de Ingredientes dinámicos -->
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-2">Ingredientes e insumos utilizados</label>
+            <div id="contenedor-ingredientes" class="space-y-2">
+              <!-- JS agregará filas de ingredientes -->
+            </div>
+            <button type="button" onclick="agregarFilaIngrediente()" class="mt-2 text-xs text-amber-700 font-bold hover:underline flex items-center gap-1">
+              <i class="fa-solid fa-plus"></i> + Agregar otro ingrediente/insumo
+            </button>
+          </div>
+
+          <div class="pt-4 border-t flex justify-end">
+            <button type="submit" class="bg-amber-600 hover:bg-amber-700 text-white px-6 py-2.5 text-sm font-bold rounded-lg shadow">
+              <i class="fa-solid fa-calculator mr-1"></i> Calcular y Guardar Costo
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Resumen de Costos Calculados -->
+      <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+        <h2 class="text-lg font-bold text-slate-800 mb-4">Tabla de Costos Guardados</h2>
+        <div id="lista-recetas-costos" class="space-y-4"></div>
       </div>
 
     </div>
@@ -180,36 +232,132 @@
       { id: 5, categoria: 'Vianda', nombre: 'Vianda Diaria', precio: 18000 }
     ];
 
+    let recetasCostos = JSON.parse(localStorage.getItem('recetas_costos_entrefuegos')) || [];
+
     let carrito = [];
     let medioPagoSeleccionado = 'Efectivo';
 
     window.cambiarPestana = function(pestana) {
       const pos = document.getElementById('vista-pos');
       const admin = document.getElementById('vista-admin');
+      const costos = document.getElementById('vista-costos');
+
       const tabPos = document.getElementById('tab-pos');
       const tabAdmin = document.getElementById('tab-admin');
+      const tabCostos = document.getElementById('tab-costos');
+
+      pos.classList.add('hidden');
+      admin.classList.add('hidden');
+      costos.classList.add('hidden');
+
+      tabPos.className = "py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap";
+      tabAdmin.className = "py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap";
+      tabCostos.className = "py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap";
 
       if (pestana === 'pos') {
         pos.classList.remove('hidden');
-        admin.classList.add('hidden');
-        tabPos.className = "py-2.5 px-4 font-bold text-sm border-b-4 border-white text-white flex items-center gap-2";
-        tabAdmin.className = "py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2";
-      } else {
-        pos.classList.add('hidden');
+        tabPos.className = "py-2.5 px-4 font-bold text-sm border-b-4 border-white text-white flex items-center gap-2 whitespace-nowrap";
+      } else if (pestana === 'admin') {
         admin.classList.remove('hidden');
-        tabAdmin.className = "py-2.5 px-4 font-bold text-sm border-b-4 border-white text-white flex items-center gap-2";
-        tabPos.className = "py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2";
+        tabAdmin.className = "py-2.5 px-4 font-bold text-sm border-b-4 border-white text-white flex items-center gap-2 whitespace-nowrap";
+      } else if (pestana === 'costos') {
+        costos.classList.remove('hidden');
+        tabCostos.className = "py-2.5 px-4 font-bold text-sm border-b-4 border-white text-white flex items-center gap-2 whitespace-nowrap";
       }
     };
 
+    // Lógica para Ingredientes Dinámicos
+    window.agregarFilaIngrediente = function() {
+      const contenedor = document.getElementById('contenedor-ingredientes');
+      const div = document.createElement('div');
+      div.className = "grid grid-cols-12 gap-2 items-center fila-ingrediente";
+      div.innerHTML = `
+        <input type="text" placeholder="Ej: Harina 000, Carne picada" class="col-span-6 border p-2 rounded-lg text-sm bg-slate-50 ing-nombre" required>
+        <input type="number" placeholder="Costo ($)" class="col-span-5 border p-2 rounded-lg text-sm bg-slate-50 ing-costo" required>
+        <button type="button" onclick="this.parentElement.remove()" class="col-span-1 text-red-500 hover:text-red-700 text-center"><i class="fa-solid fa-trash"></i></button>
+      `;
+      contenedor.appendChild(div);
+    };
+
+    window.guardarCostosReceta = function(e) {
+      e.preventDefault();
+      const nombre = document.getElementById('costo-nombre-receta').value;
+      const rendimiento = parseFloat(document.getElementById('costo-rendimiento').value);
+
+      const filas = document.querySelectorAll('.fila-ingrediente');
+      let costoTotal = 0;
+      let ingredientes = [];
+
+      filas.forEach(f => {
+        const ingNombre = f.querySelector('.ing-nombre').value;
+        const ingCosto = parseFloat(f.querySelector('.ing-costo').value) || 0;
+        costoTotal += ingCosto;
+        ingredientes.push({ nombre: ingNombre, costo: ingCosto });
+      });
+
+      const costoUnitario = rendimiento > 0 ? (costoTotal / rendimiento) : 0;
+
+      const nuevaReceta = {
+        id: Date.now(),
+        nombre,
+        rendimiento,
+        costoTotal,
+        costoUnitario,
+        ingredientes
+      };
+
+      recetasCostos.push(nuevaReceta);
+      localStorage.setItem('recetas_costos_entrefuegos', JSON.stringify(recetasCostos));
+      
+      document.getElementById('costo-nombre-receta').value = '';
+      document.getElementById('costo-rendimiento').value = '';
+      document.getElementById('contenedor-ingredientes').innerHTML = '';
+      agregarFilaIngrediente();
+      
+      renderizarCostos();
+      alert('¡Costo calculado y guardado con éxito!');
+    };
+
+    window.eliminarReceta = function(id) {
+      if (confirm('¿Eliminar este cálculo de costos?')) {
+        recetasCostos = recetasCostos.filter(r => r.id !== id);
+        localStorage.setItem('recetas_costos_entrefuegos', JSON.stringify(recetasCostos));
+        renderizarCostos();
+      }
+    };
+
+    function renderizarCostos() {
+      const container = document.getElementById('lista-recetas-costos');
+      container.innerHTML = '';
+
+      if (recetasCostos.length === 0) {
+        container.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">No hay recetas o costos guardados todavía.</p>`;
+        return;
+      }
+
+      recetasCostos.forEach(r => {
+        container.innerHTML += `
+          <div class="border rounded-xl p-4 bg-slate-50 relative border-slate-200 space-y-2">
+            <button onclick="eliminarReceta(${r.id})" class="absolute top-3 right-3 text-slate-400 hover:text-red-500 text-xs"><i class="fa-solid fa-trash"></i></button>
+            <div class="flex justify-between items-center pr-6">
+              <h3 class="font-bold text-slate-800 text-base">${r.nombre}</h3>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs bg-white p-3 rounded-lg border border-slate-100">
+              <div><span class="text-slate-500 block">Rendimiento:</span> <strong>${r.rendimiento} unidades</strong></div>
+              <div><span class="text-slate-500 block">Costo Total Tanda:</span> <strong class="text-slate-800">$${r.costoTotal.toLocaleString()}</strong></div>
+              <div><span class="text-slate-500 block">Costo Unitario:</span> <strong class="text-amber-600 text-sm">$${Math.round(r.costoUnitario).toLocaleString()} c/u</strong></div>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    // Funciones Generales
     window.cambiarTipoFormulario = function() {
       const cat = document.getElementById('prod-categoria').value;
       const campoLitros = document.getElementById('campo-litros');
-      if (cat === 'Bebidas') {
-        campoLitros.classList.remove('hidden');
-      } else {
-        campoLitros.classList.add('hidden');
-      }
+      if (cat === 'Bebidas') campoLitros.classList.remove('hidden');
+      else campoLitros.classList.add('hidden');
     };
 
     function guardarCatalogo() {
@@ -225,9 +373,7 @@
       const litros = document.getElementById('prod-litros').value;
 
       let nombreFinal = nombre;
-      if (categoria === 'Bebidas' && litros) {
-        nombreFinal = `${nombre} (${litros})`;
-      }
+      if (categoria === 'Bebidas' && litros) nombreFinal = `${nombre} (${litros})`;
 
       const nuevo = { id: Date.now(), categoria, nombre: nombreFinal, precio };
       if (categoria === 'Empanadas') nuevo.docena = precio * 10;
@@ -249,6 +395,7 @@
     function renderizarTodo() {
       renderizarPOS();
       renderizarAdmin();
+      renderizarCostos();
     }
 
     function renderizarPOS() {
@@ -292,10 +439,6 @@
           `;
         }
       });
-
-      if (bebidasContainer.innerHTML === '') {
-        bebidasContainer.innerHTML = `<p class="text-xs text-slate-400 col-span-3 text-center py-4">No hay bebidas cargadas. Agrégalas desde "Gestor de Menú".</p>`;
-      }
     }
 
     function renderizarAdmin() {
@@ -421,7 +564,9 @@
       }
     };
 
+    // Inicialización
     window.seleccionarPago('Efectivo');
+    agregarFilaIngrediente();
     renderizarTodo();
   </script>
 </body>
