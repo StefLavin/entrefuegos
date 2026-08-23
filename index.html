@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EntreFuegos - Ventas</title>
+  <title>EntreFuegos - POS & Catálogo</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
-<body class="bg-slate-100 font-sans text-slate-800">
+<body class="bg-slate-100 font-sans text-slate-800 pb-10">
 
   <!-- Encabezado -->
   <header class="bg-amber-600 text-white p-4 shadow-md sticky top-0 z-10 flex justify-between items-center">
@@ -24,39 +24,59 @@
     <!-- SECCIÓN CATÁLOGO -->
     <section class="md:col-span-2 space-y-6">
       
+      <!-- Panel de Administración / Agregar Producto -->
+      <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+        <div class="flex justify-between items-center mb-3">
+          <h2 class="text-lg font-bold text-slate-700 flex items-center gap-2">
+            <i class="fa-solid fa-pen-to-square text-amber-600"></i> Gestor de Productos
+          </h2>
+          <button onclick="toggleFormulario()" class="text-xs bg-slate-800 hover:bg-slate-900 text-white px-3 py-1.5 rounded-lg font-bold">
+            <i class="fa-solid fa-plus"></i> Añadir Producto
+          </button>
+        </div>
+
+        <!-- Formulario ocultable -->
+        <form id="form-producto" onsubmit="guardarNuevoProducto(event)" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 border-t">
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Categoría</label>
+            <select id="prod-categoria" onchange="cambiarTipoFormulario()" class="w-full border p-2 rounded-lg text-sm bg-slate-50">
+              <option value="Empanadas">Empanadas</option>
+              <option value="Pizza">Pizza</option>
+              <option value="Vianda">Vianda</option>
+              <option value="Bebidas">Bebidas</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Nombre / Sabor</label>
+            <input type="text" id="prod-nombre" placeholder="Ej: Coca Cola, Carne Picante" required class="w-full border p-2 rounded-lg text-sm bg-slate-50">
+          </div>
+
+          <!-- Campos específicos para Bebidas -->
+          <div id="campo-litros" class="hidden">
+            <label class="block text-xs font-bold text-slate-600 mb-1">Litros / Tamaño</label>
+            <input type="text" id="prod-litros" placeholder="Ej: 1.5L, 500ml" class="w-full border p-2 rounded-lg text-sm bg-slate-50">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Precio ($)</label>
+            <input type="number" id="prod-precio" placeholder="2000" required class="w-full border p-2 rounded-lg text-sm bg-slate-50">
+          </div>
+
+          <div class="sm:col-span-2 flex justify-end gap-2 mt-2">
+            <button type="button" onclick="toggleFormulario()" class="px-4 py-2 text-xs font-bold text-slate-500 hover:bg-slate-100 rounded-lg">Cancelar</button>
+            <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 text-xs font-bold rounded-lg shadow">Guardar Producto</button>
+          </div>
+        </form>
+      </div>
+
       <!-- Empanadas -->
       <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
         <h2 class="text-lg font-bold text-slate-700 mb-3 flex items-center gap-2">
           <i class="fa-solid fa-box-tissue text-amber-600"></i> Empanadas
         </h2>
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <!-- Carne -->
-          <div class="border rounded-lg p-3 text-center bg-slate-50 hover:bg-amber-50 border-slate-200 transition">
-            <span class="font-bold block text-slate-800">Carne</span>
-            <span class="text-xs text-slate-500">$1.000 u. | $10.000 doc.</span>
-            <div class="mt-3 flex justify-center gap-2">
-              <button onclick="agregarItem('Empanada Carne', 1000)" class="bg-amber-600 hover:bg-amber-700 text-white text-xs px-3 py-2 rounded-lg font-bold">+1 Unid</button>
-              <button onclick="agregarItem('Docena Carne', 10000)" class="bg-slate-800 hover:bg-slate-900 text-white text-xs px-3 py-2 rounded-lg font-bold">+1 Doc</button>
-            </div>
-          </div>
-          <!-- Pollo -->
-          <div class="border rounded-lg p-3 text-center bg-slate-50 hover:bg-amber-50 border-slate-200 transition">
-            <span class="font-bold block text-slate-800">Pollo</span>
-            <span class="text-xs text-slate-500">$1.000 u. | $10.000 doc.</span>
-            <div class="mt-3 flex justify-center gap-2">
-              <button onclick="agregarItem('Empanada Pollo', 1000)" class="bg-amber-600 hover:bg-amber-700 text-white text-xs px-3 py-2 rounded-lg font-bold">+1 Unid</button>
-              <button onclick="agregarItem('Docena Pollo', 10000)" class="bg-slate-800 hover:bg-slate-900 text-white text-xs px-3 py-2 rounded-lg font-bold">+1 Doc</button>
-            </div>
-          </div>
-          <!-- Jamón y Queso -->
-          <div class="border rounded-lg p-3 text-center bg-slate-50 hover:bg-amber-50 border-slate-200 transition">
-            <span class="font-bold block text-slate-800">Jamón y Queso</span>
-            <span class="text-xs text-slate-500">$1.000 u. | $10.000 doc.</span>
-            <div class="mt-3 flex justify-center gap-2">
-              <button onclick="agregarItem('Empanada J&Q', 1000)" class="bg-amber-600 hover:bg-amber-700 text-white text-xs px-3 py-2 rounded-lg font-bold">+1 Unid</button>
-              <button onclick="agregarItem('Docena J&Q', 10000)" class="bg-slate-800 hover:bg-slate-900 text-white text-xs px-3 py-2 rounded-lg font-bold">+1 Doc</button>
-            </div>
-          </div>
+        <div id="grid-empanadas" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <!-- Dinámico -->
         </div>
       </div>
 
@@ -65,21 +85,8 @@
         <h2 class="text-lg font-bold text-slate-700 mb-3 flex items-center gap-2">
           <i class="fa-solid fa-pizza-slice text-amber-600"></i> Pizzas y Viandas
         </h2>
-        <div class="grid grid-cols-2 gap-3">
-          <button onclick="agregarItem('Pizza Muzzarella', 8500)" class="border p-3 rounded-lg bg-slate-50 hover:bg-amber-50 text-left border-slate-200 flex justify-between items-center">
-            <div>
-              <span class="font-bold block">Pizza Muzzarella</span>
-              <span class="text-xs text-slate-500">$8.500</span>
-            </div>
-            <i class="fa-solid fa-plus text-amber-600"></i>
-          </button>
-          <button onclick="agregarItem('Vianda Diaria', 4500)" class="border p-3 rounded-lg bg-slate-50 hover:bg-amber-50 text-left border-slate-200 flex justify-between items-center">
-            <div>
-              <span class="font-bold block">Vianda Diaria</span>
-              <span class="text-xs text-slate-500">$4.500</span>
-            </div>
-            <i class="fa-solid fa-plus text-amber-600"></i>
-          </button>
+        <div id="grid-pizzas-viandas" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <!-- Dinámico -->
         </div>
       </div>
 
@@ -88,15 +95,8 @@
         <h2 class="text-lg font-bold text-slate-700 mb-3 flex items-center gap-2">
           <i class="fa-solid fa-bottle-water text-amber-600"></i> Bebidas
         </h2>
-        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-          <button onclick="agregarItem('Gaseosa 1.5L', 2500)" class="border p-2 rounded-lg bg-slate-50 hover:bg-amber-50 text-center border-slate-200">
-            <span class="text-sm font-semibold block">Gaseosa 1.5L</span>
-            <span class="text-xs text-slate-500">$2.500</span>
-          </button>
-          <button onclick="agregarItem('Agua C/Gas 500ml', 1200)" class="border p-2 rounded-lg bg-slate-50 hover:bg-amber-50 text-center border-slate-200">
-            <span class="text-sm font-semibold block">Agua 500ml</span>
-            <span class="text-xs text-slate-500">$1.200</span>
-          </button>
+        <div id="grid-bebidas" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <!-- Dinámico -->
         </div>
       </div>
 
@@ -156,8 +156,125 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
+    // Catálogo Base con tus precios actualizados
+    let catalogo = JSON.parse(localStorage.getItem('catalogo_entrefuegos')) || [
+      { id: 1, categoria: 'Empanadas', nombre: 'Carne', precio: 2000, docena: 20000 },
+      { id: 2, categoria: 'Empanadas', nombre: 'Pollo', precio: 2000, docena: 20000 },
+      { id: 3, categoria: 'Empanadas', nombre: 'Jamón y Queso', precio: 2000, docena: 20000 },
+      { id: 4, categoria: 'Pizza', nombre: 'Pizza Muzzarella', precio: 15000 },
+      { id: 5, categoria: 'Vianda', nombre: 'Vianda Diaria', precio: 18000 }
+    ];
+
     let carrito = [];
     let medioPagoSeleccionado = 'Efectivo';
+
+    function guardarCatalogo() {
+      localStorage.setItem('catalogo_entrefuegos', JSON.stringify(catalogo));
+      renderizarCatalogo();
+    }
+
+    window.toggleFormulario = function() {
+      const form = document.getElementById('form-producto');
+      form.classList.toggle('hidden');
+    };
+
+    window.cambiarTipoFormulario = function() {
+      const cat = document.getElementById('prod-categoria').value;
+      const campoLitros = document.getElementById('campo-litros');
+      if (cat === 'Bebidas') {
+        campoLitros.classList.remove('hidden');
+      } else {
+        campoLitros.classList.add('hidden');
+      }
+    };
+
+    window.guardarNuevoProducto = function(e) {
+      e.preventDefault();
+      const categoria = document.getElementById('prod-categoria').value;
+      const nombre = document.getElementById('prod-nombre').value;
+      const precio = parseFloat(document.getElementById('prod-precio').value);
+      const litros = document.getElementById('prod-litros').value;
+
+      let nombreFinal = nombre;
+      if (categoria === 'Bebidas' && litros) {
+        nombreFinal = `${nombre} (${litros})`;
+      }
+
+      const nuevo = {
+        id: Date.now(),
+        categoria,
+        nombre: nombreFinal,
+        precio
+      };
+
+      if (categoria === 'Empanadas') {
+        nuevo.docena = precio * 10; // Promoción automática de docena
+      }
+
+      catalogo.push(nuevo);
+      guardarCatalogo();
+      toggleFormulario();
+      document.getElementById('form-producto').reset();
+    };
+
+    window.eliminarProducto = function(id) {
+      if (confirm('¿Quieres eliminar este producto del catálogo?')) {
+        catalogo = catalogo.filter(p => p.id !== id);
+        guardarCatalogo();
+      }
+    };
+
+    function renderizarCatalogo() {
+      const empanadasContainer = document.getElementById('grid-empanadas');
+      const pizzasViandasContainer = document.getElementById('grid-pizzas-viandas');
+      const bebidasContainer = document.getElementById('grid-bebidas');
+
+      empanadasContainer.innerHTML = '';
+      pizzasViandasContainer.innerHTML = '';
+      bebidasContainer.innerHTML = '';
+
+      catalogo.forEach(prod => {
+        if (prod.categoria === 'Empanadas') {
+          empanadasContainer.innerHTML += `
+            <div class="border rounded-lg p-3 text-center bg-slate-50 hover:bg-amber-50 border-slate-200 transition relative group">
+              <button onclick="eliminarProducto(${prod.id})" class="absolute top-1 right-2 text-slate-300 hover:text-red-500 text-xs"><i class="fa-solid fa-trash"></i></button>
+              <span class="font-bold block text-slate-800">${prod.nombre}</span>
+              <span class="text-xs text-slate-500">$${prod.precio.toLocaleString()} u. | $${prod.docena.toLocaleString()} doc.</span>
+              <div class="mt-3 flex justify-center gap-2">
+                <button onclick="agregarItem('${prod.nombre} (Unid)', ${prod.precio})" class="bg-amber-600 hover:bg-amber-700 text-white text-xs px-2.5 py-1.5 rounded-lg font-bold">+1 Unid</button>
+                <button onclick="agregarItem('Docena ${prod.nombre}', ${prod.docena})" class="bg-slate-800 hover:bg-slate-900 text-white text-xs px-2.5 py-1.5 rounded-lg font-bold">+1 Doc</button>
+              </div>
+            </div>
+          `;
+        } else if (prod.categoria === 'Pizza' || prod.categoria === 'Vianda') {
+          pizzasViandasContainer.innerHTML += `
+            <div class="border p-3 rounded-lg bg-slate-50 hover:bg-amber-50 border-slate-200 flex justify-between items-center">
+              <div>
+                <span class="font-bold block">${prod.nombre}</span>
+                <span class="text-xs text-slate-500">$${prod.precio.toLocaleString()}</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <button onclick="eliminarProducto(${prod.id})" class="text-slate-300 hover:text-red-500 text-xs px-1"><i class="fa-solid fa-trash"></i></button>
+                <button onclick="agregarItem('${prod.nombre}', ${prod.precio})" class="bg-amber-600 hover:bg-amber-700 text-white px-3 py-1.5 rounded-lg font-bold text-xs">+ Agregar</button>
+              </div>
+            </div>
+          `;
+        } else if (prod.categoria === 'Bebidas') {
+          bebidasContainer.innerHTML += `
+            <div class="border p-3 rounded-lg bg-slate-50 hover:bg-amber-50 border-slate-200 text-center relative">
+              <button onclick="eliminarProducto(${prod.id})" class="absolute top-1 right-2 text-slate-300 hover:text-red-500 text-xs"><i class="fa-solid fa-trash"></i></button>
+              <span class="font-bold block text-sm">${prod.nombre}</span>
+              <span class="text-xs text-slate-500 block mb-2">$${prod.precio.toLocaleString()}</span>
+              <button onclick="agregarItem('${prod.nombre}', ${prod.precio})" class="bg-amber-600 hover:bg-amber-700 text-white px-3 py-1.5 rounded-lg font-bold text-xs w-full">+ Agregar</button>
+            </div>
+          `;
+        }
+      });
+
+      if (bebidasContainer.innerHTML === '') {
+        bebidasContainer.innerHTML = `<p class="text-xs text-slate-400 col-span-3 text-center py-4">No hay bebidas cargadas. ¡Añade una con el botón de arriba!</p>`;
+      }
+    }
 
     window.agregarItem = function(nombre, precio) {
       const existe = carrito.find(item => item.nombre === nombre);
@@ -266,6 +383,7 @@
     };
 
     window.seleccionarPago('Efectivo');
+    renderizarCatalogo();
   </script>
 </body>
 </html>
