@@ -3,264 +3,280 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sistema de Ventas - Empanadas</title>
-  <style>
-    * {
-      box-sizing: border-box;
-      font-family: Arial, sans-serif;
-    }
-    body {
-      background-color: #f4f6f8;
-      margin: 0;
-      padding: 20px;
-    }
-    .container {
-      max-width: 650px;
-      margin: 0 auto;
-      background: #ffffff;
-      padding: 25px;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
-    h2, h3 {
-      color: #333;
-      margin-top: 0;
-    }
-    .form-group {
-      margin-bottom: 15px;
-    }
-    label {
-      display: block;
-      font-weight: bold;
-      margin-bottom: 5px;
-      color: #555;
-    }
-    input[type="date"], select, input[type="number"] {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      font-size: 16px;
-    }
-    .sabores-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 15px;
-      margin-top: 10px;
-    }
-    .sabor-item {
-      background: #f8f9fa;
-      padding: 12px;
-      border-radius: 6px;
-      border: 1px solid #e9ecef;
-    }
-    .resumen-box {
-      background: #e9ecef;
-      padding: 15px;
-      border-radius: 6px;
-      margin-top: 20px;
-    }
-    .resumen-box p {
-      margin: 5px 0;
-      font-size: 16px;
-    }
-    .precio-total {
-      font-size: 22px !important;
-      font-weight: bold;
-      color: #2b8a3e;
-    }
-    button {
-      width: 100%;
-      background-color: #2b8a3e;
-      color: white;
-      border: none;
-      padding: 12px;
-      font-size: 18px;
-      font-weight: bold;
-      border-radius: 6px;
-      cursor: pointer;
-      margin-top: 15px;
-    }
-    button:hover {
-      background-color: #237032;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 15px;
-    }
-    th, td {
-      border: 1px solid #dee2e6;
-      padding: 10px;
-      text-align: left;
-      font-size: 14px;
-    }
-    th {
-      background-color: #f1f3f5;
-    }
-  </style>
+  <title>EntreFuegos - Sistema POS & Gestión</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body>
+<body class="bg-slate-100 font-sans text-slate-800 antialiased min-h-screen pb-12">
 
-<div class="container">
-  <h2>Registrar Venta de Empanadas</h2>
-
-  <div class="form-group">
-    <label for="fechaVenta">Fecha de la Venta:</label>
-    <input type="date" id="fechaVenta">
-  </div>
-
-  <div class="form-group">
-    <label for="tipoEmpanada">Tamaño de Empanada:</label>
-    <select id="tipoEmpanada" onchange="calcularTotales()">
-      <option value="Estandar">Estándar</option>
-      <option value="Copetin">Copetín</option>
-    </select>
-  </div>
-
-  <h3>Cantidad por Sabor:</h3>
-  <div class="sabores-grid">
-    <div class="sabor-item">
-      <label for="cantJYQ">Jamón y Queso</label>
-      <input type="number" id="cantJYQ" min="0" value="0" oninput="calcularTotales()">
+  <header class="bg-amber-700 text-white shadow-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-4">
+      <div class="flex items-center space-x-2">
+        <i class="fa-solid fa-fire text-amber-300 text-2xl"></i>
+        <h1 class="text-2xl font-black tracking-tight">EntreFuegos</h1>
+      </div>
+      <div class="flex items-center gap-2 bg-amber-800/60 px-3 py-1 rounded-full text-xs font-semibold text-amber-200">
+        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+        Firebase Conectado (Tiempo Real)
+      </div>
     </div>
-    <div class="sabor-item">
-      <label for="cantCarne">Carne</label>
-      <input type="number" id="cantCarne" min="0" value="0" oninput="calcularTotales()">
+
+    <nav class="bg-amber-800/80 border-t border-amber-600/50 overflow-x-auto">
+      <div class="max-w-7xl mx-auto flex px-2">
+        <button id="tab-pos" onclick="cambiarPestana('pos')" class="py-2.5 px-4 font-bold text-sm border-b-4 border-white text-white flex items-center gap-2 whitespace-nowrap">
+          <i class="fa-solid fa-cash-register"></i> Ventas POS
+        </button>
+        <button id="tab-admin" onclick="cambiarPestana('admin')" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
+          <i class="fa-solid fa-utensils"></i> Menú de Ventas
+        </button>
+        <button id="tab-ingredientes" onclick="cambiarPestana('ingredientes')" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
+          <i class="fa-solid fa-carrot"></i> Catálogo de Insumos & Stock
+        </button>
+        <button id="tab-costos" onclick="cambiarPestana('costos')" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
+          <i class="fa-solid fa-calculator"></i> Recetas y Fichas
+        </button>
+        <button id="tab-margenes" onclick="cambiarPestana('margenes')" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
+          <i class="fa-solid fa-chart-line"></i> Márgenes y Ganancias
+        </button>
+        <button id="tab-arqueo" onclick="cambiarPestana('arqueo')" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
+          <i class="fa-solid fa-vault"></i> Arqueo y Cierre
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 py-6">
+
+    <section id="vista-pos" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div class="lg:col-span-2 space-y-6">
+
+        <div class="bg-amber-50/80 p-5 rounded-2xl shadow-sm border border-amber-200">
+          <div class="flex justify-between items-center mb-3">
+            <h2 class="font-black text-amber-900 uppercase tracking-wide text-xs flex items-center gap-2">
+              <i class="fa-solid fa-cloud-sun text-amber-600"></i> Carga Rápida de Empanadas Estándar por Sabor
+            </h2>
+            <span class="text-xs bg-amber-200 text-amber-900 font-bold px-2 py-0.5 rounded-full">
+              Escala: $20.000 / docena | $10.000 / 6 u. | $1.800 / c.u
+            </span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+            <div class="bg-white p-3 rounded-xl border border-amber-100 shadow-sm">
+              <label class="block text-xs font-bold text-slate-700 mb-1">Jamón y Queso</label>
+              <input type="number" id="sabor-jyq" min="0" value="0" oninput="calcularPromocionEmpanadas()" class="w-full border p-2 rounded-lg text-sm font-bold bg-slate-50">
+            </div>
+            <div class="bg-white p-3 rounded-xl border border-amber-100 shadow-sm">
+              <label class="block text-xs font-bold text-slate-700 mb-1">Carne</label>
+              <input type="number" id="sabor-carne" min="0" value="0" oninput="calcularPromocionEmpanadas()" class="w-full border p-2 rounded-lg text-sm font-bold bg-slate-50">
+            </div>
+            <div class="bg-white p-3 rounded-xl border border-amber-100 shadow-sm">
+              <label class="block text-xs font-bold text-slate-700 mb-1">Pollo</label>
+              <input type="number" id="sabor-pollo" min="0" value="0" oninput="calcularPromocionEmpanadas()" class="w-full border p-2 rounded-lg text-sm font-bold bg-slate-50">
+            </div>
+          </div>
+
+          <div class="bg-white p-3 rounded-xl border border-amber-200 flex flex-wrap justify-between items-center gap-2">
+            <div>
+              <span class="text-xs font-bold text-slate-500 block">Resumen del Combo:</span>
+              <span id="resumen-empanadas-promo" class="text-sm font-black text-slate-800">0 empanadas ($0)</span>
+              <span id="desglose-empanadas-promo" class="text-xs text-amber-700 block font-semibold">0 docenas, 0 medias, 0 sueltas</span>
+            </div>
+            <button onclick="agregarEmpanadasEspecialesAlCarrito()" class="bg-amber-600 hover:bg-amber-700 text-white font-bold py-2 px-4 rounded-xl text-xs transition flex items-center gap-1 shadow">
+              <i class="fa-solid fa-cart-plus"></i> Agregar Promo al Pedido
+            </button>
+          </div>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+          <h2 class="font-black text-slate-700 uppercase tracking-wide text-xs mb-3 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-amber-500"></span> Empanadas Directas Catálogo
+          </h2>
+          <div id="grid-empanadas" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+          <h2 class="font-black text-slate-700 uppercase tracking-wide text-xs mb-3 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-amber-500"></span> Pizzas & Viandas
+          </h2>
+          <div id="grid-pizzas-viandas" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+          <h2 class="font-black text-slate-700 uppercase tracking-wide text-xs mb-3 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-amber-500"></span> Bebidas
+          </h2>
+          <div id="grid-bebidas" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
+        </div>
+      </div>
+
+      <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 h-fit sticky top-24 space-y-4">
+        <div class="flex justify-between items-center border-b pb-3">
+          <h2 class="font-bold text-slate-800 text-base">Pedido Actual</h2>
+          <button onclick="vaciarCarrito()" class="text-xs text-red-500 hover:text-red-700 font-semibold">Vaciar</button>
+        </div>
+
+        <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+          <label class="block text-xs font-bold text-slate-600 mb-1 flex items-center gap-1">
+            <i class="fa-solid fa-calendar-day text-amber-600"></i> Fecha de la Venta
+          </label>
+          <input type="date" id="fecha-venta-pos" class="w-full border p-2 rounded-lg text-sm bg-white font-bold text-slate-700">
+        </div>
+
+        <div id="lista-pedido" class="space-y-3 max-h-60 overflow-y-auto pr-1"></div>
+
+        <div class="border-t pt-3 space-y-3">
+          <div class="flex justify-between items-center">
+            <span class="text-sm font-semibold text-slate-600">Total:</span>
+            <span id="total-monto" class="text-2xl font-black text-amber-600">$0</span>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Medio de Pago</label>
+            <div class="grid grid-cols-3 gap-2">
+              <button id="btn-Efectivo" onclick="seleccionarPago('Efectivo')" class="btn-pago border p-2 text-xs rounded-lg font-bold text-white bg-amber-600 border-amber-600">Efectivo</button>
+              <button id="btn-Transferencia" onclick="seleccionarPago('Transferencia')" class="btn-pago border p-2 text-xs rounded-lg font-bold text-slate-600 border-slate-300">Transf.</button>
+              <button id="btn-Paga Luego" onclick="seleccionarPago('Paga Luego')" class="btn-pago border p-2 text-xs rounded-lg font-bold text-slate-600 border-slate-300">Paga Luego</button>
+            </div>
+          </div>
+
+          <button id="btn-guardar" onclick="registrarVenta()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-cloud-arrow-up"></i> Registrar y Sincronizar
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section id="vista-admin" class="hidden max-w-4xl mx-auto space-y-6">
+      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+        <h2 class="font-bold text-slate-800 text-lg mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-plus-circle text-amber-600"></i> Agregar Producto al Menú de Ventas
+        </h2>
+        <form onsubmit="guardarNuevoProducto(event)" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Categoría</label>
+            <select id="prod-categoria" onchange="cambiarTipoFormulario()" class="w-full border p-2 rounded-lg text-sm bg-slate-50">
+              <option value="Empanadas">Empanadas</option>
+              <option value="Pizza">Pizza</option>
+              <option value="Vianda">Vianda</option>
+              <option value="Bebidas">Bebidas</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Nombre / Sabor</label>
+            <input type="text" id="prod-nombre" placeholder="Ej: Humita, Coca Cola" class="w-full border p-2 rounded-lg text-sm bg-slate-50" required>
+          </div>
+          <div id="campo-litros" class="hidden">
+            <label class="block text-xs font-bold text-slate-600 mb-1">Capacidad / Tamaño</label>
+            <input type="text" id="prod-litros" placeholder="Ej: 1.5L, Lote" class="w-full border p-2 rounded-lg text-sm bg-slate-50">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Precio de Venta ($)</label>
+            <input type="number" id="prod-precio" placeholder="2000" class="w-full border p-2 rounded-lg text-sm bg-slate-50" required>
+          </div>
+          <div class="md:col-span-4 flex justify-end">
+            <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-2 rounded-lg text-sm transition">
+              <i class="fa-solid fa-floppy-disk"></i> Guardar en Menú
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+        <h2 class="font-bold text-slate-800 text-lg mb-4">Productos Actuales en Catálogo de Venta</h2>
+        <div id="lista-admin-productos" class="divide-y divide-slate-100"></div>
+      </div>
+    </section>
+
+    <div id="modal-editar-producto" class="fixed inset-0 bg-slate-900/50 flex items-center justify-center p-4 z-50 hidden backdrop-blur-sm">
+      <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full p-6 space-y-4">
+        <div class="flex justify-between items-center border-b pb-3">
+          <h3 class="font-bold text-slate-800 text-lg flex items-center gap-2">
+            <i class="fa-solid fa-pen-to-square text-amber-600"></i> Editar Producto
+          </h3>
+          <button onclick="cerrarModalEditar()" class="text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
+        </div>
+        <form onsubmit="actualizarProducto(event)" class="space-y-4">
+          <input type="hidden" id="edit-prod-id">
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Categoría</label>
+            <select id="edit-prod-categoria" onchange="cambiarTipoFormularioEdicion()" class="w-full border p-2 rounded-lg text-sm bg-slate-50">
+              <option value="Empanadas">Empanadas</option>
+              <option value="Pizza">Pizza</option>
+              <option value="Vianda">Vianda</option>
+              <option value="Bebidas">Bebidas</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Nombre / Sabor</label>
+            <input type="text" id="edit-prod-nombre" class="w-full border p-2 rounded-lg text-sm bg-slate-50" required>
+          </div>
+          <div id="edit-campo-litros" class="hidden">
+            <label class="block text-xs font-bold text-slate-600 mb-1">Capacidad / Tamaño</label>
+            <input type="text" id="edit-prod-litros" class="w-full border p-2 rounded-lg text-sm bg-slate-50">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Precio de Venta ($)</label>
+            <input type="number" id="edit-prod-precio" class="w-full border p-2 rounded-lg text-sm bg-slate-50" required>
+          </div>
+          <div class="flex justify-end gap-2 pt-2">
+            <button type="button" onclick="cerrarModalEditar()" class="px-4 py-2 text-sm font-bold text-slate-500 hover:text-slate-700">Cancelar</button>
+            <button type="submit" class="bg-amber-600 hover:bg-amber-700 text-white font-bold px-5 py-2 rounded-lg text-sm transition">
+              <i class="fa-solid fa-check"></i> Actualizar Producto
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
-    <div class="sabor-item">
-      <label for="cantPollo">Pollo</label>
-      <input type="number" id="cantPollo" min="0" value="0" oninput="calcularTotales()">
-    </div>
-  </div>
 
-  <div class="resumen-box">
-    <p>Total Empanadas: <strong id="lblTotalUnidades">0</strong> u.</p>
-    <p id="lblDesgloseTarifa">Desglose: 0 docenas, 0 medias, 0 sueltas</p>
-    <p class="precio-total">Monto Total: $<span id="lblMontoTotal">0</span></p>
-  </div>
+    <section id="vista-ingredientes" class="hidden max-w-5xl mx-auto space-y-6">
+      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+        <h2 class="font-bold text-slate-800 text-lg mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-box-open text-amber-600"></i> Registrar Insumo / Materia Prima
+        </h2>
+        <form onsubmit="guardarIngrediente(event)" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          <div class="lg:col-span-2">
+            <label class="block text-xs font-bold text-slate-600 mb-1">Nombre del Insumo</label>
+            <input type="text" id="ing-nombre" placeholder="Ej: Queso Mozzarella" class="w-full border p-2 rounded-lg text-sm bg-slate-50" required>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Cant. Paquete/Compra</label>
+            <input type="number" step="0.01" id="ing-cantidad-paquete" placeholder="Ej: 5" class="w-full border p-2 rounded-lg text-sm bg-slate-50" required>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Unidad Medida</label>
+            <select id="ing-unidad" class="w-full border p-2 rounded-lg text-sm bg-slate-50">
+              <option value="kg">Kilogramos (kg)</option>
+              <option value="gr">Gramos (gr)</option>
+              <option value="lt">Litros (lt)</option>
+              <option value="ml">Mililitros (ml)</option>
+              <option value="unid">Unidades (unid)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Costo Paquete ($)</label>
+            <input type="number" step="0.01" id="ing-precio-paquete" placeholder="Ej: 25000" class="w-full border p-2 rounded-lg text-sm bg-slate-50" required>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Stock Inicial</label>
+            <input type="number" step="0.01" id="ing-stock-actual" placeholder="Ej: 10" class="w-full border p-2 rounded-lg text-sm bg-slate-50" required>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Stock Mínimo (Alerta)</label>
+            <input type="number" step="0.01" id="ing-stock-minimo" placeholder="Ej: 2" class="w-full border p-2 rounded-lg text-sm bg-slate-50" value="0">
+          </div>
+          <div class="lg:col-span-5 flex items-end justify-end">
+            <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-2 rounded-lg text-sm transition">
+              <i class="fa-solid fa-plus"></i> Guardar Insumo
+            </button>
+          </div>
+        </form>
+      </div>
 
-  <button onclick="guardarVenta()">Confirmar y Registrar Venta</button>
+      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+        <h2 class="font-bold text-slate-800 text-lg mb-4">Insumos y Estado de Inventario</h2>
+        <div id="lista-ingredientes-base" class="divide-y divide-slate-100"></div>
+      </div>
+    </section>
 
-  <h3 style="margin-top: 30px;">Ventas Registradas</h3>
-  <table>
-    <thead>
-      <tr>
-        <th>Fecha</th>
-        <th>Tipo</th>
-        <th>Detalle por Sabor</th>
-        <th>Total ($)</th>
-      </tr>
-    </thead>
-    <tbody id="tablaHistorial">
-      </tbody>
-  </table>
-</div>
-
-<script>
-  // Constantes de precios para tamaño Estándar
-  const PRECIO_DOCENA = 20000;
-  const PRECIO_MEDIA = 10000;
-  const PRECIO_UNIDAD = 1800;
-
-  // Cargar fecha actual por defecto en el selector
-  document.addEventListener("DOMContentLoaded", () => {
-    const hoy = new Date().toISOString().split('T')[0];
-    document.getElementById("fechaVenta").value = hoy;
-  });
-
-  // Función para calcular el precio según la combinación más conveniente
-  function calcularPrecioEstandar(totalUnidades) {
-    if (totalUnidades <= 0) {
-      return { total: 0, docenas: 0, mediasDocenas: 0, unidadesSueltas: 0 };
-    }
-
-    let docenas = Math.floor(totalUnidades / 12);
-    let remanente = totalUnidades % 12;
-
-    let mediasDocenas = 0;
-    let unidadesSueltas = 0;
-
-    if (remanente >= 6) {
-      mediasDocenas = 1;
-      unidadesSueltas = remanente - 6;
-    } else {
-      unidadesSueltas = remanente;
-    }
-
-    const total = (docenas * PRECIO_DOCENA) + 
-                  (mediasDocenas * PRECIO_MEDIA) + 
-                  (unidadesSueltas * PRECIO_UNIDAD);
-
-    return { total, docenas, mediasDocenas, unidadesSueltas };
-  }
-
-  // Actualizar resumen en tiempo real mientras el usuario ingresa cantidades
-  function calcularTotales() {
-    const jyq = parseInt(document.getElementById("cantJYQ").value) || 0;
-    const carne = parseInt(document.getElementById("cantCarne").value) || 0;
-    const pollo = parseInt(document.getElementById("cantPollo").value) || 0;
-    const tipo = document.getElementById("tipoEmpanada").value;
-
-    const totalUnidades = jyq + carne + pollo;
-    document.getElementById("lblTotalUnidades").innerText = totalUnidades;
-
-    if (tipo === "Estandar") {
-      const calculo = calcularPrecioEstandar(totalUnidades);
-      document.getElementById("lblMontoTotal").innerText = calculo.total.toLocaleString("es-AR");
-      document.getElementById("lblDesgloseTarifa").innerText = 
-        `Desglose: ${calculo.docenas} docena(s), ${calculo.mediasDocenas} media(s), ${calculo.unidadesSueltas} unidad(es) suelta(s)`;
-    } else {
-      // Ajustar aquí si Copetín maneja un precio fijo distinto
-      document.getElementById("lblDesgloseTarifa").innerText = "Precio de Copetín sujeto a tarifa especial";
-    }
-  }
-
-  // Guardar venta y refrescar la tabla del historial
-  function guardarVenta() {
-    const fecha = document.getElementById("fechaVenta").value;
-    const tipo = document.getElementById("tipoEmpanada").value;
-    const jyq = parseInt(document.getElementById("cantJYQ").value) || 0;
-    const carne = parseInt(document.getElementById("cantCarne").value) || 0;
-    const pollo = parseInt(document.getElementById("cantPollo").value) || 0;
-
-    const totalUnidades = jyq + carne + pollo;
-
-    if (totalUnidades === 0) {
-      alert("Por favor ingresa al menos una unidad para registrar la venta.");
-      return;
-    }
-
-    const calculo = calcularPrecioEstandar(totalUnidades);
-
-    // Formatear detalle de sabores
-    let detalleSabores = [];
-    if (jyq > 0) detalleSabores.push(`${jyq} J&Q`);
-    if (carne > 0) detalleSabores.push(`${carne} Carne`);
-    if (pollo > 0) detalleSabores.push(`${pollo} Pollo`);
-
-    // Agregar fila a la tabla del historial
-    const tabla = document.getElementById("tablaHistorial");
-    const nuevaFila = document.createElement("tr");
-
-    nuevaFila.innerHTML = `
-      <td>${fecha}</td>
-      <td>${tipo}</td>
-      <td>${detalleSabores.join(", ")} (${totalUnidades} u.)</td>
-      <td>$${calculo.total.toLocaleString("es-AR")}</td>
-    `;
-
-    tabla.prepend(nuevaFila);
-
-    // Limpiar formulario despues de guardar
-    document.getElementById("cantJYQ").value = 0;
-    document.getElementById("cantCarne").value = 0;
-    document.getElementById("cantPollo").value = 0;
-    calcularTotales();
-
-    alert("¡Venta registrada con éxito!");
-  }
-</script>
-
-</body>
-</html>
+    <section id="vista-costos" class="hidden max-w-5xl mx-auto space-y-6">
+      <div class="bg-white p-6 rounded-2xl shadow-sm border border
