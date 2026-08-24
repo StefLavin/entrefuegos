@@ -17,32 +17,26 @@
         <h1 class="text-2xl font-black tracking-tight">EntreFuegos</h1>
       </div>
       <div id="estado-conexion" class="flex items-center gap-2 bg-amber-800/60 px-3 py-1 rounded-full text-xs font-semibold text-amber-200">
-        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-        Sistema Listo
+        <span id="dot-conexion" class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span id="texto-conexion">Sistema Listo</span>
       </div>
     </div>
 
     <nav class="bg-amber-800/80 border-t border-amber-600/50 overflow-x-auto">
       <div class="max-w-7xl mx-auto flex px-2">
-        <button id="tab-pos" onclick="window.cambiarPestana('pos')" class="py-2.5 px-4 font-bold text-sm border-b-4 border-white text-white flex items-center gap-2 whitespace-nowrap">
+        <button id="tab-pos" onclick="cambiarPestana('pos')" class="py-2.5 px-4 font-bold text-sm border-b-4 border-white text-white flex items-center gap-2 whitespace-nowrap">
           <i class="fa-solid fa-cash-register"></i> Ventas POS
         </button>
-        <button id="tab-estadisticas" onclick="window.cambiarPestana('estadisticas')" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
+        <button id="tab-estadisticas" onclick="cambiarPestana('estadisticas')" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
           <i class="fa-solid fa-chart-pie"></i> Sabores más Vendidos
         </button>
-        <button id="tab-admin" onclick="window.cambiarPestana('admin')" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
+        <button id="tab-admin" onclick="cambiarPestana('admin')" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
           <i class="fa-solid fa-utensils"></i> Menú de Ventas
         </button>
-        <button id="tab-ingredientes" onclick="window.cambiarPestana('ingredientes')" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
-          <i class="fa-solid fa-carrot"></i> Catálogo de Insumos & Stock
-        </button>
-        <button id="tab-costos" onclick="window.cambiarPestana('costos')" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
-          <i class="fa-solid fa-calculator"></i> Recetas y Fichas
-        </button>
-        <button id="tab-margenes" onclick="window.cambiarPestana('margenes')" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
+        <button id="tab-margenes" onclick="cambiarPestana('margenes')" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
           <i class="fa-solid fa-chart-line"></i> Márgenes y Ganancias
         </button>
-        <button id="tab-arqueo" onclick="window.cambiarPestana('arqueo')" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
+        <button id="tab-arqueo" onclick="cambiarPestana('arqueo')" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
           <i class="fa-solid fa-vault"></i> Arqueo y Cierre
         </button>
       </div>
@@ -51,6 +45,7 @@
 
   <main class="max-w-7xl mx-auto px-4 py-6">
 
+    <!-- VISTA POS -->
     <section id="vista-pos" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div class="lg:col-span-2 space-y-6">
 
@@ -63,7 +58,7 @@
               <span id="label-escala-precios" class="text-xs bg-amber-200 text-amber-900 font-bold px-2.5 py-1 rounded-full">
                 Escala: $20.000 / docena | $10.000 / 6 u. | $1.800 / c.u
               </span>
-              <button onclick="window.abrirModalEscala()" class="bg-amber-700 hover:bg-amber-800 text-white text-xs font-bold px-2.5 py-1 rounded-lg transition flex items-center gap-1 shadow-sm">
+              <button onclick="abrirModalEscala()" class="bg-amber-700 hover:bg-amber-800 text-white text-xs font-bold px-2.5 py-1 rounded-lg transition flex items-center gap-1 shadow-sm">
                 <i class="fa-solid fa-gear"></i> Editar Escala
               </button>
             </div>
@@ -72,15 +67,15 @@
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
             <div class="bg-white p-3 rounded-xl border border-amber-100 shadow-sm">
               <label class="block text-xs font-bold text-slate-700 mb-1">Jamón y Queso</label>
-              <input type="number" id="sabor-jyq" min="0" value="0" oninput="window.calcularPromocionEmpanadas()" class="w-full border p-2 rounded-lg text-sm font-bold bg-slate-50">
+              <input type="number" id="sabor-jyq" min="0" value="0" oninput="calcularPromocionEmpanadas()" class="w-full border p-2 rounded-lg text-sm font-bold bg-slate-50">
             </div>
             <div class="bg-white p-3 rounded-xl border border-amber-100 shadow-sm">
               <label class="block text-xs font-bold text-slate-700 mb-1">Carne</label>
-              <input type="number" id="sabor-carne" min="0" value="0" oninput="window.calcularPromocionEmpanadas()" class="w-full border p-2 rounded-lg text-sm font-bold bg-slate-50">
+              <input type="number" id="sabor-carne" min="0" value="0" oninput="calcularPromocionEmpanadas()" class="w-full border p-2 rounded-lg text-sm font-bold bg-slate-50">
             </div>
             <div class="bg-white p-3 rounded-xl border border-amber-100 shadow-sm">
               <label class="block text-xs font-bold text-slate-700 mb-1">Pollo</label>
-              <input type="number" id="sabor-pollo" min="0" value="0" oninput="window.calcularPromocionEmpanadas()" class="w-full border p-2 rounded-lg text-sm font-bold bg-slate-50">
+              <input type="number" id="sabor-pollo" min="0" value="0" oninput="calcularPromocionEmpanadas()" class="w-full border p-2 rounded-lg text-sm font-bold bg-slate-50">
             </div>
           </div>
 
@@ -90,7 +85,7 @@
               <span id="resumen-empanadas-promo" class="text-sm font-black text-slate-800">0 empanadas ($0)</span>
               <span id="desglose-empanadas-promo" class="text-xs text-amber-700 block font-semibold">0 docenas, 0 medias, 0 sueltas</span>
             </div>
-            <button onclick="window.agregarEmpanadasEspecialesAlCarrito()" class="bg-amber-600 hover:bg-amber-700 text-white font-bold py-2 px-4 rounded-xl text-xs transition flex items-center gap-1 shadow">
+            <button onclick="agregarEmpanadasEspecialesAlCarrito()" class="bg-amber-600 hover:bg-amber-700 text-white font-bold py-2 px-4 rounded-xl text-xs transition flex items-center gap-1 shadow">
               <i class="fa-solid fa-cart-plus"></i> Agregar Promo al Pedido
             </button>
           </div>
@@ -121,7 +116,7 @@
       <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 h-fit sticky top-24 space-y-4">
         <div class="flex justify-between items-center border-b pb-3">
           <h2 class="font-bold text-slate-800 text-base">Pedido Actual</h2>
-          <button onclick="window.vaciarCarrito()" class="text-xs text-red-500 hover:text-red-700 font-semibold">Vaciar</button>
+          <button onclick="vaciarCarrito()" class="text-xs text-red-500 hover:text-red-700 font-semibold">Vaciar</button>
         </div>
 
         <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
@@ -142,25 +137,25 @@
           <div>
             <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Medio de Pago</label>
             <div class="grid grid-cols-3 gap-2">
-              <button id="btn-Efectivo" onclick="window.seleccionarPago('Efectivo')" class="btn-pago border p-2 text-xs rounded-lg font-bold text-white bg-amber-600 border-amber-600">Efectivo</button>
-              <button id="btn-Transferencia" onclick="window.seleccionarPago('Transferencia')" class="btn-pago border p-2 text-xs rounded-lg font-bold text-slate-600 border-slate-300">Transf.</button>
-              <button id="btn-Paga Luego" onclick="window.seleccionarPago('Paga Luego')" class="btn-pago border p-2 text-xs rounded-lg font-bold text-slate-600 border-slate-300">Paga Luego</button>
+              <button id="btn-Efectivo" onclick="seleccionarPago('Efectivo')" class="btn-pago border p-2 text-xs rounded-lg font-bold text-white bg-amber-600 border-amber-600">Efectivo</button>
+              <button id="btn-Transferencia" onclick="seleccionarPago('Transferencia')" class="btn-pago border p-2 text-xs rounded-lg font-bold text-slate-600 border-slate-300">Transf.</button>
+              <button id="btn-Paga Luego" onclick="seleccionarPago('Paga Luego')" class="btn-pago border p-2 text-xs rounded-lg font-bold text-slate-600 border-slate-300">Paga Luego</button>
             </div>
           </div>
 
-          <button id="btn-guardar" onclick="window.registrarVenta()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-2">
+          <button id="btn-guardar" onclick="registrarVenta()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-2">
             <i class="fa-solid fa-cloud-arrow-up"></i> Registrar Venta
           </button>
         </div>
       </div>
     </section>
 
+    <!-- VISTA ESTADÍSTICAS -->
     <section id="vista-estadisticas" class="hidden max-w-5xl mx-auto space-y-6">
       <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
         <h2 class="font-bold text-slate-800 text-lg mb-2 flex items-center gap-2">
           <i class="fa-solid fa-chart-pie text-amber-600"></i> Ranking y Contador de Empanadas Vendidas
         </h2>
-        <p class="text-xs text-slate-500 mb-6">Muestra la cantidad total vendida por variedad.</p>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <div class="bg-amber-50 p-4 rounded-xl border border-amber-200 flex items-center gap-4">
@@ -186,39 +181,31 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-col items-center justify-center">
-            <h3 class="text-sm font-bold text-slate-700 mb-4">Distribución de Ventas por Variedad</h3>
-            <div class="w-full max-w-xs">
-              <canvas id="grafico-torta-empanadas"></canvas>
-            </div>
-          </div>
-
-          <div>
-            <h3 class="text-sm font-bold text-slate-700 mb-3">Detalle por Variedad</h3>
-            <div class="overflow-hidden border border-slate-200 rounded-xl">
-              <table class="w-full text-left text-sm">
-                <thead class="bg-slate-100 text-xs uppercase font-bold text-slate-600 border-b">
-                  <tr>
-                    <th class="p-3">Sabor / Variedad</th>
-                    <th class="p-3 text-right">Unidades Vendidas</th>
-                    <th class="p-3 text-right">Porcentaje</th>
-                  </tr>
-                </thead>
-                <tbody id="tabla-contador-sabores" class="divide-y divide-slate-100 bg-white"></tbody>
-              </table>
-            </div>
+        <div>
+          <h3 class="text-sm font-bold text-slate-700 mb-3">Detalle por Variedad</h3>
+          <div class="overflow-hidden border border-slate-200 rounded-xl">
+            <table class="w-full text-left text-sm">
+              <thead class="bg-slate-100 text-xs uppercase font-bold text-slate-600 border-b">
+                <tr>
+                  <th class="p-3">Sabor / Variedad</th>
+                  <th class="p-3 text-right">Unidades Vendidas</th>
+                  <th class="p-3 text-right">Porcentaje</th>
+                </tr>
+              </thead>
+              <tbody id="tabla-contador-sabores" class="divide-y divide-slate-100 bg-white"></tbody>
+            </table>
           </div>
         </div>
       </div>
     </section>
 
+    <!-- VISTA ADMIN -->
     <section id="vista-admin" class="hidden max-w-4xl mx-auto space-y-6">
       <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
         <h2 class="font-bold text-slate-800 text-lg mb-4 flex items-center gap-2">
           <i class="fa-solid fa-plus-circle text-amber-600"></i> Agregar Producto al Menú
         </h2>
-        <form onsubmit="window.guardarNuevoProducto(event)" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <form onsubmit="guardarNuevoProducto(event)" class="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
             <label class="block text-xs font-bold text-slate-600 mb-1">Categoría</label>
             <select id="prod-categoria" class="w-full border p-2 rounded-lg text-sm bg-slate-50">
@@ -250,15 +237,16 @@
       </div>
     </section>
 
+    <!-- MODAL EDITAR ESCALA -->
     <div id="modal-editar-escala" class="fixed inset-0 bg-slate-900/50 flex items-center justify-center p-4 z-50 hidden backdrop-blur-sm">
       <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 space-y-4">
         <div class="flex justify-between items-center border-b pb-3">
           <h3 class="font-bold text-slate-800 text-lg flex items-center gap-2">
             <i class="fa-solid fa-sliders text-amber-600"></i> Escala de Precios Empanadas
           </h3>
-          <button onclick="window.cerrarModalEscala()" class="text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
+          <button onclick="cerrarModalEscala()" class="text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
         </div>
-        <form onsubmit="window.guardarEscalaPrecios(event)" class="space-y-4">
+        <form onsubmit="guardarEscalaPrecios(event)" class="space-y-4">
           <div>
             <label class="block text-xs font-bold text-slate-600 mb-1">Precio por Docena (12 u.)</label>
             <input type="number" id="escala-docena" class="w-full border p-2 rounded-lg text-sm bg-slate-50 font-bold" required>
@@ -272,7 +260,7 @@
             <input type="number" id="escala-unidad" class="w-full border p-2 rounded-lg text-sm bg-slate-50 font-bold" required>
           </div>
           <div class="flex justify-end gap-2 pt-2">
-            <button type="button" onclick="window.cerrarModalEscala()" class="px-4 py-2 text-sm font-bold text-slate-500 hover:text-slate-700">Cancelar</button>
+            <button type="button" onclick="cerrarModalEscala()" class="px-4 py-2 text-sm font-bold text-slate-500 hover:text-slate-700">Cancelar</button>
             <button type="submit" class="bg-amber-600 hover:bg-amber-700 text-white font-bold px-5 py-2 rounded-lg text-sm transition">
               <i class="fa-solid fa-check"></i> Actualizar
             </button>
@@ -281,6 +269,7 @@
       </div>
     </div>
 
+    <!-- VISTA MÁRGENES -->
     <section id="vista-margenes" class="hidden max-w-5xl mx-auto space-y-6">
       <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
         <div class="p-5 border-b"><h2 class="font-bold text-slate-800 text-lg">Márgenes y Ganancias</h2></div>
@@ -301,12 +290,11 @@
       </div>
     </section>
 
+    <!-- VISTA ARQUEO -->
     <section id="vista-arqueo" class="hidden max-w-4xl mx-auto space-y-6">
       <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex justify-between items-center">
-        <div>
-          <h2 class="font-bold text-slate-800 text-lg">Arqueo Diario</h2>
-        </div>
-        <input type="date" id="filtro-fecha-arqueo" onchange="window.cargarArqueoDia()" class="border p-2 rounded-lg text-sm bg-slate-50 font-bold text-slate-700">
+        <div><h2 class="font-bold text-slate-800 text-lg">Arqueo Diario</h2></div>
+        <input type="date" id="filtro-fecha-arqueo" onchange="cargarArqueoDia()" class="border p-2 rounded-lg text-sm bg-slate-50 font-bold text-slate-700">
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -328,8 +316,8 @@
   </main>
 
   <script>
-    // ESTADO LOCAL DE LA APLICACIÓN DE RESPALDO (SIEMPRE DISPONIBLE)
-    window.catalogoGlobal = [
+    // GLOBAL STATE
+    let catalogoGlobal = [
       { id: '1', nombre: 'Carne', precio: 1800, categoria: 'Empanadas' },
       { id: '2', nombre: 'Pollo', precio: 1800, categoria: 'Empanadas' },
       { id: '3', nombre: 'Jamón y Queso', precio: 1800, categoria: 'Empanadas' },
@@ -338,22 +326,22 @@
       { id: '6', nombre: 'Coca Cola 1.5L', precio: 3500, categoria: 'Bebidas' }
     ];
 
-    window.carritoGlobal = [];
-    window.ventasGlobales = [];
-    window.medioPagoSeleccionado = 'Efectivo';
-    window.escalaPrecios = { docena: 20000, media: 10000, unidad: 1800 };
+    let carritoGlobal = [];
+    let ventasGlobales = [];
+    let medioPagoSeleccionado = 'Efectivo';
+    let escalaPrecios = { docena: 20000, media: 10000, unidad: 1800 };
 
     const hoy = new Date().toISOString().split('T')[0];
 
     document.addEventListener("DOMContentLoaded", () => {
       const fechaInput = document.getElementById('fecha-venta-pos');
       if (fechaInput) fechaInput.value = hoy;
-      window.renderizarPOS();
-      window.renderizarAdminProductos();
-      window.renderizarMargenes();
+      renderizarPOS();
+      renderizarAdminProductos();
+      renderizarMargenes();
     });
 
-    window.cambiarPestana = function(pestana) {
+    function cambiarPestana(pestana) {
       const vistas = ['pos', 'estadisticas', 'admin', 'margenes', 'arqueo'];
       vistas.forEach(v => {
         const elemVista = document.getElementById(`vista-${v}`);
@@ -367,42 +355,42 @@
       if (vistaActiva) vistaActiva.classList.remove('hidden');
       if (tabActivo) tabActivo.className = "py-2.5 px-4 font-bold text-sm border-b-4 border-white text-white flex items-center gap-2 whitespace-nowrap";
 
-      if (pestana === 'pos') window.renderizarPOS();
-      else if (pestana === 'estadisticas') window.renderizarEstadisticasEmpanadas();
-      else if (pestana === 'admin') window.renderizarAdminProductos();
-      else if (pestana === 'margenes') window.renderizarMargenes();
+      if (pestana === 'pos') renderizarPOS();
+      else if (pestana === 'estadisticas') renderizarEstadisticasEmpanadas();
+      else if (pestana === 'admin') renderizarAdminProductos();
+      else if (pestana === 'margenes') renderizarMargenes();
       else if (pestana === 'arqueo') {
         const fInput = document.getElementById('filtro-fecha-arqueo');
         if (fInput) fInput.value = hoy;
-        window.cargarArqueoDia();
+        cargarArqueoDia();
       }
-    };
+    }
 
-    window.abrirModalEscala = function() {
-      document.getElementById('escala-docena').value = window.escalaPrecios.docena;
-      document.getElementById('escala-media').value = window.escalaPrecios.media;
-      document.getElementById('escala-unidad').value = window.escalaPrecios.unidad;
+    function abrirModalEscala() {
+      document.getElementById('escala-docena').value = escalaPrecios.docena;
+      document.getElementById('escala-media').value = escalaPrecios.media;
+      document.getElementById('escala-unidad').value = escalaPrecios.unidad;
       document.getElementById('modal-editar-escala').classList.remove('hidden');
-    };
+    }
 
-    window.cerrarModalEscala = function() {
+    function cerrarModalEscala() {
       document.getElementById('modal-editar-escala').classList.add('hidden');
-    };
+    }
 
-    window.guardarEscalaPrecios = function(e) {
+    function guardarEscalaPrecios(e) {
       e.preventDefault();
-      window.escalaPrecios.docena = parseFloat(document.getElementById('escala-docena').value) || 0;
-      window.escalaPrecios.media = parseFloat(document.getElementById('escala-media').value) || 0;
-      window.escalaPrecios.unidad = parseFloat(document.getElementById('escala-unidad').value) || 0;
+      escalaPrecios.docena = parseFloat(document.getElementById('escala-docena').value) || 0;
+      escalaPrecios.media = parseFloat(document.getElementById('escala-media').value) || 0;
+      escalaPrecios.unidad = parseFloat(document.getElementById('escala-unidad').value) || 0;
 
       document.getElementById('label-escala-precios').innerText = 
-        `Escala: $${window.escalaPrecios.docena.toLocaleString()} / docena | $${window.escalaPrecios.media.toLocaleString()} / 6 u. | $${window.escalaPrecios.unidad.toLocaleString()} / c.u`;
+        `Escala: $${escalaPrecios.docena.toLocaleString()} / docena | $${escalaPrecios.media.toLocaleString()} / 6 u. | $${escalaPrecios.unidad.toLocaleString()} / c.u`;
 
-      window.calcularPromocionEmpanadas();
-      window.cerrarModalEscala();
-    };
+      calcularPromocionEmpanadas();
+      cerrarModalEscala();
+    }
 
-    window.calcularPromocionEmpanadas = function() {
+    function calcularPromocionEmpanadas() {
       const jyq = parseInt(document.getElementById('sabor-jyq').value) || 0;
       const carne = parseInt(document.getElementById('sabor-carne').value) || 0;
       const pollo = parseInt(document.getElementById('sabor-pollo').value) || 0;
@@ -414,13 +402,13 @@
       let mediasDocenas = remanente >= 6 ? 1 : 0;
       let unidadesSueltas = remanente >= 6 ? remanente - 6 : remanente;
 
-      const totalMonto = (docenas * window.escalaPrecios.docena) + (mediasDocenas * window.escalaPrecios.media) + (unidadesSueltas * window.escalaPrecios.unidad);
+      const totalMonto = (docenas * escalaPrecios.docena) + (mediasDocenas * escalaPrecios.media) + (unidadesSueltas * escalaPrecios.unidad);
 
       document.getElementById('resumen-empanadas-promo').innerText = `${totalUnidades} empanadas ($${totalMonto.toLocaleString()})`;
       document.getElementById('desglose-empanadas-promo').innerText = `${docenas} docena(s), ${mediasDocenas} media(s), ${unidadesSueltas} suelta(s)`;
-    };
+    }
 
-    window.agregarEmpanadasEspecialesAlCarrito = function() {
+    function agregarEmpanadasEspecialesAlCarrito() {
       const jyq = parseInt(document.getElementById('sabor-jyq').value) || 0;
       const carne = parseInt(document.getElementById('sabor-carne').value) || 0;
       const pollo = parseInt(document.getElementById('sabor-pollo').value) || 0;
@@ -433,14 +421,14 @@
       let medias = remanente >= 6 ? 1 : 0;
       let sueltas = remanente >= 6 ? remanente - 6 : remanente;
 
-      const totalMonto = (docenas * window.escalaPrecios.docena) + (medias * window.escalaPrecios.media) + (sueltas * window.escalaPrecios.unidad);
+      const totalMonto = (docenas * escalaPrecios.docena) + (medias * escalaPrecios.media) + (sueltas * escalaPrecios.unidad);
 
       const detalleSabores = [];
       if (jyq > 0) detalleSabores.push(`${jyq} Jamón y Queso`);
       if (carne > 0) detalleSabores.push(`${carne} Carne`);
       if (pollo > 0) detalleSabores.push(`${pollo} Pollo`);
 
-      window.carritoGlobal.push({
+      carritoGlobal.push({
         id: 'promo-' + Date.now(),
         nombre: `Promo Empanadas (${totalUnidades} u.)`,
         detalle: detalleSabores.join(', '),
@@ -452,18 +440,18 @@
       document.getElementById('sabor-jyq').value = 0;
       document.getElementById('sabor-carne').value = 0;
       document.getElementById('sabor-pollo').value = 0;
-      window.calcularPromocionEmpanadas();
-      window.renderizarCarrito();
-    };
+      calcularPromocionEmpanadas();
+      renderizarCarrito();
+    }
 
-    window.agregarAlCarrito = function(prodId) {
-      const prod = window.catalogoGlobal.find(p => p.id === prodId);
+    function agregarAlCarrito(prodId) {
+      const prod = catalogoGlobal.find(p => p.id === prodId);
       if (!prod) return;
 
-      const enCarrito = window.carritoGlobal.find(item => item.id === prodId);
+      const enCarrito = carritoGlobal.find(item => item.id === prodId);
       if (enCarrito) enCarrito.cantidad++;
       else {
-        window.carritoGlobal.push({
+        carritoGlobal.push({
           id: prod.id,
           nombre: prod.nombre,
           precio: prod.precio,
@@ -471,15 +459,15 @@
           categoria: prod.categoria
         });
       }
-      window.renderizarCarrito();
-    };
+      renderizarCarrito();
+    }
 
-    window.renderizarCarrito = function() {
+    function renderizarCarrito() {
       const contenedor = document.getElementById('lista-pedido');
       contenedor.innerHTML = '';
       let total = 0;
 
-      window.carritoGlobal.forEach((item, idx) => {
+      carritoGlobal.forEach((item, idx) => {
         const subtotal = item.precio * item.cantidad;
         total += subtotal;
         contenedor.innerHTML += `
@@ -491,7 +479,7 @@
             </div>
             <div class="flex items-center gap-2">
               <span class="text-xs font-black text-slate-700">$${subtotal.toLocaleString()}</span>
-              <button onclick="window.eliminarDelCarrito(${idx})" class="text-red-500 hover:text-red-700 text-xs font-bold px-1.5 py-0.5 rounded">
+              <button onclick="eliminarDelCarrito(${idx})" class="text-red-500 hover:text-red-700 text-xs font-bold px-1.5 py-0.5 rounded">
                 <i class="fa-solid fa-xmark"></i>
               </button>
             </div>
@@ -500,28 +488,28 @@
       });
 
       document.getElementById('total-monto').innerText = `$${total.toLocaleString()}`;
-    };
+    }
 
-    window.eliminarDelCarrito = function(idx) {
-      window.carritoGlobal.splice(idx, 1);
-      window.renderizarCarrito();
-    };
+    function eliminarDelCarrito(idx) {
+      carritoGlobal.splice(idx, 1);
+      renderizarCarrito();
+    }
 
-    window.vaciarCarrito = function() {
-      window.carritoGlobal = [];
-      window.renderizarCarrito();
-    };
+    function vaciarCarrito() {
+      carritoGlobal = [];
+      renderizarCarrito();
+    }
 
-    window.seleccionarPago = function(metodo) {
-      window.medioPagoSeleccionado = metodo;
+    function seleccionarPago(metodo) {
+      medioPagoSeleccionado = metodo;
       document.querySelectorAll('.btn-pago').forEach(b => {
         b.className = "btn-pago border p-2 text-xs rounded-lg font-bold text-slate-600 border-slate-300";
       });
       const btnActivo = document.getElementById(`btn-${metodo}`);
       if (btnActivo) btnActivo.className = "btn-pago border p-2 text-xs rounded-lg font-bold text-white bg-amber-600 border-amber-600";
-    };
+    }
 
-    window.renderizarPOS = function() {
+    function renderizarPOS() {
       const gridEmp = document.getElementById('grid-empanadas');
       const gridPiz = document.getElementById('grid-pizzas-viandas');
       const gridBeb = document.getElementById('grid-bebidas');
@@ -529,9 +517,9 @@
       if (!gridEmp || !gridPiz || !gridBeb) return;
       gridEmp.innerHTML = ''; gridPiz.innerHTML = ''; gridBeb.innerHTML = '';
 
-      window.catalogoGlobal.forEach(prod => {
+      catalogoGlobal.forEach(prod => {
         const btnHtml = `
-          <button onclick="window.agregarAlCarrito('${prod.id}')" class="p-3 bg-slate-50 hover:bg-amber-50 border border-slate-200 rounded-lg font-semibold text-left transition flex justify-between items-center w-full">
+          <button onclick="agregarAlCarrito('${prod.id}')" class="p-3 bg-slate-50 hover:bg-amber-50 border border-slate-200 rounded-lg font-semibold text-left transition flex justify-between items-center w-full">
             <div>
               <div class="text-xs font-bold text-slate-800">${prod.nombre}</div>
               <div class="text-xs text-amber-600 font-black">$${(prod.precio || 0).toLocaleString()}</div>
@@ -543,13 +531,13 @@
         else if (prod.categoria === 'Pizza' || prod.categoria === 'Vianda') gridPiz.innerHTML += btnHtml;
         else if (prod.categoria === 'Bebidas') gridBeb.innerHTML += btnHtml;
       });
-    };
+    }
 
-    window.renderizarAdminProductos = function() {
+    function renderizarAdminProductos() {
       const cont = document.getElementById('lista-admin-productos');
       if (!cont) return;
       cont.innerHTML = '';
-      window.catalogoGlobal.forEach(p => {
+      catalogoGlobal.forEach(p => {
         cont.innerHTML += `
           <div class="py-3 flex justify-between items-center">
             <div>
@@ -558,61 +546,61 @@
             </div>
             <div class="flex items-center gap-3">
               <span class="font-black text-amber-600 text-sm">$${p.precio}</span>
-              <button onclick="window.eliminarProducto('${p.id}')" class="text-red-500 hover:text-red-700 text-xs"><i class="fa-solid fa-trash"></i></button>
+              <button onclick="eliminarProducto('${p.id}')" class="text-red-500 hover:text-red-700 text-xs"><i class="fa-solid fa-trash"></i></button>
             </div>
           </div>
         `;
       });
-    };
+    }
 
-    window.guardarNuevoProducto = function(e) {
+    function guardarNuevoProducto(e) {
       e.preventDefault();
       const cat = document.getElementById('prod-categoria').value;
       const nom = document.getElementById('prod-nombre').value;
       const pre = parseFloat(document.getElementById('prod-precio').value);
 
       const nuevo = { id: 'prod-' + Date.now(), categoria: cat, nombre: nom, precio: pre };
-      window.catalogoGlobal.push(nuevo);
+      catalogoGlobal.push(nuevo);
       if (window.guardarProductoFirestore) window.guardarProductoFirestore(nuevo);
 
       document.getElementById('prod-nombre').value = '';
       document.getElementById('prod-precio').value = '';
-      window.renderizarPOS();
-      window.renderizarAdminProductos();
-    };
+      renderizarPOS();
+      renderizarAdminProductos();
+    }
 
-    window.eliminarProducto = function(id) {
+    function eliminarProducto(id) {
       if (confirm('¿Eliminar producto del menú?')) {
-        window.catalogoGlobal = window.catalogoGlobal.filter(p => p.id !== id);
+        catalogoGlobal = catalogoGlobal.filter(p => p.id !== id);
         if (window.eliminarProductoFirestore) window.eliminarProductoFirestore(id);
-        window.renderizarPOS();
-        window.renderizarAdminProductos();
+        renderizarPOS();
+        renderizarAdminProductos();
       }
-    };
+    }
 
-    window.registrarVenta = function() {
-      if (window.carritoGlobal.length === 0) return alert('El carrito está vacío');
+    function registrarVenta() {
+      if (carritoGlobal.length === 0) return alert('El carrito está vacío');
       const fecha = document.getElementById('fecha-venta-pos').value || hoy;
-      const total = window.carritoGlobal.reduce((acc, item) => acc + (item.precio * item.cantidad), 0);
+      const total = carritoGlobal.reduce((acc, item) => acc + (item.precio * item.cantidad), 0);
 
       const venta = {
         id: 'venta-' + Date.now(),
         fecha,
-        items: [...window.carritoGlobal],
+        items: [...carritoGlobal],
         total,
-        medioPago: window.medioPagoSeleccionado
+        medioPago: medioPagoSeleccionado
       };
 
-      window.ventasGlobales.push(venta);
+      ventasGlobales.push(venta);
       if (window.registrarVentaFirestore) window.registrarVentaFirestore(venta);
 
-      window.vaciarCarrito();
+      vaciarCarrito();
       alert('Venta registrada con éxito');
-    };
+    }
 
-    window.renderizarEstadisticasEmpanadas = function() {
+    function renderizarEstadisticasEmpanadas() {
       const conteoSabores = { "Jamón y Queso": 0, "Carne": 0, "Pollo": 0 };
-      window.ventasGlobales.forEach(venta => {
+      ventasGlobales.forEach(venta => {
         if (!venta.items) return;
         venta.items.forEach(item => {
           if (item.saboresIndividuales) {
@@ -644,22 +632,22 @@
           tbody.innerHTML += `<tr><td class="p-3 font-bold text-slate-800">${sabor}</td><td class="p-3 text-right font-black text-amber-600">${cant} u.</td><td class="p-3 text-right font-semibold text-slate-500">${pct}%</td></tr>`;
         });
       }
-    };
+    }
 
-    window.renderizarMargenes = function() {
+    function renderizarMargenes() {
       const tbody = document.getElementById('tabla-margenes-body');
       if (!tbody) return;
       tbody.innerHTML = '';
-      window.catalogoGlobal.forEach(prod => {
-        const precioVenta = prod.precio || window.escalaPrecios.unidad;
+      catalogoGlobal.forEach(prod => {
+        const precioVenta = prod.precio || escalaPrecios.unidad;
         tbody.innerHTML += `<tr><td class="p-3 font-bold text-slate-800">${prod.nombre}</td><td class="p-3 font-bold text-slate-700">$${precioVenta.toLocaleString()}</td><td class="p-3 font-semibold text-slate-600">$0.00</td><td class="p-3 font-bold text-amber-600">$${precioVenta.toLocaleString()}</td><td class="p-3 font-black text-emerald-600">100%</td></tr>`;
       });
-    };
+    }
 
-    window.cargarArqueoDia = function() {
+    function cargarArqueoDia() {
       const fecha = document.getElementById('filtro-fecha-arqueo').value || hoy;
       let total = 0, efectivo = 0, transferencia = 0;
-      window.ventasGlobales.filter(v => v.fecha === fecha).forEach(v => {
+      ventasGlobales.filter(v => v.fecha === fecha).forEach(v => {
         total += v.total || 0;
         if (v.medioPago === 'Efectivo') efectivo += v.total;
         else if (v.medioPago === 'Transferencia') transferencia += v.total;
@@ -668,60 +656,79 @@
       document.getElementById('arqueo-total-ventas').innerText = `$${total.toLocaleString()}`;
       document.getElementById('arqueo-efectivo').innerText = `$${efectivo.toLocaleString()}`;
       document.getElementById('arqueo-transferencia').innerText = `$${transferencia.toLocaleString()}`;
-    };
+    }
   </script>
 
+  <!-- CAPA FIREBASE PROTEGIDA CONTRA ERRORES DE RED/CONEXIÓN -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getFirestore, collection, addDoc, doc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    try {
-      const firebaseConfig = {
-        apiKey: "AIzaSyBLkWuMHj3hEXQ7b6Fr0I5Eu8B4I8KqlGk",
-        authDomain: "entrefuegos-c5b78.firebaseapp.com",
-        projectId: "entrefuegos-c5b78",
-        storageBucket: "entrefuegos-c5b78.firebasestorage.app",
-        messagingSenderId: "170507928754",
-        appId: "1:170507928754:web:e14fd77c535494afe975ab"
-      };
+    const firebaseConfig = {
+      apiKey: "AIzaSyBLkWuMHj3hEXQ7b6Fr0I5Eu8B4I8KqlGk",
+      authDomain: "entrefuegos-c5b78.firebaseapp.com",
+      projectId: "entrefuegos-c5b78",
+      storageBucket: "entrefuegos-c5b78.firebasestorage.app",
+      messagingSenderId: "170507928754",
+      appId: "1:170507928754:web:e14fd77c535494afe975ab"
+    };
 
+    try {
       const app = initializeApp(firebaseConfig);
       const db = getFirestore(app);
 
       window.guardarProductoFirestore = async (prod) => {
-        await addDoc(collection(db, "productos"), prod);
+        try { await addDoc(collection(db, "productos"), prod); } catch (e) { console.warn("Error guardando producto:", e); }
       };
 
       window.eliminarProductoFirestore = async (id) => {
-        await deleteDoc(doc(db, "productos", id));
+        try { await deleteDoc(doc(db, "productos", id)); } catch (e) { console.warn("Error eliminando producto:", e); }
       };
 
       window.registrarVentaFirestore = async (venta) => {
-        await addDoc(collection(db, "ventas"), venta);
+        try { await addDoc(collection(db, "ventas"), venta); } catch (e) { console.warn("Error registrando venta:", e); }
       };
 
-      onSnapshot(collection(db, "productos"), (snapshot) => {
-        if (!snapshot.empty) {
-          window.catalogoGlobal = [];
-          snapshot.forEach(docSnap => window.catalogoGlobal.push({ id: docSnap.id, ...docSnap.data() }));
-          window.renderizarPOS();
-          window.renderizarAdminProductos();
-          window.renderizarMargenes();
+      onSnapshot(collection(db, "productos"), 
+        (snapshot) => {
+          if (!snapshot.empty) {
+            catalogoGlobal = [];
+            snapshot.forEach(docSnap => catalogoGlobal.push({ id: docSnap.id, ...docSnap.data() }));
+            renderizarPOS();
+            renderizarAdminProductos();
+            renderizarMargenes();
+          }
+        },
+        (error) => {
+          console.warn("Firestore error en productos, manteniendo modo local:", error);
+          marcarModoLocal();
         }
-      });
+      );
 
-      onSnapshot(collection(db, "ventas"), (snapshot) => {
-        if (!snapshot.empty) {
-          window.ventasGlobales = [];
-          snapshot.forEach(docSnap => window.ventasGlobales.push({ id: docSnap.id, ...docSnap.data() }));
-          window.renderizarEstadisticasEmpanadas();
+      onSnapshot(collection(db, "ventas"), 
+        (snapshot) => {
+          if (!snapshot.empty) {
+            ventasGlobales = [];
+            snapshot.forEach(docSnap => ventasGlobales.push({ id: docSnap.id, ...docSnap.data() }));
+            renderizarEstadisticasEmpanadas();
+          }
+        },
+        (error) => {
+          console.warn("Firestore error en ventas, manteniendo modo local:", error);
+          marcarModoLocal();
         }
-      });
+      );
 
     } catch (err) {
-      console.warn("Firebase no se pudo conectar. Operando en modo offline.", err);
-      const estado = document.getElementById('estado-conexion');
-      if(estado) estado.innerHTML = '<span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span> Modo Local Activo';
+      console.warn("Error inicializando Firebase:", err);
+      marcarModoLocal();
+    }
+
+    function marcarModoLocal() {
+      const dot = document.getElementById('dot-conexion');
+      const txt = document.getElementById('texto-conexion');
+      if (dot) dot.className = "w-2.5 h-2.5 rounded-full bg-amber-400";
+      if (txt) txt.innerText = "Modo Local Activo";
     }
   </script>
 </body>
