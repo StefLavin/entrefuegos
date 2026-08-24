@@ -1,277 +1,1201 @@
 <!DOCTYPE html>
+
 <html lang="es">
+
 <head>
+
   <meta charset="UTF-8">
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>EntreFuegos - POS, Ingredientes & Costos</title>
+
   <script src="https://cdn.tailwindcss.com"></script>
+
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
 </head>
+
 <body class="bg-slate-100 font-sans text-slate-800 pb-10">
 
+
+
+  <!-- Encabezado con Navegación -->
+
   <header class="bg-amber-600 text-white shadow-md sticky top-0 z-20">
+
     <div class="max-w-6xl mx-auto p-4 flex justify-between items-center">
+
       <h1 class="text-xl font-bold flex items-center gap-2">
+
         <i class="fa-solid fa-fire"></i> EntreFuegos
+
       </h1>
+
       <span class="text-xs bg-amber-700 px-3 py-1 rounded-full font-semibold flex items-center gap-1">
+
         <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span> Firebase Conectado
+
       </span>
+
     </div>
 
+
+
+    <!-- Pestañas de Menú -->
+
     <div class="flex bg-amber-700 max-w-6xl mx-auto px-4 gap-2 overflow-x-auto">
+
       <button onclick="cambiarPestana('pos')" id="tab-pos" class="py-2.5 px-4 font-bold text-sm border-b-4 border-white text-white flex items-center gap-2 whitespace-nowrap">
+
         <i class="fa-solid fa-cash-register"></i> Ventas POS
+
       </button>
+
       <button onclick="cambiarPestana('admin')" id="tab-admin" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
+
         <i class="fa-solid fa-boxes-packing"></i> Menú de Ventas
+
       </button>
+
       <button onclick="cambiarPestana('ingredientes')" id="tab-ingredientes" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
+
         <i class="fa-solid fa-carrot"></i> Catálogo de Insumos
+
       </button>
+
       <button onclick="cambiarPestana('costos')" id="tab-costos" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
+
         <i class="fa-solid fa-calculator"></i> Recetas y Fichas
+
       </button>
+
       <button onclick="cambiarPestana('margenes')" id="tab-margenes" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
+
         <i class="fa-solid fa-chart-line"></i> Márgenes y Ganancias
+
       </button>
-      <button onclick="cambiarPestana('arqueo')" id="tab-arqueo" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
-        <i class="fa-solid fa-vault"></i> Arqueo y Cierre
-      </button>
+
     </div>
+
   </header>
+
+
 
   <main class="max-w-6xl mx-auto p-4">
 
+
+
+    <!-- PESTAÑA 1: VENTAS (POS) -->
+
     <div id="vista-pos" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
       <section class="md:col-span-2 space-y-6">
+
         <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+
           <h2 class="text-lg font-bold text-slate-700 mb-3 flex items-center gap-2">
+
             <i class="fa-solid fa-box-tissue text-amber-600"></i> Empanadas
+
           </h2>
+
           <div id="grid-empanadas" class="grid grid-cols-1 sm:grid-cols-3 gap-3"></div>
+
         </div>
 
+
+
         <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+
           <h2 class="text-lg font-bold text-slate-700 mb-3 flex items-center gap-2">
+
             <i class="fa-solid fa-pizza-slice text-amber-600"></i> Pizzas y Viandas
+
           </h2>
+
           <div id="grid-pizzas-viandas" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+
         </div>
 
+
+
         <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+
           <h2 class="text-lg font-bold text-slate-700 mb-3 flex items-center gap-2">
+
             <i class="fa-solid fa-bottle-water text-amber-600"></i> Bebidas
+
           </h2>
+
           <div id="grid-bebidas" class="grid grid-cols-1 sm:grid-cols-3 gap-3"></div>
+
         </div>
+
       </section>
+
+
 
       <section class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col justify-between h-fit">
+
         <div>
+
           <h2 class="text-lg font-bold text-slate-800 border-b pb-2 mb-4 flex justify-between items-center">
+
             <span>Pedido Actual</span>
+
             <button onclick="vaciarCarrito()" class="text-xs text-red-500 hover:underline">Vaciar</button>
+
           </h2>
+
           <div id="lista-pedido" class="space-y-3 min-h-[150px] max-h-[300px] overflow-y-auto mb-4">
+
             <p class="text-sm text-slate-400 text-center py-8">No hay productos en el pedido.</p>
+
           </div>
+
         </div>
+
+
 
         <div class="border-t pt-4 space-y-4">
+
           <div class="flex justify-between items-center text-xl font-black text-slate-800">
+
             <span>Total:</span>
+
             <span id="total-monto" class="text-amber-600">$0</span>
+
           </div>
 
+
+
           <div>
+
             <label class="block text-xs font-bold text-slate-600 uppercase mb-2">Medio de Pago</label>
+
             <div class="grid grid-cols-3 gap-2">
-              <button onclick="seleccionarPago('Efectivo')" id="btn-Efectivo" class="btn-pago border p-2 text-xs rounded-lg font-bold text-white bg-amber-600 border-amber-600">Efectivo</button>
+
+              <button onclick="seleccionarPago('Efectivo')" id="btn-Efectivo" class="btn-pago border p-2 text-xs rounded-lg font-bold text-slate-600 border-slate-300">Efectivo</button>
+
               <button onclick="seleccionarPago('Transferencia')" id="btn-Transferencia" class="btn-pago border p-2 text-xs rounded-lg font-bold text-slate-600 border-slate-300">Transf.</button>
+
               <button onclick="seleccionarPago('Paga Luego')" id="btn-Paga Luego" class="btn-pago border p-2 text-xs rounded-lg font-bold text-slate-600 border-slate-300">Fiado</button>
+
             </div>
+
           </div>
+
+
 
           <button id="btn-guardar" onclick="registrarVenta()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl shadow-lg transition text-center flex justify-center items-center gap-2">
+
             <i class="fa-solid fa-cloud-arrow-up"></i> Registrar y Sincronizar
+
           </button>
+
         </div>
+
       </section>
+
     </div>
+
+
+
+    <!-- PESTAÑA 2: GESTOR DE MENÚ DE VENTAS -->
 
     <div id="vista-admin" class="hidden space-y-6">
-      <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-        <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-          <i class="fa-solid fa-plus text-amber-600"></i> Agregar Producto al Menú de Ventas
-        </h2>
-        <form onsubmit="guardarNuevoProducto(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Categoría</label>
-            <select id="prod-categoria" onchange="cambiarTipoFormulario()" class="w-full border p-2 rounded-lg text-sm bg-slate-50">
-              <option value="Empanadas">Empanadas</option>
-              <option value="Pizza">Pizza</option>
-              <option value="Vianda">Vianda</option>
-              <option value="Bebidas">Bebidas</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Nombre / Sabor</label>
-            <input type="text" id="prod-nombre" placeholder="Ej: Humita, Coca Cola" required class="w-full border p-2 rounded-lg text-sm bg-slate-50">
-          </div>
-          <div id="campo-litros" class="hidden">
-            <label class="block text-xs font-bold text-slate-600 mb-1">Tamaño / Litros</label>
-            <input type="text" id="prod-litros" placeholder="Ej: 1.5L, 500ml" class="w-full border p-2 rounded-lg text-sm bg-slate-50">
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Precio de Venta ($)</label>
-            <input type="number" id="prod-precio" placeholder="2000" required class="w-full border p-2 rounded-lg text-sm bg-slate-50">
-          </div>
-          <div class="sm:col-span-2 flex justify-end">
-            <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 text-sm font-bold rounded-lg shadow">
-              <i class="fa-solid fa-save mr-1"></i> Guardar en Menú
-            </button>
-          </div>
-        </form>
-      </div>
 
       <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-        <h2 class="text-lg font-bold text-slate-800 mb-4">Productos Actuales en Catálogo de Venta</h2>
-        <div id="lista-admin-productos" class="divide-y divide-slate-100"></div>
+
+        <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+
+          <i class="fa-solid fa-plus text-amber-600"></i> Agregar Producto al Menú de Ventas
+
+        </h2>
+
+        <form onsubmit="guardarNuevoProducto(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+          <div>
+
+            <label class="block text-xs font-bold text-slate-600 mb-1">Categoría</label>
+
+            <select id="prod-categoria" onchange="cambiarTipoFormulario()" class="w-full border p-2 rounded-lg text-sm bg-slate-50">
+
+              <option value="Empanadas">Empanadas</option>
+
+              <option value="Pizza">Pizza</option>
+
+              <option value="Vianda">Vianda</option>
+
+              <option value="Bebidas">Bebidas</option>
+
+            </select>
+
+          </div>
+
+          <div>
+
+            <label class="block text-xs font-bold text-slate-600 mb-1">Nombre / Sabor</label>
+
+            <input type="text" id="prod-nombre" placeholder="Ej: Humita, Coca Cola" required class="w-full border p-2 rounded-lg text-sm bg-slate-50">
+
+          </div>
+
+          <div id="campo-litros" class="hidden">
+
+            <label class="block text-xs font-bold text-slate-600 mb-1">Tamaño / Litros</label>
+
+            <input type="text" id="prod-litros" placeholder="Ej: 1.5L, 500ml" class="w-full border p-2 rounded-lg text-sm bg-slate-50">
+
+          </div>
+
+          <div>
+
+            <label class="block text-xs font-bold text-slate-600 mb-1">Precio de Venta ($)</label>
+
+            <input type="number" id="prod-precio" placeholder="2000" required class="w-full border p-2 rounded-lg text-sm bg-slate-50">
+
+          </div>
+
+          <div class="sm:col-span-2 flex justify-end">
+
+            <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 text-sm font-bold rounded-lg shadow">
+
+              <i class="fa-solid fa-save mr-1"></i> Guardar en Menú
+
+            </button>
+
+          </div>
+
+        </form>
+
       </div>
+
+
+
+      <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+
+        <h2 class="text-lg font-bold text-slate-800 mb-4">Productos Actuales en Catálogo de Venta</h2>
+
+        <div id="lista-admin-productos" class="divide-y divide-slate-100"></div>
+
+      </div>
+
     </div>
+
+
+
+    <!-- PESTAÑA 3: CATÁLOGO DE MATERIAS PRIMAS E INSUMOS -->
 
     <div id="vista-ingredientes" class="hidden space-y-6">
+
       <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+
         <h2 class="text-lg font-bold text-slate-800 mb-2 flex items-center gap-2">
+
           <i class="fa-solid fa-carrot text-amber-600"></i> Alta de Materia Prima / Insumo
+
         </h2>
+
         <p class="text-xs text-slate-500 mb-6">Agregá acá los insumos que compras con su precio. Todo lo que cargues en este catálogo aparecerá automáticamente disponible en el menú desplegable al armar tus recetas.</p>
 
+
+
         <form onsubmit="guardarIngrediente(event)" class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+
           <div class="sm:col-span-1">
+
             <label class="block text-xs font-bold text-slate-600 mb-1">Ingrediente / Insumo</label>
+
             <input type="text" id="ing-nombre" placeholder="Ej: Harina 0000, Carne picada" required class="w-full border p-2 rounded-lg text-sm bg-slate-50">
+
           </div>
+
           <div>
+
             <label class="block text-xs font-bold text-slate-600 mb-1">Cantidad Comprada</label>
+
             <input type="number" step="0.01" id="ing-cantidad-paquete" placeholder="Ej: 1 (si es 1 kg) o 500 (gr)" required class="w-full border p-2 rounded-lg text-sm bg-slate-50">
+
           </div>
+
           <div>
+
             <label class="block text-xs font-bold text-slate-600 mb-1">Unidad de Compra</label>
+
             <select id="ing-unidad" class="w-full border p-2 rounded-lg text-sm bg-slate-50">
+
               <option value="kg">Kilogramos (kg)</option>
+
               <option value="gr">Gramos (gr)</option>
+
               <option value="lt">Litros (lt)</option>
+
               <option value="ml">Mililitros (ml)</option>
+
               <option value="unid">Unidades / Pack (unid)</option>
+
             </select>
+
           </div>
+
           <div>
+
             <label class="block text-xs font-bold text-slate-600 mb-1">Precio Total Pagado ($)</label>
+
             <input type="number" step="0.01" id="ing-precio-paquete" placeholder="Ej: 1200" required class="w-full border p-2 rounded-lg text-sm bg-slate-50">
+
           </div>
+
           <div class="sm:col-span-4 flex justify-end">
+
             <button type="submit" class="bg-amber-600 hover:bg-amber-700 text-white px-6 py-2.5 text-sm font-bold rounded-lg shadow flex items-center gap-2">
+
               <i class="fa-solid fa-plus"></i> Guardar en Catálogo de Insumos
+
             </button>
+
           </div>
+
         </form>
+
       </div>
 
+
+
       <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+
         <h2 class="text-lg font-bold text-slate-800 mb-4">Catálogo Completo de Insumos Guardados</h2>
+
         <div id="lista-ingredientes-base" class="divide-y divide-slate-100"></div>
+
       </div>
+
     </div>
+
+
+
+    <!-- PESTAÑA 4: RECETAS Y FICHAS TÉCNICAS -->
 
     <div id="vista-costos" class="hidden space-y-6">
+
       <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+
         <h2 class="text-lg font-bold text-slate-800 mb-2 flex items-center gap-2">
+
           <i class="fa-solid fa-book-open text-amber-600"></i> Armador de Recetas y Fichas Técnicas
+
         </h2>
-        <p class="text-xs text-slate-500 mb-6">Seleccioná los insumos de tu catálogo en el menú desplegable, indicá la cantidad utilizada y las unidades que rinde la mezcla.</p>
+
+        <p class="text-xs text-slate-500 mb-6">Seleccioná los insumos de tu catálogo en el menú desplegable, indicá la cantidad utilizada y las unidades que rinde la mezcla. El costo total y por unidad se calculará al instante.</p>
+
+
 
         <form onsubmit="guardarCostosReceta(event)" class="space-y-4">
+
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
             <div>
+
               <label class="block text-xs font-bold text-slate-600 mb-1">Nombre de la Receta / Preparación</label>
-              <input type="text" id="costo-nombre-receta" placeholder="Ej: Tapas de Empanadas, Relleno Carne" required class="w-full border p-2 rounded-lg text-sm bg-slate-50">
+
+              <input type="text" id="costo-nombre-receta" placeholder="Ej: Tapas de Empanadas (100u), Relleno Carne (10 docenas)" required class="w-full border p-2 rounded-lg text-sm bg-slate-50">
+
             </div>
+
             <div>
+
               <label class="block text-xs font-bold text-slate-600 mb-1">Rendimiento (Unidades/Porciones producidas)</label>
+
               <input type="number" id="costo-rendimiento" placeholder="Ej: 100 (tapas) o 12 (pizzas)" required class="w-full border p-2 rounded-lg text-sm bg-slate-50">
+
             </div>
+
           </div>
 
+
+
           <div>
+
             <label class="block text-xs font-bold text-slate-600 mb-2">Seleccionar Insumos y Cantidades Usadas</label>
+
             <div id="contenedor-ingredientes-receta" class="space-y-2"></div>
+
             <button type="button" onclick="agregarFilaIngredienteReceta()" class="mt-3 text-xs text-amber-700 font-bold hover:underline flex items-center gap-1">
+
               <i class="fa-solid fa-plus"></i> + Agregar insumo a esta receta
+
             </button>
+
           </div>
+
+
 
           <div class="pt-4 border-t flex justify-end">
+
             <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 text-sm font-bold rounded-lg shadow">
+
               <i class="fa-solid fa-file-invoice-dollar mr-1"></i> Guardar Receta
+
             </button>
+
           </div>
+
         </form>
+
       </div>
 
+
+
       <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+
         <h2 class="text-lg font-bold text-slate-800 mb-4">Recetas y Fichas Técnicas Guardadas</h2>
+
         <div id="lista-recetas-costos" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+
       </div>
+
     </div>
+
+
+
+    <!-- PESTAÑA 5: CÁLCULO DE MÁRGENES Y GANANCIAS -->
 
     <div id="vista-margenes" class="hidden space-y-6">
+
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+
         <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
+
           <div class="p-3 bg-emerald-100 text-emerald-600 rounded-lg text-xl"><i class="fa-solid fa-sack-dollar"></i></div>
+
           <div>
+
             <span class="text-xs text-slate-500 font-bold uppercase block">Margen Promedio</span>
+
             <span id="stat-margen-promedio" class="text-2xl font-black text-slate-800">0%</span>
+
           </div>
+
         </div>
+
         <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
+
           <div class="p-3 bg-amber-100 text-amber-600 rounded-lg text-xl"><i class="fa-solid fa-box"></i></div>
+
           <div>
+
             <span class="text-xs text-slate-500 font-bold uppercase block">Productos Vinculados</span>
+
             <span id="stat-prod-vinculados" class="text-2xl font-black text-slate-800">0 / 0</span>
+
           </div>
+
         </div>
+
         <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
+
           <div class="p-3 bg-blue-100 text-blue-600 rounded-lg text-xl"><i class="fa-solid fa-chart-line"></i></div>
+
           <div>
+
             <span class="text-xs text-slate-500 font-bold uppercase block">Ganancia Prom. x Unid</span>
+
             <span id="stat-ganancia-promedio" class="text-2xl font-black text-slate-800">$0</span>
+
           </div>
+
         </div>
+
       </div>
+
+
 
       <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-        <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-          <i class="fa-solid fa-scale-balanced text-amber-600"></i> Análisis de Márgenes de Ganancia
-        </h2>
-        <div class="overflow-x-auto">
-          <table class="w-full text-left border-collapse">
-            <thead>
-              <tr class="border-b text-xs font-bold text-slate-400 uppercase bg-slate-50">
-                <th class="p-3">Producto</th>
-                <th class="p-3">Precio Venta</th>
-                <th class="p-3">Origen del Costo</th>
-                <th class="p-3">Costo Directo</th>
-                <th class="p-3">Ganancia ($)</th>
-                <th class="p-3">Margen (%)</th>
-              </tr>
-            </thead>
-            <tbody id="tabla-margenes-body" class="divide-y divide-slate-100 text-sm"></tbody>
-          </table>
+
+        <div class="flex justify-between items-center mb-4">
+
+          <div>
+
+            <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+
+              <i class="fa-solid fa-scale-balanced text-amber-600"></i> Análisis de Márgenes de Ganancia
+
+            </h2>
+
+            <p class="text-xs text-slate-500">Vinculá cada producto con una Receta/Ficha Técnica o asignale un costo manual para medir su rentabilidad.</p>
+
+          </div>
+
         </div>
+
+
+
+        <div class="overflow-x-auto">
+
+          <table class="w-full text-left border-collapse">
+
+            <thead>
+
+              <tr class="border-b text-xs font-bold text-slate-400 uppercase bg-slate-50">
+
+                <th class="p-3">Producto</th>
+
+                <th class="p-3">Precio Venta</th>
+
+                <th class="p-3">Origen del Costo</th>
+
+                <th class="p-3">Costo Directo</th>
+
+                <th class="p-3">Ganancia ($)</th>
+
+                <th class="p-3">Margen (%)</th>
+
+              </tr>
+
+            </thead>
+
+            <tbody id="tabla-margenes-body" class="divide-y divide-slate-100 text-sm">
+
+              <!-- Carga Dinámica -->
+
+            </tbody>
+
+          </table>
+
+        </div>
+
       </div>
+
     </div>
 
-    <div id="vista-arqueo" class="hidden space-y-6">
-      <div class="bg-white p-6 rounded-xl shadow-sm border border
+
+
+  </main>
+
+
+
+  <!-- MODAL FICHA TÉCNICA -->
+
+  <div id="modal-ficha" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+
+    <div class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden border border-slate-200 animate-fade-in">
+
+      <div class="bg-amber-600 p-4 text-white flex justify-between items-center">
+
+        <h3 class="font-bold text-lg flex items-center gap-2">
+
+          <i class="fa-solid fa-clipboard-list"></i> Ficha Técnica de Producción
+
+        </h3>
+
+        <button onclick="cerrarFichaTecnica()" class="text-amber-100 hover:text-white text-xl font-bold">&times;</button>
+
+      </div>
+
+      
+
+      <div id="contenido-ficha-modal" class="p-6 space-y-6 max-h-[80vh] overflow-y-auto"></div>
+
+
+
+      <div class="bg-slate-50 p-4 border-t flex justify-between items-center">
+
+        <button onclick="window.print()" class="bg-slate-700 hover:bg-slate-800 text-white px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-2">
+
+          <i class="fa-solid fa-print"></i> Imprimir / PDF
+
+        </button>
+
+        <button onclick="cerrarFichaTecnica()" class="bg-amber-600 hover:bg-amber-700 text-white px-5 py-2 rounded-lg text-xs font-bold">
+
+          Cerrar
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- LÓGICA Y FIREBASE -->
+
+  <script type="module">
+
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+
+
+    const firebaseConfig = {
+
+      apiKey: "AIzaSyBLkWuMHj3hEXQ7b6Fr0I5Eu8B4I8KqlGk",
+
+      authDomain: "entrefuegos-c5b78.firebaseapp.com",
+
+      projectId: "entrefuegos-c5b78",
+
+      storageBucket: "entrefuegos-c5b78.firebasestorage.app",
+
+      messagingSenderId: "170507928754",
+
+      appId: "1:170507928754:web:e14fd77c535494afe975ab",
+
+      measurementId: "G-JRP0T5W9SJ"
+
+    };
+
+
+
+    const app = initializeApp(firebaseConfig);
+
+    const db = getFirestore(app);
+
+
+
+    let catalogo = JSON.parse(localStorage.getItem('catalogo_entrefuegos')) || [
+
+      { id: 1, categoria: 'Empanadas', nombre: 'Carne', precio: 2000, docena: 20000, recetaId: null, costoManual: 0 },
+
+      { id: 2, categoria: 'Empanadas', nombre: 'Pollo', precio: 2000, docena: 20000, recetaId: null, costoManual: 0 },
+
+      { id: 3, categoria: 'Empanadas', nombre: 'Jamón y Queso', precio: 2000, docena: 20000, recetaId: null, costoManual: 0 },
+
+      { id: 4, categoria: 'Pizza', nombre: 'Pizza Muzzarella', precio: 15000, recetaId: null, costoManual: 0 },
+
+      { id: 5, categoria: 'Vianda', nombre: 'Vianda Diaria', precio: 18000, recetaId: null, costoManual: 0 }
+
+    ];
+
+
+
+    let materiasPrimas = JSON.parse(localStorage.getItem('materias_primas_entrefuegos')) || [
+
+      { id: 101, nombre: 'Harina 0000', cantidadPaquete: 1, unidad: 'kg', precioPaquete: 1200, costoUnitarioStandard: 1.2 },
+
+      { id: 102, nombre: 'Carne Picada Especial', cantidadPaquete: 1, unidad: 'kg', precioPaquete: 7500, costoUnitarioStandard: 7.5 },
+
+      { id: 103, nombre: 'Cebolla', cantidadPaquete: 1, unidad: 'kg', precioPaquete: 1000, costoUnitarioStandard: 1.0 },
+
+      { id: 104, nombre: 'Queso Muzzarella', cantidadPaquete: 1, unidad: 'kg', precioPaquete: 8000, costoUnitarioStandard: 8.0 }
+
+    ];
+
+
+
+    let recetasCostos = JSON.parse(localStorage.getItem('recetas_costos_entrefuegos')) || [];
+
+    let carrito = [];
+
+    let medioPagoSeleccionado = 'Efectivo';
+
+
+
+    window.cambiarPestana = function(pestana) {
+
+      const vPos = document.getElementById('vista-pos');
+
+      const vAdmin = document.getElementById('vista-admin');
+
+      const vIngredientes = document.getElementById('vista-ingredientes');
+
+      const vCostos = document.getElementById('vista-costos');
+
+      const vMargenes = document.getElementById('vista-margenes');
+
+
+
+      const tPos = document.getElementById('tab-pos');
+
+      const tAdmin = document.getElementById('tab-admin');
+
+      const tIng = document.getElementById('tab-ingredientes');
+
+      const tCostos = document.getElementById('tab-costos');
+
+      const tMargenes = document.getElementById('tab-margenes');
+
+
+
+      [vPos, vAdmin, vIngredientes, vCostos, vMargenes].forEach(el => el.classList.add('hidden'));
+
+
+
+      const inactiveStyle = "py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap";
+
+      const activeStyle = "py-2.5 px-4 font-bold text-sm border-b-4 border-white text-white flex items-center gap-2 whitespace-nowrap";
+
+
+
+      [tPos, tAdmin, tIng, tCostos, tMargenes].forEach(el => el.className = inactiveStyle);
+
+
+
+      if (pestana === 'pos') { vPos.classList.remove('hidden'); tPos.className = activeStyle; }
+
+      else if (pestana === 'admin') { vAdmin.classList.remove('hidden'); tAdmin.className = activeStyle; }
+
+      else if (pestana === 'ingredientes') { vIngredientes.classList.remove('hidden'); tIng.className = activeStyle; }
+
+      else if (pestana === 'costos') { vCostos.classList.remove('hidden'); tCostos.className = activeStyle; }
+
+      else if (pestana === 'margenes') { 
+
+        vMargenes.classList.remove('hidden'); 
+
+        tMargenes.className = activeStyle; 
+
+        renderizarMargenes();
+
+      }
+
+    };
+
+
+
+    window.guardarIngrediente = function(e) {
+
+      e.preventDefault();
+
+      const nombre = document.getElementById('ing-nombre').value;
+
+      const cantPaquete = parseFloat(document.getElementById('ing-cantidad-paquete').value);
+
+      const unidad = document.getElementById('ing-unidad').value;
+
+      const precioPaquete = parseFloat(document.getElementById('ing-precio-paquete').value);
+
+
+
+      let factorConversion = 1;
+
+      if (unidad === 'kg' || unidad === 'lt') factorConversion = cantPaquete * 1000;
+
+      else factorConversion = cantPaquete;
+
+
+
+      const costoUnitarioStandard = precioPaquete / factorConversion;
+
+
+
+      const nuevoInsumo = {
+
+        id: Date.now(),
+
+        nombre,
+
+        cantidadPaquete: cantPaquete,
+
+        unidad,
+
+        precioPaquete,
+
+        costoUnitarioStandard
+
+      };
+
+
+
+      materiasPrimas.push(nuevoInsumo);
+
+      localStorage.setItem('materias_primas_entrefuegos', JSON.stringify(materiasPrimas));
+
+
+
+      e.target.reset();
+
+      renderizarMateriasPrimas();
+
+      renderizarSelectoresInsumos();
+
+      alert('¡Insumo agregado al catálogo con éxito!');
+
+    };
+
+
+
+    window.eliminarMateriaPrima = function(id) {
+
+      if (confirm('¿Eliminar este insumo del catálogo?')) {
+
+        materiasPrimas = materiasPrimas.filter(m => m.id !== id);
+
+        localStorage.setItem('materias_primas_entrefuegos', JSON.stringify(materiasPrimas));
+
+        renderizarMateriasPrimas();
+
+        renderizarSelectoresInsumos();
+
+      }
+
+    };
+
+
+
+    function renderizarMateriasPrimas() {
+
+      const container = document.getElementById('lista-ingredientes-base');
+
+      container.innerHTML = '';
+
+
+
+      if (materiasPrimas.length === 0) {
+
+        container.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">No hay insumos en el catálogo. Cargá el primero arriba.</p>`;
+
+        return;
+
+      }
+
+
+
+      materiasPrimas.forEach(m => {
+
+        let textoMedidaBase = m.unidad === 'kg' ? 'gramo' : (m.unidad === 'lt' ? 'ml' : 'unid');
+
+        container.innerHTML += `
+
+          <div class="py-3 flex justify-between items-center">
+
+            <div>
+
+              <span class="font-bold text-slate-800 text-sm block">${m.nombre}</span>
+
+              <span class="text-xs text-slate-500">Compra: ${m.cantidadPaquete} ${m.unidad} x $${m.precioPaquete.toLocaleString()}</span>
+
+            </div>
+
+            <div class="flex items-center gap-4">
+
+              <span class="text-xs bg-amber-50 text-amber-800 px-2.5 py-1 rounded-lg border border-amber-200 font-bold">
+
+                $${m.costoUnitarioStandard.toFixed(2)} / ${textoMedidaBase}
+
+              </span>
+
+              <button onclick="eliminarMateriaPrima(${m.id})" class="text-red-500 hover:text-red-700 text-xs font-bold">
+
+                <i class="fa-solid fa-trash"></i>
+
+              </button>
+
+            </div>
+
+          </div>
+
+        `;
+
+      });
+
+    }
+
+
+
+    window.agregarFilaIngredienteReceta = function() {
+
+      const contenedor = document.getElementById('contenedor-ingredientes-receta');
+
+      const div = document.createElement('div');
+
+      div.className = "grid grid-cols-12 gap-2 items-center fila-insumo-receta";
+
+
+
+      let optionsHTML = materiasPrimas.map(m => {
+
+        let unidDisplay = (m.unidad === 'kg') ? 'gr' : (m.unidad === 'lt' ? 'ml' : m.unidad);
+
+        return `<option value="${m.id}">${m.nombre} (Costo base: $${m.costoUnitarioStandard.toFixed(2)}/${unidDisplay})</option>`;
+
+      }).join('');
+
+
+
+      div.innerHTML = `
+
+        <select class="col-span-6 border p-2 rounded-lg text-sm bg-slate-50 insumo-select" required>
+
+          <option value="">-- Seleccionar Insumo --</option>
+
+          ${optionsHTML}
+
+        </select>
+
+        <input type="number" step="0.01" placeholder="Cant. usada (gr/ml/u)" class="col-span-5 border p-2 rounded-lg text-sm bg-slate-50 insumo-cantidad" required>
+
+        <button type="button" onclick="this.parentElement.remove()" class="col-span-1 text-red-500 hover:text-red-700 text-center"><i class="fa-solid fa-trash"></i></button>
+
+      `;
+
+      contenedor.appendChild(div);
+
+    };
+
+
+
+    function renderizarSelectoresInsumos() {
+
+      const contenedor = document.getElementById('contenedor-ingredientes-receta');
+
+      if (contenedor) {
+
+        contenedor.innerHTML = '';
+
+        agregarFilaIngredienteReceta();
+
+      }
+
+    }
+
+
+
+    window.guardarCostosReceta = function(e) {
+
+      e.preventDefault();
+
+      const nombre = document.getElementById('costo-nombre-receta').value;
+
+      const rendimiento = parseFloat(document.getElementById('costo-rendimiento').value);
+
+
+
+      const filas = document.querySelectorAll('.fila-insumo-receta');
+
+      let costoTotal = 0;
+
+      let detalleIngredientes = [];
+
+
+
+      filas.forEach(f => {
+
+        const insumoId = parseFloat(f.querySelector('.insumo-select').value);
+
+        const cantidadUsada = parseFloat(f.querySelector('.insumo-cantidad').value) || 0;
+
+
+
+        const materia = materiasPrimas.find(m => m.id === insumoId);
+
+        if (materia) {
+
+          const subtotalIngrediente = cantidadUsada * materia.costoUnitarioStandard;
+
+          costoTotal += subtotalIngrediente;
+
+
+
+          let unidadCorta = (materia.unidad === 'kg') ? 'gr' : (materia.unidad === 'lt' ? 'ml' : 'unid');
+
+          detalleIngredientes.push({
+
+            nombre: materia.nombre,
+
+            cantidadUsada,
+
+            unidad: unidadCorta,
+
+            costoSubtotal: subtotalIngrediente
+
+          });
+
+        }
+
+      });
+
+
+
+      const costoUnitario = rendimiento > 0 ? (costoTotal / rendimiento) : 0;
+
+
+
+      const nuevaReceta = {
+
+        id: Date.now(),
+
+        nombre,
+
+        rendimiento,
+
+        costoTotal,
+
+        costoUnitario,
+
+        ingredientes: detalleIngredientes
+
+      };
+
+
+
+      recetasCostos.push(nuevaReceta);
+
+      localStorage.setItem('recetas_costos_entrefuegos', JSON.stringify(recetasCostos));
+
+
+
+      document.getElementById('costo-nombre-receta').value = '';
+
+      document.getElementById('costo-rendimiento').value = '';
+
+      renderizarSelectoresInsumos();
+
+      renderizarRecetas();
+
+      alert('¡Receta y Ficha Técnica guardadas!');
+
+    };
+
+
+
+    window.eliminarReceta = function(id) {
+
+      if (confirm('¿Eliminar esta receta del sistema?')) {
+
+        recetasCostos = recetasCostos.filter(r => r.id !== id);
+
+        localStorage.setItem('recetas_costos_entrefuegos', JSON.stringify(recetasCostos));
+
+        renderizarRecetas();
+
+      }
+
+    };
+
+
+
+    function renderizarRecetas() {
+
+      const container = document.getElementById('lista-recetas-costos');
+
+      if (!container) return;
+
+      container.innerHTML = '';
+
+
+
+      if (recetasCostos.length === 0) {
+
+        container.innerHTML = `<p class="text-xs text-slate-400 col-span-2 text-center py-4">No hay recetas guardadas aún.</p>`;
+
+        return;
+
+      }
+
+
+
+      recetasCostos.forEach(r => {
+
+        container.innerHTML += `
+
+          <div class="border rounded-xl p-4 bg-slate-50 border-slate-200 flex flex-col justify-between space-y-3 relative shadow-sm">
+
+            <button onclick="eliminarReceta(${r.id})" class="absolute top-3 right-3 text-slate-400 hover:text-red-500 text-xs"><i class="fa-solid fa-trash"></i></button>
+
+            <div>
+
+              <h3 class="font-bold text-slate-800 text-base pr-6">${r.nombre}</h3>
+
+              <div class="grid grid-cols-2 gap-2 mt-2 bg-white p-2.5 rounded-lg border border-slate-100 text-xs">
+
+                <div><span class="text-slate-500 block">Rendimiento:</span> <strong>${r.rendimiento} unidades</strong></div>
+
+                <div><span class="text-slate-500 block">Costo Unitario:</span> <strong class="text-amber-600 text-sm">$${Math.round(r.costoUnitario).toLocaleString()} c/u</strong></div>
+
+              </div>
+
+            </div>
+
+            <div class="pt-2 border-t flex justify-between items-center">
+
+              <span class="text-xs text-slate-500 font-semibold">Costo Tanda: $${Math.round(r.costoTotal).toLocaleString()}</span>
+
+              <button onclick="abrirFichaTecnica(${r.id})" class="bg-amber-600 hover:bg-amber-700 text-white text-xs px-3 py-1.5 rounded-lg font-bold flex items-center gap-1.5 shadow-sm">
+
+                <i class="fa-solid fa-file-lines"></i> Ficha Técnica
+
+              </button>
+
+            </div>
+
+          </div>
+
+        `;
+
+      });
+
+    }
+
+
+
+    window.abrirFichaTecnica = function(id) {
+
+      const receta = recetasCostos.find(r => r.id === id);
+
+      if (!receta) return;
+
+
+
+      const modal = document.getElementById('modal-ficha');
+
+      const contenido = document.getElementById('contenido-ficha-modal');
+
+
+
+      let tablaIngredientes = receta.ingredientes.map(i => `
+
+        <tr class="border-b border-slate-100 text-sm">
+
+          <td class="py-2 font-medium text-slate-800">${i.nombre}</td>
+
+          <td class="py-2 text-center text-slate-600">${i.cantidadUsada} ${i.unidad}</td>
+
+          <td class="py-2 text-right font-bold text-slate-700">$${Math.round(i.costoSubtotal).toLocaleString()}</td>
+
+        </tr>
+
+      `).join('');
+
+
+
+      contenido.innerHTML = `
+
+        <div class="border-b pb-4">
+
+          <span class="text-xs font-bold text-amber-700 uppercase tracking-wider">Ficha Técnica de Receta</span>
+
+          <h2 class="text-2xl font-black text-slate-800">${receta.nombre}</h2>
+
+          <p class="text-xs text-slate-500 mt-1">Generado automáticamente por el gestor de costos EntreFuegos</p>
+
+        </div>
+
+
+
+        <div class="grid grid-cols-3 gap-3 bg-amber-50 p-4 rounded-xl border border-amber-200 text-center">
+
+          <div>
+
+            <span class="block text-xs text-amber-800 font-medium">Rendimiento Tanda</span>
+
+            <span class="text-lg font-bold text-amber-950">${receta.rendimiento} u.</span>
+
+          </div>
+
+          <div>
+
+            <span class="block text-xs text-amber-800 font-medium">Costo Total Tanda</span>
+
+            <span class="text-lg font-bold text-amber-950">$${Math.round(receta.costoTotal).toLocaleString()}</span>
+
+          </div>
+
+          <div>
+
+            <span class="block text-xs text-amber-800 font-medium">Costo x Unidad</span>
