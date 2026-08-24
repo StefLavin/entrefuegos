@@ -1,373 +1,13 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EntreFuegos - POS, Ingredientes & Costos</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-</head>
-<body class="bg-slate-100 font-sans text-slate-800 pb-10">
-
-  <header class="bg-amber-600 text-white shadow-md sticky top-0 z-20">
-    <div class="max-w-6xl mx-auto p-4 flex justify-between items-center">
-      <h1 class="text-xl font-bold flex items-center gap-2">
-        <i class="fa-solid fa-fire"></i> EntreFuegos
-      </h1>
-      <span class="text-xs bg-amber-700 px-3 py-1 rounded-full font-semibold flex items-center gap-1">
-        <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span> Firebase Conectado
-      </span>
-    </div>
-
-    <div class="flex bg-amber-700 max-w-6xl mx-auto px-4 gap-2 overflow-x-auto">
-      <button onclick="cambiarPestana('pos')" id="tab-pos" class="py-2.5 px-4 font-bold text-sm border-b-4 border-white text-white flex items-center gap-2 whitespace-nowrap">
-        <i class="fa-solid fa-cash-register"></i> Ventas POS
-      </button>
-      <button onclick="cambiarPestana('admin')" id="tab-admin" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
-        <i class="fa-solid fa-boxes-packing"></i> Menú de Ventas
-      </button>
-      <button onclick="cambiarPestana('ingredientes')" id="tab-ingredientes" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
-        <i class="fa-solid fa-carrot"></i> Catálogo de Insumos
-      </button>
-      <button onclick="cambiarPestana('costos')" id="tab-costos" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
-        <i class="fa-solid fa-calculator"></i> Recetas y Fichas
-      </button>
-      <button onclick="cambiarPestana('margenes')" id="tab-margenes" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
-        <i class="fa-solid fa-chart-line"></i> Márgenes y Ganancias
-      </button>
-      <button onclick="cambiarPestana('arqueo')" id="tab-arqueo" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
-        <i class="fa-solid fa-vault"></i> Arqueo y Cierre
-      </button>
-    </div>
-  </header>
-
-  <main class="max-w-6xl mx-auto p-4">
-
-    <!-- POS -->
-    <div id="vista-pos" class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <section class="md:col-span-2 space-y-6">
-        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-          <h2 class="text-lg font-bold text-slate-700 mb-3 flex items-center gap-2">
-            <i class="fa-solid fa-box-tissue text-amber-600"></i> Empanadas
-          </h2>
-          <div id="grid-empanadas" class="grid grid-cols-1 sm:grid-cols-3 gap-3"></div>
-        </div>
-
-        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-          <h2 class="text-lg font-bold text-slate-700 mb-3 flex items-center gap-2">
-            <i class="fa-solid fa-pizza-slice text-amber-600"></i> Pizzas y Viandas
-          </h2>
-          <div id="grid-pizzas-viandas" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
-        </div>
-
-        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-          <h2 class="text-lg font-bold text-slate-700 mb-3 flex items-center gap-2">
-            <i class="fa-solid fa-bottle-water text-amber-600"></i> Bebidas
-          </h2>
-          <div id="grid-bebidas" class="grid grid-cols-1 sm:grid-cols-3 gap-3"></div>
-        </div>
-      </section>
-
-      <section class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col justify-between h-fit">
-        <div>
-          <h2 class="text-lg font-bold text-slate-800 border-b pb-2 mb-4 flex justify-between items-center">
-            <span>Pedido Actual</span>
-            <button onclick="vaciarCarrito()" class="text-xs text-red-500 hover:underline">Vaciar</button>
-          </h2>
-          <div id="lista-pedido" class="space-y-3 min-h-[150px] max-h-[300px] overflow-y-auto mb-4">
-            <p class="text-sm text-slate-400 text-center py-8">No hay productos en el pedido.</p>
-          </div>
-        </div>
-
-        <div class="border-t pt-4 space-y-4">
-          <div class="flex justify-between items-center text-xl font-black text-slate-800">
-            <span>Total:</span>
-            <span id="total-monto" class="text-amber-600">$0</span>
-          </div>
-
-          <div>
-            <label class="block text-xs font-bold text-slate-600 uppercase mb-2">Medio de Pago</label>
-            <div class="grid grid-cols-3 gap-2">
-              <button onclick="seleccionarPago('Efectivo')" id="btn-Efectivo" class="btn-pago border p-2 text-xs rounded-lg font-bold text-white bg-amber-600 border-amber-600">Efectivo</button>
-              <button onclick="seleccionarPago('Transferencia')" id="btn-Transferencia" class="btn-pago border p-2 text-xs rounded-lg font-bold text-slate-600 border-slate-300">Transf.</button>
-              <button onclick="seleccionarPago('Paga Luego')" id="btn-Paga Luego" class="btn-pago border p-2 text-xs rounded-lg font-bold text-slate-600 border-slate-300">Fiado</button>
-            </div>
-          </div>
-
-          <button id="btn-guardar" onclick="registrarVenta()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl shadow-lg transition text-center flex justify-center items-center gap-2">
-            <i class="fa-solid fa-cloud-arrow-up"></i> Registrar y Sincronizar
-          </button>
-        </div>
-      </section>
-    </div>
-
-    <!-- ADMIN / MENÚ -->
-    <div id="vista-admin" class="hidden space-y-6">
-      <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-        <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-          <i class="fa-solid fa-plus text-amber-600"></i> Agregar Producto al Menú de Ventas
-        </h2>
-        <form onsubmit="guardarNuevoProducto(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Categoría</label>
-            <select id="prod-categoria" onchange="cambiarTipoFormulario()" class="w-full border p-2 rounded-lg text-sm bg-slate-50">
-              <option value="Empanadas">Empanadas</option>
-              <option value="Pizza">Pizza</option>
-              <option value="Vianda">Vianda</option>
-              <option value="Bebidas">Bebidas</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Nombre / Sabor</label>
-            <input type="text" id="prod-nombre" placeholder="Ej: Humita, Coca Cola" required class="w-full border p-2 rounded-lg text-sm bg-slate-50">
-          </div>
-          <div id="campo-litros" class="hidden">
-            <label class="block text-xs font-bold text-slate-600 mb-1">Tamaño / Litros</label>
-            <input type="text" id="prod-litros" placeholder="Ej: 1.5L, 500ml" class="w-full border p-2 rounded-lg text-sm bg-slate-50">
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Precio de Venta ($)</label>
-            <input type="number" id="prod-precio" placeholder="2000" required class="w-full border p-2 rounded-lg text-sm bg-slate-50">
-          </div>
-          <div class="sm:col-span-2 flex justify-end">
-            <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 text-sm font-bold rounded-lg shadow">
-              <i class="fa-solid fa-save mr-1"></i> Guardar en Menú
-            </button>
-          </div>
-        </form>
-      </div>
-
-      <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-        <h2 class="text-lg font-bold text-slate-800 mb-4">Productos Actuales en Catálogo de Venta</h2>
-        <div id="lista-admin-productos" class="divide-y divide-slate-100"></div>
-      </div>
-    </div>
-
-    <!-- INGREDIENTES -->
-    <div id="vista-ingredientes" class="hidden space-y-6">
-      <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-        <h2 class="text-lg font-bold text-slate-800 mb-2 flex items-center gap-2">
-          <i class="fa-solid fa-carrot text-amber-600"></i> Alta de Materia Prima / Insumo
-        </h2>
-        <p class="text-xs text-slate-500 mb-6">Agregá acá los insumos que compras con su precio. Todo lo que cargues en este catálogo aparecerá automáticamente disponible en el menú desplegable al armar tus recetas.</p>
-
-        <form onsubmit="guardarIngrediente(event)" class="grid grid-cols-1 sm:grid-cols-4 gap-4">
-          <div class="sm:col-span-1">
-            <label class="block text-xs font-bold text-slate-600 mb-1">Ingrediente / Insumo</label>
-            <input type="text" id="ing-nombre" placeholder="Ej: Harina 0000, Carne picada" required class="w-full border p-2 rounded-lg text-sm bg-slate-50">
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Cantidad Comprada</label>
-            <input type="number" step="0.01" id="ing-cantidad-paquete" placeholder="Ej: 1 (si es 1 kg) o 500 (gr)" required class="w-full border p-2 rounded-lg text-sm bg-slate-50">
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Unidad de Compra</label>
-            <select id="ing-unidad" class="w-full border p-2 rounded-lg text-sm bg-slate-50">
-              <option value="kg">Kilogramos (kg)</option>
-              <option value="gr">Gramos (gr)</option>
-              <option value="lt">Litros (lt)</option>
-              <option value="ml">Mililitros (ml)</option>
-              <option value="unid">Unidades / Pack (unid)</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Precio Total Pagado ($)</label>
-            <input type="number" step="0.01" id="ing-precio-paquete" placeholder="Ej: 1200" required class="w-full border p-2 rounded-lg text-sm bg-slate-50">
-          </div>
-          <div class="sm:col-span-4 flex justify-end">
-            <button type="submit" class="bg-amber-600 hover:bg-amber-700 text-white px-6 py-2.5 text-sm font-bold rounded-lg shadow flex items-center gap-2">
-              <i class="fa-solid fa-plus"></i> Guardar en Catálogo de Insumos
-            </button>
-          </div>
-        </form>
-      </div>
-
-      <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-        <h2 class="text-lg font-bold text-slate-800 mb-4">Catálogo Completo de Insumos Guardados</h2>
-        <div id="lista-ingredientes-base" class="divide-y divide-slate-100"></div>
-      </div>
-    </div>
-
-    <!-- COSTOS & RECETAS -->
-    <div id="vista-costos" class="hidden space-y-6">
-      <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-        <h2 class="text-lg font-bold text-slate-800 mb-2 flex items-center gap-2">
-          <i class="fa-solid fa-book-open text-amber-600"></i> Armador de Recetas y Fichas Técnicas
-        </h2>
-        <p class="text-xs text-slate-500 mb-6">Seleccioná los insumos de tu catálogo en el menú desplegable, indicá la cantidad utilizada y las unidades que rinde la mezcla.</p>
-
-        <form onsubmit="guardarCostosReceta(event)" class="space-y-4">
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">Nombre de la Receta / Preparación</label>
-              <input type="text" id="costo-nombre-receta" placeholder="Ej: Tapas de Empanadas, Relleno Carne" required class="w-full border p-2 rounded-lg text-sm bg-slate-50">
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">Rendimiento (Unidades/Porciones producidas)</label>
-              <input type="number" id="costo-rendimiento" placeholder="Ej: 100 (tapas) o 12 (pizzas)" required class="w-full border p-2 rounded-lg text-sm bg-slate-50">
-            </div>
-          </div>
-
-          <div>
-            <label class="block text-xs font-bold text-slate-600 mb-2">Seleccionar Insumos y Cantidades Usadas</label>
-            <div id="contenedor-ingredientes-receta" class="space-y-2"></div>
-            <button type="button" onclick="agregarFilaIngredienteReceta()" class="mt-3 text-xs text-amber-700 font-bold hover:underline flex items-center gap-1">
-              <i class="fa-solid fa-plus"></i> + Agregar insumo a esta receta
-            </button>
-          </div>
-
-          <div class="pt-4 border-t flex justify-end">
-            <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 text-sm font-bold rounded-lg shadow">
-              <i class="fa-solid fa-file-invoice-dollar mr-1"></i> Guardar Receta
-            </button>
-          </div>
-        </form>
-      </div>
-
-      <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-        <h2 class="text-lg font-bold text-slate-800 mb-4">Recetas y Fichas Técnicas Guardadas</h2>
-        <div id="lista-recetas-costos" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
-      </div>
-    </div>
-
-    <!-- MÁRGENES -->
-    <div id="vista-margenes" class="hidden space-y-6">
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
-          <div class="p-3 bg-emerald-100 text-emerald-600 rounded-lg text-xl"><i class="fa-solid fa-sack-dollar"></i></div>
-          <div>
-            <span class="text-xs text-slate-500 font-bold uppercase block">Margen Promedio</span>
-            <span id="stat-margen-promedio" class="text-2xl font-black text-slate-800">0%</span>
-          </div>
-        </div>
-        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
-          <div class="p-3 bg-amber-100 text-amber-600 rounded-lg text-xl"><i class="fa-solid fa-box"></i></div>
-          <div>
-            <span class="text-xs text-slate-500 font-bold uppercase block">Productos Vinculados</span>
-            <span id="stat-prod-vinculados" class="text-2xl font-black text-slate-800">0 / 0</span>
-          </div>
-        </div>
-        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
-          <div class="p-3 bg-blue-100 text-blue-600 rounded-lg text-xl"><i class="fa-solid fa-chart-line"></i></div>
-          <div>
-            <span class="text-xs text-slate-500 font-bold uppercase block">Ganancia Prom. x Unid</span>
-            <span id="stat-ganancia-promedio" class="text-2xl font-black text-slate-800">$0</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-        <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-          <i class="fa-solid fa-scale-balanced text-amber-600"></i> Análisis de Márgenes de Ganancia
-        </h2>
-        <div class="overflow-x-auto">
-          <table class="w-full text-left border-collapse">
-            <thead>
-              <tr class="border-b text-xs font-bold text-slate-400 uppercase bg-slate-50">
-                <th class="p-3">Producto</th>
-                <th class="p-3">Precio Venta</th>
-                <th class="p-3">Origen del Costo</th>
-                <th class="p-3">Costo Directo</th>
-                <th class="p-3">Ganancia ($)</th>
-                <th class="p-3">Margen (%)</th>
-              </tr>
-            </thead>
-            <tbody id="tabla-margenes-body" class="divide-y divide-slate-100 text-sm"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- ARQUEO Y CIERRE DE CAJA -->
-    <div id="vista-arqueo" class="hidden space-y-6">
-      <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-          <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
-            <i class="fa-solid fa-vault text-amber-600"></i> Resumen de Caja y Arqueo Diario
-          </h2>
-          <p class="text-xs text-slate-500">Filtrá por fecha para consultar los cobros y realizar el balance final de la jornada.</p>
-        </div>
-        <div class="flex items-center gap-2">
-          <label class="text-xs font-bold text-slate-600">Fecha:</label>
-          <input type="date" id="filtro-fecha-arqueo" class="border p-2 rounded-lg text-sm bg-slate-50" onchange="cargarArqueoDia()">
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-          <span class="text-xs font-bold text-slate-400 uppercase block">Total Venta Día</span>
-          <span id="arqueo-total-ventas" class="text-2xl font-black text-amber-600">$0</span>
-          <span id="arqueo-cant-pedidos" class="text-xs text-slate-500 block mt-1">0 pedidos registrados</span>
-        </div>
-
-        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-          <div class="flex justify-between items-center">
-            <span class="text-xs font-bold text-slate-400 uppercase">Efectivo Sistema</span>
-            <i class="fa-solid fa-money-bill-wave text-emerald-600"></i>
-          </div>
-          <span id="arqueo-efectivo" class="text-2xl font-black text-slate-800">$0</span>
-        </div>
-
-        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-          <div class="flex justify-between items-center">
-            <span class="text-xs font-bold text-slate-400 uppercase">Transferencias</span>
-            <i class="fa-solid fa-mobile-screen text-blue-600"></i>
-          </div>
-          <span id="arqueo-transferencia" class="text-2xl font-black text-slate-800">$0</span>
-        </div>
-
-        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-          <div class="flex justify-between items-center">
-            <span class="text-xs font-bold text-slate-400 uppercase">Fiado / Por Cobrar</span>
-            <i class="fa-solid fa-clock text-amber-600"></i>
-          </div>
-          <span id="arqueo-fiado" class="text-2xl font-black text-slate-800">$0</span>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 space-y-4">
-          <h3 class="font-bold text-slate-800 text-base border-b pb-2 flex items-center gap-2">
-            <i class="fa-solid fa-calculator text-amber-600"></i> Conteo Físico y Cierre de Caja
-          </h3>
-          <p class="text-xs text-slate-500">Ingresá el dinero real en billetes/monedas contado al cierre para verificar diferencias.</p>
-          
-          <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Monto Físico en Caja Registradora ($)</label>
-            <input type="number" id="arqueo-efectivo-real" placeholder="Ej: 25000" oninput="calcularDiferenciaArqueo()" class="w-full border p-3 rounded-xl text-lg font-bold bg-slate-50 border-slate-300">
-          </div>
-
-          <div id="box-diferencia" class="p-4 rounded-xl border bg-slate-50 flex justify-between items-center">
-            <span class="text-sm font-bold text-slate-700">Diferencia:</span>
-            <span id="arqueo-diferencia-monto" class="text-xl font-black text-slate-600">$0</span>
-          </div>
-
-          <button id="btn-cerrar-caja" onclick="guardarCierreCaja()" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 rounded-xl shadow transition flex justify-center items-center gap-2">
-            <i class="fa-solid fa-lock"></i> Finalizar y Guardar Cierre de Caja
-          </button>
-        </div>
-
-        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-          <div class="flex justify-between items-center mb-4 border-b pb-2">
-            <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
-              <i class="fa-solid fa-list-check text-amber-600"></i> Detalle de Ventas Registradas
-            </h3>
-            <button onclick="eliminarVentasDelDia()" class="text-xs bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1 rounded-lg font-bold transition flex items-center gap-1">
-              <i class="fa-solid fa-trash-can"></i> Borrar Ventas del Día
-            </button>
-          </div>
-          <div id="lista-ventas-arqueo" class="space-y-3 max-h-[350px] overflow-y-auto divide-y divide-slate-100">
-            <p class="text-xs text-slate-400 text-center py-6">Selecciona una fecha para ver las ventas.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-  </main>
-
+<!-- LÓGICA Y FIREBASE -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs, query, where, doc, deleteDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { 
+      getFirestore, 
+      collection, 
+      addDoc, 
+      serverTimestamp,
+      onSnapshot 
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBLkWuMHj3hEXQ7b6Fr0I5Eu8B4I8KqlGk",
@@ -382,591 +22,361 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    let catalogo = JSON.parse(localStorage.getItem('catalogo_entrefuegos')) || [
-      { id: 1, categoria: 'Empanadas', nombre: 'Carne', precio: 2000 },
-      { id: 2, categoria: 'Empanadas', nombre: 'Pollo', precio: 2000 },
-      { id: 3, categoria: 'Empanadas', nombre: 'Jamón y Queso', precio: 2000 },
-      { id: 4, categoria: 'Pizza', nombre: 'Pizza Muzzarella', precio: 15000 },
-      { id: 5, categoria: 'Vianda', nombre: 'Vianda Diaria', precio: 18000 }
-    ];
-
+    let catalogo = JSON.parse(localStorage.getItem('catalogo_entrefuegos')) || [];
     let materiasPrimas = JSON.parse(localStorage.getItem('materias_primas_entrefuegos')) || [];
     let recetasCostos = JSON.parse(localStorage.getItem('recetas_costos_entrefuegos')) || [];
     let carrito = [];
     let medioPagoSeleccionado = 'Efectivo';
-    let ventasCargadasArqueo = [];
 
-    const hoy = new Date().toISOString().split('T')[0];
+    // ESCUCHA EN TIEMPO REAL CON FIRESTORE
+    function iniciarSincronizacionEnTiempoReal() {
+      // Escuchar cambios en el menú de productos
+      onSnapshot(collection(db, "productos"), (snapshot) => {
+        if (!snapshot.empty) {
+          catalogo = [];
+          snapshot.forEach(doc => {
+            catalogo.push({ id: doc.id, ...doc.data() });
+          });
+          localStorage.setItem('catalogo_entrefuegos', JSON.stringify(catalogo));
+          renderizarTodo();
+        }
+      });
+
+      // Escuchar cambios en insumos
+      onSnapshot(collection(db, "insumos"), (snapshot) => {
+        if (!snapshot.empty) {
+          materiasPrimas = [];
+          snapshot.forEach(doc => {
+            materiasPrimas.push({ id: doc.id, ...doc.data() });
+          });
+          localStorage.setItem('materias_primas_entrefuegos', JSON.stringify(materiasPrimas));
+          renderizarTodo();
+        }
+      });
+    }
 
     window.cambiarPestana = function(pestana) {
       const vPos = document.getElementById('vista-pos');
       const vAdmin = document.getElementById('vista-admin');
       const vIngredientes = document.getElementById('vista-ingredientes');
       const vCostos = document.getElementById('vista-costos');
-      const vMargenes = document.getElementById('vista-margenes');
-      const vArqueo = document.getElementById('vista-arqueo');
 
       const tPos = document.getElementById('tab-pos');
       const tAdmin = document.getElementById('tab-admin');
       const tIng = document.getElementById('tab-ingredientes');
       const tCostos = document.getElementById('tab-costos');
-      const tMargenes = document.getElementById('tab-margenes');
-      const tArqueo = document.getElementById('tab-arqueo');
 
-      [vPos, vAdmin, vIngredientes, vCostos, vMargenes, vArqueo].forEach(el => el.classList.add('hidden'));
+      [vPos, vAdmin, vIngredientes, vCostos].forEach(el => el.classList.add('hidden'));
 
       const inactiveStyle = "py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap";
       const activeStyle = "py-2.5 px-4 font-bold text-sm border-b-4 border-white text-white flex items-center gap-2 whitespace-nowrap";
 
-      [tPos, tAdmin, tIng, tCostos, tMargenes, tArqueo].forEach(el => el.className = inactiveStyle);
+      [tPos, tAdmin, tIng, tCostos].forEach(el => el.className = inactiveStyle);
 
-      if (pestana === 'pos') { vPos.classList.remove('hidden'); tPos.className = activeStyle; renderizarPOS(); }
-      else if (pestana === 'admin') { vAdmin.classList.remove('hidden'); tAdmin.className = activeStyle; renderizarAdminProductos(); }
-      else if (pestana === 'ingredientes') { vIngredientes.classList.remove('hidden'); tIng.className = activeStyle; renderizarIngredientesBase(); }
-      else if (pestana === 'costos') { vCostos.classList.remove('hidden'); tCostos.className = activeStyle; renderizarRecetas(); }
-      else if (pestana === 'margenes') { vMargenes.classList.remove('hidden'); tMargenes.className = activeStyle; renderizarMargenes(); }
-      else if (pestana === 'arqueo') {
-        vArqueo.classList.remove('hidden');
-        tArqueo.className = activeStyle;
-        document.getElementById('filtro-fecha-arqueo').value = hoy;
-        window.cargarArqueoDia();
+      if (pestana === 'pos') { vPos.classList.remove('hidden'); tPos.className = activeStyle; }
+      else if (pestana === 'admin') { vAdmin.classList.remove('hidden'); tAdmin.className = activeStyle; }
+      else if (pestana === 'ingredientes') { vIngredientes.classList.remove('hidden'); tIng.className = activeStyle; }
+      else if (pestana === 'costos') { vCostos.classList.remove('hidden'); tCostos.className = activeStyle; }
+    };
+
+    window.guardarIngrediente = async function(e) {
+      e.preventDefault();
+      const nombre = document.getElementById('ing-nombre').value;
+      const cantPaquete = parseFloat(document.getElementById('ing-cantidad-paquete').value);
+      const unidad = document.getElementById('ing-unidad').value;
+      const precioPaquete = parseFloat(document.getElementById('ing-precio-paquete').value);
+
+      let factorConversion = 1;
+      if (unidad === 'kg' || unidad === 'lt') factorConversion = cantPaquete * 1000;
+      else factorConversion = cantPaquete;
+
+      const costoUnitarioStandard = precioPaquete / factorConversion;
+
+      const nuevoInsumo = {
+        nombre,
+        cantidadPaquete: cantPaquete,
+        unidad,
+        precioPaquete,
+        costoUnitarioStandard,
+        fecha: serverTimestamp()
+      };
+
+      try {
+        await addDoc(collection(db, "insumos"), nuevoInsumo);
+        e.target.reset();
+        alert('¡Insumo sincronizado con éxito!');
+      } catch (err) {
+        console.error("Error al guardar insumo:", err);
       }
     };
 
-    // POS Y VENTAS
-    function renderizarPOS() {
-      const gridEmp = document.getElementById('grid-empanadas');
-      const gridPiz = document.getElementById('grid-pizzas-viandas');
-      const gridBeb = document.getElementById('grid-bebidas');
+    window.guardarNuevoProducto = async function(e) {
+      e.preventDefault();
+      const categoria = document.getElementById('prod-categoria').value;
+      const nombre = document.getElementById('prod-nombre').value;
+      const precio = parseFloat(document.getElementById('prod-precio').value);
+      const litros = document.getElementById('prod-litros').value;
 
-      gridEmp.innerHTML = '';
-      gridPiz.innerHTML = '';
-      gridBeb.innerHTML = '';
+      let nombreFinal = nombre;
+      if (categoria === 'Bebidas' && litros) nombreFinal = `${nombre} (${litros})`;
+
+      const nuevo = { categoria, nombre: nombreFinal, precio, fecha: serverTimestamp() };
+      if (categoria === 'Empanadas') nuevo.docena = precio * 10;
+
+      try {
+        await addDoc(collection(db, "productos"), nuevo);
+        alert('¡Producto guardado y sincronizado!');
+        e.target.reset();
+        cambiarPestana('pos');
+      } catch (err) {
+        console.error("Error al guardar producto:", err);
+      }
+    };
+
+    function renderizarTodo() {
+      renderizarPOS();
+      renderizarAdmin();
+      renderizarMateriasPrimas();
+      renderizarSelectoresInsumos();
+      renderizarRecetas();
+    }
+
+    function renderizarPOS() {
+      const empanadasContainer = document.getElementById('grid-empanadas');
+      const pizzasViandasContainer = document.getElementById('grid-pizzas-viandas');
+      const bebidasContainer = document.getElementById('grid-bebidas');
+
+      if(!empanadasContainer) return;
+
+      empanadasContainer.innerHTML = '';
+      pizzasViandasContainer.innerHTML = '';
+      bebidasContainer.innerHTML = '';
 
       catalogo.forEach(prod => {
-        const btnHtml = `
-          <button onclick="agregarAlCarrito(${prod.id})" class="p-3 bg-slate-50 hover:bg-amber-50 border border-slate-200 rounded-lg font-semibold text-left transition flex justify-between items-center">
-            <div>
-              <div class="text-xs font-bold text-slate-800">${prod.nombre} ${prod.litros ? `(${prod.litros})` : ''}</div>
-              <div class="text-xs text-amber-600 font-black">$${prod.precio.toLocaleString()}</div>
+        if (prod.categoria === 'Empanadas') {
+          empanadasContainer.innerHTML += `
+            <div class="border rounded-lg p-3 text-center bg-slate-50 border-slate-200">
+              <span class="font-bold block text-slate-800">${prod.nombre}</span>
+              <span class="text-xs text-slate-500">$${prod.precio.toLocaleString()} u. | $${(prod.docena || prod.precio * 10).toLocaleString()} doc.</span>
+              <div class="mt-3 flex justify-center gap-2">
+                <button onclick="agregarItem('${prod.nombre} (Unid)', ${prod.precio})" class="bg-amber-600 hover:bg-amber-700 text-white text-xs px-2.5 py-1.5 rounded-lg font-bold">+1 Unid</button>
+                <button onclick="agregarItem('Docena ${prod.nombre}', ${prod.docena || prod.precio * 10})" class="bg-slate-800 hover:bg-slate-900 text-white text-xs px-2.5 py-1.5 rounded-lg font-bold">+1 Doc</button>
+              </div>
             </div>
-            <i class="fa-solid fa-plus text-amber-600 text-xs"></i>
-          </button>
-        `;
-        if (prod.categoria === 'Empanadas') gridEmp.innerHTML += btnHtml;
-        else if (prod.categoria === 'Pizza' || prod.categoria === 'Vianda') gridPiz.innerHTML += btnHtml;
-        else if (prod.categoria === 'Bebidas') gridBeb.innerHTML += btnHtml;
+          `;
+        } else if (prod.categoria === 'Pizza' || prod.categoria === 'Vianda') {
+          pizzasViandasContainer.innerHTML += `
+            <div class="border p-3 rounded-lg bg-slate-50 border-slate-200 flex justify-between items-center">
+              <div>
+                <span class="font-bold block">${prod.nombre}</span>
+                <span class="text-xs text-slate-500">$${prod.precio.toLocaleString()}</span>
+              </div>
+              <button onclick="agregarItem('${prod.nombre}', ${prod.precio})" class="bg-amber-600 hover:bg-amber-700 text-white px-3 py-1.5 rounded-lg font-bold text-xs">+ Agregar</button>
+            </div>
+          `;
+        } else if (prod.categoria === 'Bebidas') {
+          bebidasContainer.innerHTML += `
+            <div class="border p-3 rounded-lg bg-slate-50 border-slate-200 text-center">
+              <span class="font-bold block text-sm">${prod.nombre}</span>
+              <span class="text-xs text-slate-500 block mb-2">$${prod.precio.toLocaleString()}</span>
+              <button onclick="agregarItem('${prod.nombre}', ${prod.precio})" class="bg-amber-600 hover:bg-amber-700 text-white px-3 py-1.5 rounded-lg font-bold text-xs w-full">+ Agregar</button>
+            </div>
+          `;
+        }
       });
     }
 
-    window.agregarAlCarrito = function(id) {
-      const prod = catalogo.find(p => p.id === id);
-      if (!prod) return;
-      const itemExistente = carrito.find(item => item.id === id);
-      if (itemExistente) {
-        itemExistente.cantidad++;
-      } else {
-        carrito.push({ ...prod, cantidad: 1 });
+    function renderizarAdmin() {
+      const container = document.getElementById('lista-admin-productos');
+      if(!container) return;
+      container.innerHTML = '';
+
+      catalogo.forEach(p => {
+        container.innerHTML += `
+          <div class="py-3 flex justify-between items-center">
+            <div>
+              <span class="text-xs bg-slate-200 text-slate-700 px-2 py-0.5 rounded font-bold mr-2">${p.categoria}</span>
+              <span class="font-bold text-slate-800 text-sm">${p.nombre}</span>
+            </div>
+            <span class="text-sm font-semibold text-slate-600">$${p.precio.toLocaleString()}</span>
+          </div>
+        `;
+      });
+    }
+
+    function renderizarMateriasPrimas() {
+      const container = document.getElementById('lista-ingredientes-base');
+      if(!container) return;
+      container.innerHTML = '';
+
+      materiasPrimas.forEach(m => {
+        let textoMedidaBase = m.unidad === 'kg' ? 'gramo' : (m.unidad === 'lt' ? 'ml' : 'unid');
+        container.innerHTML += `
+          <div class="py-3 flex justify-between items-center">
+            <div>
+              <span class="font-bold text-slate-800 text-sm block">${m.nombre}</span>
+              <span class="text-xs text-slate-500">Compra: ${m.cantidadPaquete} ${m.unidad} x $${m.precioPaquete.toLocaleString()}</span>
+            </div>
+            <span class="text-xs bg-amber-50 text-amber-800 px-2.5 py-1 rounded-lg border border-amber-200 font-bold">
+              $${m.costoUnitarioStandard.toFixed(2)} / ${textoMedidaBase}
+            </span>
+          </div>
+        `;
+      });
+    }
+
+    window.agregarFilaIngredienteReceta = function() {
+      const contenedor = document.getElementById('contenedor-ingredientes-receta');
+      if(!contenedor) return;
+      const div = document.createElement('div');
+      div.className = "grid grid-cols-12 gap-2 items-center fila-insumo-receta";
+
+      let optionsHTML = materiasPrimas.map(m => {
+        let unidDisplay = (m.unidad === 'kg') ? 'gr' : (m.unidad === 'lt' ? 'ml' : m.unidad);
+        return `<option value="${m.id}">${m.nombre} (Costo base: $${m.costoUnitarioStandard.toFixed(2)}/${unidDisplay})</option>`;
+      }).join('');
+
+      div.innerHTML = `
+        <select class="col-span-6 border p-2 rounded-lg text-sm bg-slate-50 insumo-select" required>
+          <option value="">-- Seleccionar Insumo --</option>
+          ${optionsHTML}
+        </select>
+        <input type="number" step="0.01" placeholder="Cant. usada (gr/ml/u)" class="col-span-5 border p-2 rounded-lg text-sm bg-slate-50 insumo-cantidad" required>
+        <button type="button" onclick="this.parentElement.remove()" class="col-span-1 text-red-500 hover:text-red-700 text-center"><i class="fa-solid fa-trash"></i></button>
+      `;
+      contenedor.appendChild(div);
+    };
+
+    function renderizarSelectoresInsumos() {
+      const contenedor = document.getElementById('contenedor-ingredientes-receta');
+      if(!contenedor) return;
+      contenedor.innerHTML = '';
+      agregarFilaIngredienteReceta();
+    }
+
+    function renderizarRecetas() {
+      const container = document.getElementById('lista-recetas-costos');
+      if(!container) return;
+      container.innerHTML = '';
+
+      recetasCostos.forEach(r => {
+        container.innerHTML += `
+          <div class="border rounded-xl p-4 bg-slate-50 border-slate-200 flex flex-col justify-between space-y-3 relative shadow-sm">
+            <div>
+              <h3 class="font-bold text-slate-800 text-base pr-6">${r.nombre}</h3>
+              <div class="grid grid-cols-2 gap-2 mt-2 bg-white p-2.5 rounded-lg border border-slate-100 text-xs">
+                <div><span class="text-slate-500 block">Rendimiento:</span> <strong>${r.rendimiento} unidades</strong></div>
+                <div><span class="text-slate-500 block">Costo Unitario:</span> <strong class="text-amber-600 text-sm">$${Math.round(r.costoUnitario).toLocaleString()} c/u</strong></div>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    window.agregarItem = function(nombre, precio) {
+      const existe = carrito.find(item => item.nombre === nombre);
+      if (existe) existe.cantidad += 1;
+      else carrito.push({ nombre, precio, cantidad: 1 });
+      renderizarPedido();
+    };
+
+    window.cambiarCantidad = function(nombre, cambio) {
+      const item = carrito.find(i => i.nombre === nombre);
+      if (item) {
+        item.cantidad += cambio;
+        if (item.cantidad <= 0) carrito = carrito.filter(i => i.nombre !== nombre);
       }
-      renderizarCarrito();
+      renderizarPedido();
+    };
+
+    window.vaciarCarrito = function() {
+      carrito = [];
+      renderizarPedido();
     };
 
     window.seleccionarPago = function(metodo) {
       medioPagoSeleccionado = metodo;
       document.querySelectorAll('.btn-pago').forEach(btn => {
-        btn.className = "btn-pago border p-2 text-xs rounded-lg font-bold text-slate-600 border-slate-300";
+        btn.classList.remove('bg-amber-600', 'text-white', 'border-amber-600');
+        btn.classList.add('border-slate-300', 'text-slate-600');
       });
       const btnActivo = document.getElementById(`btn-${metodo}`);
       if (btnActivo) {
-        btnActivo.className = "btn-pago border p-2 text-xs rounded-lg font-bold text-white bg-amber-600 border-amber-600";
+        btnActivo.classList.add('bg-amber-600', 'text-white', 'border-amber-600');
+        btnActivo.classList.remove('border-slate-300', 'text-slate-600');
       }
     };
 
-    window.registrarVenta = async function() {
-      if (carrito.length === 0) return alert('El carrito está vacío.');
+    function renderizarPedido() {
+      const contenedor = document.getElementById('lista-pedido');
+      const totalElemento = document.getElementById('total-monto');
 
-      const total = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
-      const fechaHoy = new Date().toISOString().split('T')[0];
-
-      const venta = {
-        fechaStr: fechaHoy,
-        timestamp: serverTimestamp(),
-        items: carrito,
-        total: total,
-        metodoPago: medioPagoSeleccionado
-      };
-
-      try {
-        const btnGuardar = document.getElementById('btn-guardar');
-        btnGuardar.disabled = true;
-        btnGuardar.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Guardando...`;
-
-        await addDoc(collection(db, "ventas"), venta);
-        alert('¡Venta registrada con éxito!');
-        window.vaciarCarrito();
-      } catch (err) {
-        console.error("Error al registrar venta: ", err);
-        alert('Ocurrió un error al guardar la venta en Firebase.');
-      } finally {
-        const btnGuardar = document.getElementById('btn-guardar');
-        btnGuardar.disabled = false;
-        btnGuardar.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Registrar y Sincronizar`;
-      }
-    };
-
-    window.vaciarCarrito = function() {
-      carrito = [];
-      renderizarCarrito();
-    };
-
-    function renderizarCarrito() {
-      const cont = document.getElementById('lista-pedido');
       if (carrito.length === 0) {
-        cont.innerHTML = `<p class="text-sm text-slate-400 text-center py-8">No hay productos en el pedido.</p>`;
-        document.getElementById('total-monto').innerText = '$0';
+        contenedor.innerHTML = `<p class="text-sm text-slate-400 text-center py-8">No hay productos en el pedido.</p>`;
+        totalElemento.innerText = `$0`;
         return;
       }
 
-      cont.innerHTML = '';
+      let html = '';
       let total = 0;
-      carrito.forEach((item) => {
-        const sub = item.precio * item.cantidad;
-        total += sub;
-        cont.innerHTML += `
-          <div class="flex justify-between items-center text-sm border-b pb-2">
+
+      carrito.forEach(item => {
+        const subtotal = item.precio * item.cantidad;
+        total += subtotal;
+        html += `
+          <div class="flex justify-between items-center bg-slate-50 p-2 rounded-lg border border-slate-100">
             <div>
-              <span class="font-bold text-slate-800">${item.nombre}</span>
-              <span class="text-xs text-slate-500 block">$${item.precio} c/u</span>
+              <span class="text-sm font-bold block text-slate-700">${item.nombre}</span>
+              <span class="text-xs text-slate-500">$${item.precio.toLocaleString()} c/u</span>
             </div>
             <div class="flex items-center gap-2">
-              <span class="font-bold text-slate-700">x${item.cantidad}</span>
-              <span class="font-bold text-amber-600">$${sub.toLocaleString()}</span>
+              <button onclick="cambiarCantidad('${item.nombre}', -1)" class="w-6 h-6 bg-slate-200 text-slate-700 rounded-full font-bold flex items-center justify-center text-xs">-</button>
+              <span class="text-sm font-bold w-4 text-center">${item.cantidad}</span>
+              <button onclick="cambiarCantidad('${item.nombre}', 1)" class="w-6 h-6 bg-slate-200 text-slate-700 rounded-full font-bold flex items-center justify-center text-xs">+</button>
+              <span class="text-sm font-bold text-slate-800 ml-2">$${subtotal.toLocaleString()}</span>
             </div>
           </div>
         `;
       });
-      document.getElementById('total-monto').innerText = `$${total.toLocaleString()}`;
+
+      contenedor.innerHTML = html;
+      totalElemento.innerText = `$${total.toLocaleString()}`;
     }
 
-    // GESTIÓN DE PRODUCTOS (MENÚ DE VENTAS)
-    window.cambiarTipoFormulario = function() {
-      const cat = document.getElementById('prod-categoria').value;
-      const campoLitros = document.getElementById('campo-litros');
-      if (cat === 'Bebidas') campoLitros.classList.remove('hidden');
-      else campoLitros.classList.add('hidden');
-    };
-
-    window.guardarNuevoProducto = function(e) {
-      e.preventDefault();
-      const categoria = document.getElementById('prod-categoria').value;
-      const nombre = document.getElementById('prod-nombre').value.trim();
-      const litros = document.getElementById('prod-litros').value.trim();
-      const precio = parseFloat(document.getElementById('prod-precio').value);
-
-      const nuevo = { id: Date.now(), categoria, nombre, litros, precio };
-      catalogo.push(nuevo);
-      localStorage.setItem('catalogo_entrefuegos', JSON.stringify(catalogo));
-
-      e.target.reset();
-      window.cambiarTipoFormulario();
-      renderizarAdminProductos();
-      alert('Producto agregado al menú');
-    };
-
-    window.eliminarProducto = function(id) {
-      catalogo = catalogo.filter(p => p.id !== id);
-      localStorage.setItem('catalogo_entrefuegos', JSON.stringify(catalogo));
-      renderizarAdminProductos();
-    };
-
-    function renderizarAdminProductos() {
-      const cont = document.getElementById('lista-admin-productos');
-      if (catalogo.length === 0) {
-        cont.innerHTML = `<p class="text-xs text-slate-400 py-4">No hay productos guardados.</p>`;
-        return;
-      }
-      cont.innerHTML = '';
-      catalogo.forEach(p => {
-        cont.innerHTML += `
-          <div class="py-3 flex justify-between items-center">
-            <div>
-              <span class="text-xs font-bold bg-amber-100 text-amber-800 px-2 py-0.5 rounded mr-2">${p.categoria}</span>
-              <span class="font-bold text-slate-700">${p.nombre} ${p.litros ? `(${p.litros})` : ''}</span>
-            </div>
-            <div class="flex items-center gap-4">
-              <span class="font-black text-emerald-600">$${p.precio.toLocaleString()}</span>
-              <button onclick="eliminarProducto(${p.id})" class="text-red-500 hover:text-red-700 text-xs font-bold"><i class="fa-solid fa-trash"></i></button>
-            </div>
-          </div>
-        `;
-      });
-    }
-
-    // INGREDIENTES Y MATERIAS PRIMAS
-    window.guardarIngrediente = function(e) {
-      e.preventDefault();
-      const nombre = document.getElementById('ing-nombre').value.trim();
-      const cantidad = parseFloat(document.getElementById('ing-cantidad-paquete').value);
-      const unidad = document.getElementById('ing-unidad').value;
-      const precio = parseFloat(document.getElementById('ing-precio-paquete').value);
-
-      const costoUnitario = precio / cantidad;
-      const ingrediente = { id: Date.now(), nombre, cantidad, unidad, precio, costoUnitario };
-
-      materiasPrimas.push(ingrediente);
-      localStorage.setItem('materias_primas_entrefuegos', JSON.stringify(materiasPrimas));
-
-      e.target.reset();
-      renderizarIngredientesBase();
-      alert('Ingrediente guardado');
-    };
-
-    window.eliminarIngrediente = function(id) {
-      materiasPrimas = materiasPrimas.filter(i => i.id !== id);
-      localStorage.setItem('materias_primas_entrefuegos', JSON.stringify(materiasPrimas));
-      renderizarIngredientesBase();
-    };
-
-    function renderizarIngredientesBase() {
-      const cont = document.getElementById('lista-ingredientes-base');
-      if (materiasPrimas.length === 0) {
-        cont.innerHTML = `<p class="text-xs text-slate-400 py-4">No hay insumos registrados.</p>`;
-        return;
-      }
-      cont.innerHTML = '';
-      materiasPrimas.forEach(i => {
-        cont.innerHTML += `
-          <div class="py-3 flex justify-between items-center">
-            <div>
-              <span class="font-bold text-slate-700">${i.nombre}</span>
-              <span class="text-xs text-slate-500 block">${i.cantidad} ${i.unidad} - Costo por ${i.unidad}: $${i.costoUnitario.toFixed(2)}</span>
-            </div>
-            <div class="flex items-center gap-4">
-              <span class="font-black text-amber-600">$${i.precio.toLocaleString()}</span>
-              <button onclick="eliminarIngrediente(${i.id})" class="text-red-500 hover:text-red-700 text-xs font-bold"><i class="fa-solid fa-trash"></i></button>
-            </div>
-          </div>
-        `;
-      });
-    }
-
-    // RECETAS Y FICHA TÉCNICA
-    window.agregarFilaIngredienteReceta = function() {
-      const cont = document.getElementById('contenedor-ingredientes-receta');
-      if (materiasPrimas.length === 0) {
-        return alert('Primero debes dar de alta insumos en el Catálogo de Insumos.');
-      }
-
-      let options = materiasPrimas.map(m => `<option value="${m.id}">${m.nombre} ($${m.costoUnitario.toFixed(2)}/${m.unidad})</option>`).join('');
-
-      const div = document.createElement('div');
-      div.className = "flex gap-2 items-center fila-ingrediente-receta";
-      div.innerHTML = `
-        <select class="border p-2 rounded-lg text-sm bg-slate-50 flex-1 select-ingrediente-id">
-          ${options}
-        </select>
-        <input type="number" step="0.01" placeholder="Cant. usada" required class="w-28 border p-2 rounded-lg text-sm bg-slate-50 input-cantidad-usada">
-        <button type="button" onclick="this.parentElement.remove()" class="text-red-500 hover:text-red-700 p-2"><i class="fa-solid fa-xmark"></i></button>
-      `;
-      cont.appendChild(div);
-    };
-
-    window.guardarCostosReceta = function(e) {
-      e.preventDefault();
-      const nombre = document.getElementById('costo-nombre-receta').value.trim();
-      const rendimiento = parseFloat(document.getElementById('costo-rendimiento').value);
-
-      const filas = document.querySelectorAll('.fila-ingrediente-receta');
-      if (filas.length === 0) return alert('Debes agregar al menos un insumo a la receta.');
-
-      let costoTotalReceta = 0;
-      let detalleIngredientes = [];
-
-      filas.forEach(f => {
-        const ingId = parseInt(f.querySelector('.select-ingrediente-id').value);
-        const cant = parseFloat(f.querySelector('.input-cantidad-usada').value);
-        const mat = materiasPrimas.find(m => m.id === ingId);
-
-        if (mat) {
-          const subtotal = mat.costoUnitario * cant;
-          costoTotalReceta += subtotal;
-          detalleIngredientes.push({ nombre: mat.nombre, cantidad: cant, unidad: mat.unidad, subtotal });
-        }
-      });
-
-      const costoPorUnidad = costoTotalReceta / rendimiento;
-      const receta = { id: Date.now(), nombre, rendimiento, costoTotalReceta, costoPorUnidad, detalleIngredientes };
-
-      recetasCostos.push(receta);
-      localStorage.setItem('recetas_costos_entrefuegos', JSON.stringify(recetasCostos));
-
-      e.target.reset();
-      document.getElementById('contenedor-ingredientes-receta').innerHTML = '';
-      renderizarRecetas();
-      alert('Receta guardada con éxito');
-    };
-
-    window.eliminarReceta = function(id) {
-      recetasCostos = recetasCostos.filter(r => r.id !== id);
-      localStorage.setItem('recetas_costos_entrefuegos', JSON.stringify(recetasCostos));
-      renderizarRecetas();
-    };
-
-    function renderizarRecetas() {
-      const cont = document.getElementById('lista-recetas-costos');
-      if (recetasCostos.length === 0) {
-        cont.innerHTML = `<p class="text-xs text-slate-400 py-4 col-span-2">No hay recetas guardadas.</p>`;
-        return;
-      }
-      cont.innerHTML = '';
-      recetasCostos.forEach(r => {
-        let detalleHtml = r.detalleIngredientes.map(i => `<li class="text-xs text-slate-600 flex justify-between"><span>${i.nombre} (${i.cantidad} ${i.unidad})</span><span>$${i.subtotal.toFixed(2)}</span></li>`).join('');
-
-        cont.innerHTML += `
-          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col justify-between">
-            <div>
-              <div class="flex justify-between items-start mb-2">
-                <h3 class="font-bold text-slate-800 text-base">${r.nombre}</h3>
-                <button onclick="eliminarReceta(${r.id})" class="text-red-500 hover:text-red-700 text-xs font-bold"><i class="fa-solid fa-trash"></i></button>
-              </div>
-              <p class="text-xs text-slate-500 mb-3">Rendimiento: <strong class="text-slate-700">${r.rendimiento} unidades</strong></p>
-              <ul class="space-y-1 mb-4 border-t border-b py-2 divide-y divide-slate-100">
-                ${detalleHtml}
-              </ul>
-            </div>
-            <div class="flex justify-between items-center bg-white p-2 rounded-lg border border-slate-200">
-              <span class="text-xs font-bold text-slate-500">Costo Unitario:</span>
-              <span class="font-black text-emerald-600 text-base">$${r.costoPorUnidad.toFixed(2)}</span>
-            </div>
-          </div>
-        `;
-      });
-    }
-
-    // MÁRGENES
-    function renderizarMargenes() {
-      const tbody = document.getElementById('tabla-margenes-body');
-      tbody.innerHTML = '';
-
-      if (catalogo.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-xs text-slate-400">No hay productos en el menú.</td></tr>`;
+    window.registrarVenta = async function() {
+      if (carrito.length === 0) {
+        alert('Por favor agrega al menos un producto al pedido.');
         return;
       }
 
-      let sumaMargenes = 0;
-      let prodsVinculados = 0;
-      let sumaGanancia = 0;
+      const btn = document.getElementById('btn-guardar');
+      btn.disabled = true;
+      btn.innerText = 'Guardando...';
 
-      catalogo.forEach(p => {
-        const recetaCoincidente = recetasCostos.find(r => r.nombre.toLowerCase().trim() === p.nombre.toLowerCase().trim());
-        let costoDirecto = 0;
-        let origenCosto = "Sin receta";
-
-        if (recetaCoincidente) {
-          costoDirecto = recetaCoincidente.costoPorUnidad;
-          origenCosto = `Receta: ${recetaCoincidente.nombre}`;
-          prodsVinculados++;
-        }
-
-        const ganancia = p.precio - costoDirecto;
-        const margen = p.precio > 0 ? (ganancia / p.precio) * 100 : 0;
-
-        if (recetaCoincidente) {
-          sumaMargenes += margen;
-          sumaGanancia += ganancia;
-        }
-
-        tbody.innerHTML += `
-          <tr class="border-b hover:bg-slate-50">
-            <td class="p-3 font-bold text-slate-700">${p.nombre}</td>
-            <td class="p-3 font-semibold">$${p.precio.toLocaleString()}</td>
-            <td class="p-3 text-xs text-slate-500">${origenCosto}</td>
-            <td class="p-3 text-slate-600">${costoDirecto > 0 ? `$${costoDirecto.toFixed(2)}` : '-'}</td>
-            <td class="p-3 font-bold ${ganancia > 0 ? 'text-emerald-600' : 'text-red-500'}">$${ganancia.toFixed(2)}</td>
-            <td class="p-3 font-bold ${margen > 0 ? 'text-emerald-600' : 'text-red-500'}">${margen.toFixed(1)}%</td>
-          </tr>
-        `;
-      });
-
-      const margenProm = prodsVinculados > 0 ? (sumaMargenes / prodsVinculados).toFixed(1) : 0;
-      const gananciaProm = prodsVinculados > 0 ? (sumaGanancia / prodsVinculados).toFixed(2) : 0;
-
-      document.getElementById('stat-margen-promedio').innerText = `${margenProm}%`;
-      document.getElementById('stat-prod-vinculados').innerText = `${prodsVinculados} / ${catalogo.length}`;
-      document.getElementById('stat-ganancia-promedio').innerText = `$${gananciaProm}`;
-    }
-
-    // ARQUEO Y CIERRE DE CAJA / ELIMINACIÓN DE VENTAS
-    window.cargarArqueoDia = async function() {
-      const fecha = document.getElementById('filtro-fecha-arqueo').value;
-      if (!fecha) return;
-
-      const cont = document.getElementById('lista-ventas-arqueo');
-      cont.innerHTML = `<p class="text-xs text-slate-400 text-center py-6"><i class="fa-solid fa-spinner animate-spin"></i> Cargando ventas...</p>`;
+      const totalCalculado = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
 
       try {
-        const q = query(collection(db, "ventas"), where("fechaStr", "==", fecha));
-        const querySnapshot = await getDocs(q);
-
-        ventasCargadasArqueo = [];
-        querySnapshot.forEach((docSnap) => {
-          ventasCargadasArqueo.push({ id: docSnap.id, ...docSnap.data() });
+        await addDoc(collection(db, "ventas"), {
+          items: carrito,
+          total: totalCalculado,
+          medioPago: medioPagoSeleccionado,
+          fecha: serverTimestamp()
         });
 
-        renderizarArqueoResumen();
-      } catch (err) {
-        console.error("Error al cargar arqueo: ", err);
-        cont.innerHTML = `<p class="text-xs text-red-500 text-center py-6">Error al conectar con Firebase.</p>`;
-      }
-    };
-
-    function renderizarArqueoResumen() {
-      let totalVentas = 0;
-      let totalEfectivo = 0;
-      let totalTransferencia = 0;
-      let totalFiado = 0;
-
-      const cont = document.getElementById('lista-ventas-arqueo');
-      cont.innerHTML = '';
-
-      if (ventasCargadasArqueo.length === 0) {
-        cont.innerHTML = `<p class="text-xs text-slate-400 text-center py-6">No se registraron ventas en esta fecha.</p>`;
-      } else {
-        ventasCargadasArqueo.forEach(v => {
-          totalVentas += v.total || 0;
-          if (v.metodoPago === 'Efectivo') totalEfectivo += v.total || 0;
-          else if (v.metodoPago === 'Transferencia') totalTransferencia += v.total || 0;
-          else if (v.metodoPago === 'Paga Luego') totalFiado += v.total || 0;
-
-          let itemsTxt = (v.items || []).map(i => `${i.nombre} (x${i.cantidad})`).join(', ');
-
-          cont.innerHTML += `
-            <div class="py-3 flex justify-between items-center text-xs">
-              <div>
-                <span class="font-bold text-slate-800">$${v.total.toLocaleString()}</span>
-                <span class="ml-2 bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-semibold">${v.metodoPago}</span>
-                <p class="text-slate-500 text-[11px] mt-0.5">${itemsTxt}</p>
-              </div>
-              <button onclick="eliminarVentaIndividual('${v.id}')" title="Borrar este pedido" class="text-red-400 hover:text-red-600 p-2">
-                <i class="fa-solid fa-trash-can"></i>
-              </button>
-            </div>
-          `;
-        });
-      }
-
-      document.getElementById('arqueo-total-ventas').innerText = `$${totalVentas.toLocaleString()}`;
-      document.getElementById('arqueo-cant-pedidos').innerText = `${ventasCargadasArqueo.length} pedidos registrados`;
-      document.getElementById('arqueo-efectivo').innerText = `$${totalEfectivo.toLocaleString()}`;
-      document.getElementById('arqueo-transferencia').innerText = `$${totalTransferencia.toLocaleString()}`;
-      document.getElementById('arqueo-fiado').innerText = `$${totalFiado.toLocaleString()}`;
-
-      window.calcularDiferenciaArqueo();
-    }
-
-    window.calcularDiferenciaArqueo = function() {
-      const efectivoRealInput = document.getElementById('arqueo-efectivo-real');
-      const real = parseFloat(efectivoRealInput.value) || 0;
-
-      let efectivoSistema = 0;
-      ventasCargadasArqueo.forEach(v => {
-        if (v.metodoPago === 'Efectivo') efectivoSistema += v.total || 0;
-      });
-
-      const dif = real - efectivoSistema;
-      const difEl = document.getElementById('arqueo-diferencia-monto');
-      const boxEl = document.getElementById('box-diferencia');
-
-      difEl.innerText = `$${dif.toLocaleString()}`;
-
-      if (dif === 0) {
-        boxEl.className = "p-4 rounded-xl border bg-slate-50 flex justify-between items-center border-slate-200";
-        difEl.className = "text-xl font-black text-slate-600";
-      } else if (dif > 0) {
-        boxEl.className = "p-4 rounded-xl border bg-emerald-50 flex justify-between items-center border-emerald-200";
-        difEl.className = "text-xl font-black text-emerald-600";
-      } else {
-        boxEl.className = "p-4 rounded-xl border bg-red-50 flex justify-between items-center border-red-200";
-        difEl.className = "text-xl font-black text-red-600";
-      }
-    };
-
-    window.eliminarVentaIndividual = async function(idDoc) {
-      if (!confirm('¿Estás seguro de que deseas borrar este pedido registrado?')) return;
-
-      try {
-        await deleteDoc(doc(db, "ventas", idDoc));
-        alert('Pedido eliminado con éxito.');
-        window.cargarArqueoDia();
-      } catch (err) {
-        console.error("Error al borrar el pedido: ", err);
-        alert('Ocurrió un error al intentar eliminar la venta.');
-      }
-    };
-
-    window.eliminarVentasDelDia = async function() {
-      const fecha = document.getElementById('filtro-fecha-arqueo').value;
-      if (ventasCargadasArqueo.length === 0) return alert('No hay ventas para borrar en esta fecha.');
-
-      if (!confirm(`⚠️ ¿ATENCIÓN: Querés borrar TODAS las ventas (${ventasCargadasArqueo.length}) del día ${fecha}? Esta acción no se puede deshacer.`)) {
-        return;
-      }
-
-      try {
-        for (let venta of ventasCargadasArqueo) {
-          await deleteDoc(doc(db, "ventas", venta.id));
-        }
-        alert('Se han eliminado todas las ventas seleccionadas del día.');
-        window.cargarArqueoDia();
-      } catch (err) {
-        console.error("Error al vaciar ventas: ", err);
-        alert('Error al intentar eliminar las ventas.');
-      }
-    };
-
-    window.guardarCierreCaja = async function() {
-      const fecha = document.getElementById('filtro-fecha-arqueo').value;
-      const conteoReal = parseFloat(document.getElementById('arqueo-efectivo-real').value) || 0;
-
-      let efectivoSistema = 0;
-      let totalVentas = 0;
-
-      ventasCargadasArqueo.forEach(v => {
-        totalVentas += v.total || 0;
-        if (v.metodoPago === 'Efectivo') efectivoSistema += v.total || 0;
-      });
-
-      const diferencia = conteoReal - efectivoSistema;
-
-      const cierreData = {
-        fechaStr: fecha,
-        efectivoSistema: efectivoSistema,
-        conteoFisico: conteoReal,
-        diferencia: diferencia,
-        totalVentas: totalVentas,
-        cantPedidos: ventasCargadasArqueo.length,
-        timestamp: serverTimestamp()
-      };
-
-      try {
-        const btnCerrar = document.getElementById('btn-cerrar-caja');
-        btnCerrar.disabled = true;
-        btnCerrar.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Guardando Cierre...`;
-
-        await setDoc(doc(db, "cierres_caja", fecha), cierreData);
-        alert(`¡Cierre de caja guardado con éxito para el día ${fecha}!`);
-      } catch (err) {
-        console.error("Error al guardar cierre de caja: ", err);
-        alert('Error al intentar guardar el cierre en la base de datos.');
+        alert('¡Venta guardada y sincronizada al instante!');
+        vaciarCarrito();
+      } catch (error) {
+        console.error("Error al guardar venta: ", error);
+        alert('Ocurrió un error al guardar la venta.');
       } finally {
-        const btnCerrar = document.getElementById('btn-cerrar-caja');
-        btnCerrar.disabled = false;
-        btnCerrar.innerHTML = `<i class="fa-solid fa-lock"></i> Finalizar y Guardar Cierre de Caja`;
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Registrar y Sincronizar`;
       }
     };
 
-    // Inicializar
-    renderizarPOS();
+    // Inicializaciones
+    window.seleccionarPago('Efectivo');
+    iniciarSincronizacionEnTiempoReal();
+    renderizarTodo();
   </script>
-</body>
-</html>
