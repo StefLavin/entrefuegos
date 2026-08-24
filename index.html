@@ -2,1279 +2,146 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EntreFuegos - Sistema POS & Gestión</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- Chart.js para el gráfico de torta -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <title>Control de Stock</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; background-color: #f9f9f9; }
+    .grid-container { display: flex; gap: 20px; flex-wrap: wrap; }
+    .categoria-card { flex: 1; min-width: 300px; background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .categoria-card h2 { border-bottom: 2px solid #eee; padding-bottom: 8px; font-size: 1.2rem; }
+    ul { list-style: none; padding: 0; }
+    li { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #f0f0f0; }
+    .acciones button { padding: 4px 8px; margin-left: 2px; cursor: pointer; border: none; border-radius: 4px; font-weight: bold; }
+    .btn-sumar { background-color: #28a745; color: white; }
+    .btn-restar { background-color: #ffc107; color: black; }
+    .btn-eliminar { background-color: #dc3545; color: white; }
+    .form-container { background: #fff; padding: 15px; border-radius: 8px; margin-bottom: 20px; max-width: 500px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .form-group { margin-bottom: 10px; display: flex; flex-direction: column; gap: 5px; }
+    input, select, button { padding: 8px; font-size: 0.9rem; }
+  </style>
 </head>
-<body class="bg-slate-100 font-sans text-slate-800 antialiased min-h-screen pb-12">
+<body>
 
-  <header class="bg-amber-700 text-white shadow-md sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-4">
-      <div class="flex items-center space-x-2">
-        <i class="fa-solid fa-fire text-amber-300 text-2xl"></i>
-        <h1 class="text-2xl font-black tracking-tight">EntreFuegos</h1>
-      </div>
-      <div class="flex items-center gap-2 bg-amber-800/60 px-3 py-1 rounded-full text-xs font-semibold text-amber-200">
-        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-        Firebase Conectado (Tiempo Real)
-      </div>
+  <h1>Gestión de Stock</h1>
+
+  <!-- Formulario para agregar nuevos insumos -->
+  <div class="form-container">
+    <h3>Agregar Nuevo Insumo</h3>
+    <div class="form-group">
+      <label for="nombreInsumo">Nombre:</label>
+      <input type="text" id="nombreInsumo" placeholder="Ej: Harina 000, Vasos 300ml, Agua 500cc">
+    </div>
+    <div class="form-group">
+      <label for="categoriaInsumo">Categoría:</label>
+      <select id="categoriaInsumo">
+        <option value="materiaPrima">Materia Prima</option>
+        <option value="descartable">Descartable</option>
+        <option value="bebidas">Bebidas</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="cantidadInsumo">Cantidad Inicial:</label>
+      <input type="number" id="cantidadInsumo" value="0" min="0">
+    </div>
+    <button onclick="agregarInsumo()">Guardar Insumo</button>
+  </div>
+
+  <!-- Contenedor dividido por categorías -->
+  <div class="grid-container">
+    
+    <div class="categoria-card">
+      <h2>🥩 Materia Prima</h2>
+      <ul id="lista-materiaPrima"></ul>
     </div>
 
-    <nav class="bg-amber-800/80 border-t border-amber-600/50 overflow-x-auto">
-      <div class="max-w-7xl mx-auto flex px-2">
-        <button id="tab-pos" onclick="cambiarPestana('pos')" class="py-2.5 px-4 font-bold text-sm border-b-4 border-white text-white flex items-center gap-2 whitespace-nowrap">
-          <i class="fa-solid fa-cash-register"></i> Ventas POS
-        </button>
-        <button id="tab-stats" onclick="cambiarPestana('stats')" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
-          <i class="fa-solid fa-chart-pie"></i> Ranking Empanadas
-        </button>
-        <button id="tab-admin" onclick="cambiarPestana('admin')" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
-          <i class="fa-solid fa-utensils"></i> Menú de Ventas
-        </button>
-        <button id="tab-ingredientes" onclick="cambiarPestana('ingredientes')" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
-          <i class="fa-solid fa-carrot"></i> Catálogo de Insumos & Stock
-        </button>
-        <button id="tab-costos" onclick="cambiarPestana('costos')" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
-          <i class="fa-solid fa-calculator"></i> Recetas y Fichas
-        </button>
-        <button id="tab-margenes" onclick="cambiarPestana('margenes')" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
-          <i class="fa-solid fa-chart-line"></i> Márgenes y Ganancias
-        </button>
-        <button id="tab-arqueo" onclick="cambiarPestana('arqueo')" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
-          <i class="fa-solid fa-vault"></i> Arqueo y Cierre
-        </button>
-      </div>
-    </nav>
-  </header>
-
-  <main class="max-w-7xl mx-auto px-4 py-6">
-
-    <!-- VISTA POS -->
-    <section id="vista-pos" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <div class="lg:col-span-2 space-y-6">
-
-        <div class="bg-amber-50/80 p-5 rounded-2xl shadow-sm border border-amber-200">
-          <div class="flex justify-between items-center mb-3">
-            <h2 class="font-black text-amber-900 uppercase tracking-wide text-xs flex items-center gap-2">
-              <i class="fa-solid fa-cloud-sun text-amber-600"></i> Carga Rápida de Empanadas Estándar por Sabor
-            </h2>
-            <div class="flex items-center gap-2">
-              <span id="badge-escala-precios" class="text-xs bg-amber-200 text-amber-900 font-bold px-2 py-0.5 rounded-full">
-                Escala: $20.000 / docena | $10.000 / 6 u. | $1.800 / c.u
-              </span>
-              <button onclick="abrirModalEscala()" class="bg-amber-700 hover:bg-amber-800 text-white p-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 shadow">
-                <i class="fa-solid fa-gear"></i>
-              </button>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
-            <div class="bg-white p-3 rounded-xl border border-amber-100 shadow-sm">
-              <label class="block text-xs font-bold text-slate-700 mb-1">Jamón y Queso</label>
-              <input type="number" id="sabor-jyq" min="0" value="0" oninput="calcularPromocionEmpanadas()" class="w-full border p-2 rounded-lg text-sm font-bold bg-slate-50">
-            </div>
-            <div class="bg-white p-3 rounded-xl border border-amber-100 shadow-sm">
-              <label class="block text-xs font-bold text-slate-700 mb-1">Carne</label>
-              <input type="number" id="sabor-carne" min="0" value="0" oninput="calcularPromocionEmpanadas()" class="w-full border p-2 rounded-lg text-sm font-bold bg-slate-50">
-            </div>
-            <div class="bg-white p-3 rounded-xl border border-amber-100 shadow-sm">
-              <label class="block text-xs font-bold text-slate-700 mb-1">Pollo</label>
-              <input type="number" id="sabor-pollo" min="0" value="0" oninput="calcularPromocionEmpanadas()" class="w-full border p-2 rounded-lg text-sm font-bold bg-slate-50">
-            </div>
-          </div>
-
-          <div class="bg-white p-3 rounded-xl border border-amber-200 flex flex-wrap justify-between items-center gap-2">
-            <div>
-              <span class="text-xs font-bold text-slate-500 block">Resumen del Combo:</span>
-              <span id="resumen-empanadas-promo" class="text-sm font-black text-slate-800">0 empanadas ($0)</span>
-              <span id="desglose-empanadas-promo" class="text-xs text-amber-700 block font-semibold">0 docenas, 0 medias, 0 sueltas</span>
-            </div>
-            <button onclick="agregarEmpanadasEspecialesAlCarrito()" class="bg-amber-600 hover:bg-amber-700 text-white font-bold py-2 px-4 rounded-xl text-xs transition flex items-center gap-1 shadow">
-              <i class="fa-solid fa-cart-plus"></i> Agregar Promo al Pedido
-            </button>
-          </div>
-        </div>
-
-        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-          <h2 class="font-black text-slate-700 uppercase tracking-wide text-xs mb-3 flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-amber-500"></span> Empanadas Directas Catálogo
-          </h2>
-          <div id="grid-empanadas" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
-        </div>
-
-        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-          <h2 class="font-black text-slate-700 uppercase tracking-wide text-xs mb-3 flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-amber-500"></span> Pizzas & Viandas
-          </h2>
-          <div id="grid-pizzas-viandas" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
-        </div>
-
-        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-          <h2 class="font-black text-slate-700 uppercase tracking-wide text-xs mb-3 flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-amber-500"></span> Bebidas
-          </h2>
-          <div id="grid-bebidas" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
-        </div>
-      </div>
-
-      <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 h-fit sticky top-24 space-y-4">
-        <div class="flex justify-between items-center border-b pb-3">
-          <h2 class="font-bold text-slate-800 text-base">Pedido Actual</h2>
-          <button onclick="vaciarCarrito()" class="text-xs text-red-500 hover:text-red-700 font-semibold">Vaciar</button>
-        </div>
-
-        <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
-          <label class="block text-xs font-bold text-slate-600 mb-1 flex items-center gap-1">
-            <i class="fa-solid fa-calendar-day text-amber-600"></i> Fecha de la Venta
-          </label>
-          <input type="date" id="fecha-venta-pos" class="w-full border p-2 rounded-lg text-sm bg-white font-bold text-slate-700">
-        </div>
-
-        <div id="lista-pedido" class="space-y-3 max-h-60 overflow-y-auto pr-1"></div>
-
-        <div class="border-t pt-3 space-y-3">
-          <div class="flex justify-between items-center">
-            <span class="text-sm font-semibold text-slate-600">Total:</span>
-            <span id="total-monto" class="text-2xl font-black text-amber-600">$0</span>
-          </div>
-
-          <div>
-            <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Medio de Pago</label>
-            <div class="grid grid-cols-3 gap-2">
-              <button id="btn-Efectivo" onclick="seleccionarPago('Efectivo')" class="btn-pago border p-2 text-xs rounded-lg font-bold text-white bg-amber-600 border-amber-600">Efectivo</button>
-              <button id="btn-Transferencia" onclick="seleccionarPago('Transferencia')" class="btn-pago border p-2 text-xs rounded-lg font-bold text-slate-600 border-slate-300">Transf.</button>
-              <button id="btn-Paga Luego" onclick="seleccionarPago('Paga Luego')" class="btn-pago border p-2 text-xs rounded-lg font-bold text-slate-600 border-slate-300">Paga Luego</button>
-            </div>
-          </div>
-
-          <button id="btn-guardar" onclick="registrarVenta()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-2">
-            <i class="fa-solid fa-cloud-arrow-up"></i> Registrar y Sincronizar
-          </button>
-        </div>
-      </div>
-    </section>
-
-    <!-- VISTA ESTADÍSTICAS EMPANADAS -->
-    <section id="vista-stats" class="hidden max-w-5xl mx-auto space-y-6">
-      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-        <h2 class="font-bold text-slate-800 text-lg mb-2 flex items-center gap-2">
-          <i class="fa-solid fa-chart-pie text-amber-600"></i> Métricas de Variedades de Empanadas Vendidas
-        </h2>
-        <p class="text-xs text-slate-500">Conteo acumulado de unidades vendidas clasificadas por variedad.</p>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="bg-gradient-to-br from-amber-500 to-amber-700 text-white p-6 rounded-2xl shadow-md md:col-span-1 flex flex-col justify-between">
-          <div>
-            <span class="text-xs font-bold uppercase tracking-wider text-amber-200">Más Vendida</span>
-            <h3 id="top-sabor-nombre" class="text-3xl font-black mt-2">Cargando...</h3>
-            <p id="top-sabor-unidades" class="text-sm text-amber-100 font-semibold mt-1">0 unidades vendidas</p>
-          </div>
-          <div class="mt-6 border-t border-amber-400/40 pt-4">
-            <span class="text-xs text-amber-200 block">Total Empanadas Vendidas:</span>
-            <span id="total-empanadas-vendidas" class="text-2xl font-black">0 u.</span>
-          </div>
-        </div>
-
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 md:col-span-2 flex flex-col items-center justify-center">
-          <h4 class="text-xs font-bold text-slate-500 uppercase mb-4 self-start">Distribución de Ventas por Variedad</h4>
-          <div class="w-full max-w-md h-64">
-            <canvas id="chart-empanadas"></canvas>
-          </div>
-        </div>
-      </div>
-
-      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-        <h3 class="font-bold text-slate-800 text-base mb-4">Detalle en Unidades por Sabor</h3>
-        <div id="contenedor-contador-sabores" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"></div>
-      </div>
-    </section>
-
-    <!-- VISTA ADMIN PRODUCTOS -->
-    <section id="vista-admin" class="hidden max-w-4xl mx-auto space-y-6">
-      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-        <h2 class="font-bold text-slate-800 text-lg mb-4 flex items-center gap-2">
-          <i class="fa-solid fa-plus-circle text-amber-600"></i> Agregar Producto al Menú de Ventas
-        </h2>
-        <form onsubmit="guardarNuevoProducto(event)" class="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Categoría</label>
-            <select id="prod-categoria" onchange="cambiarTipoFormulario()" class="w-full border p-2 rounded-lg text-sm bg-slate-50">
-              <option value="Empanadas">Empanadas</option>
-              <option value="Pizza">Pizza</option>
-              <option value="Vianda">Vianda</option>
-              <option value="Bebidas">Bebidas</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Nombre / Sabor</label>
-            <input type="text" id="prod-nombre" placeholder="Ej: Humita, Coca Cola" class="w-full border p-2 rounded-lg text-sm bg-slate-50" required>
-          </div>
-          <div id="campo-litros" class="hidden">
-            <label class="block text-xs font-bold text-slate-600 mb-1">Capacidad / Tamaño</label>
-            <input type="text" id="prod-litros" placeholder="Ej: 1.5L, Lote" class="w-full border p-2 rounded-lg text-sm bg-slate-50">
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Precio de Venta ($)</label>
-            <input type="number" id="prod-precio" placeholder="2000" class="w-full border p-2 rounded-lg text-sm bg-slate-50" required>
-          </div>
-          <div class="md:col-span-4 flex justify-end">
-            <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-2 rounded-lg text-sm transition">
-              <i class="fa-solid fa-floppy-disk"></i> Guardar en Menú
-            </button>
-          </div>
-        </form>
-      </div>
-
-      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-        <h2 class="font-bold text-slate-800 text-lg mb-4">Productos Actuales en Catálogo de Venta</h2>
-        <div id="lista-admin-productos" class="divide-y divide-slate-100"></div>
-      </div>
-    </section>
-
-    <!-- MODAL EDITAR ESCALA DE EMPANADAS -->
-    <div id="modal-escala" class="fixed inset-0 bg-slate-900/50 flex items-center justify-center p-4 z-50 hidden backdrop-blur-sm">
-      <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 space-y-4">
-        <div class="flex justify-between items-center border-b pb-3">
-          <h3 class="font-bold text-slate-800 text-lg flex items-center gap-2">
-            <i class="fa-solid fa-tags text-amber-600"></i> Escala de Precios Empanadas
-          </h3>
-          <button onclick="cerrarModalEscala()" class="text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
-        </div>
-        <form onsubmit="guardarEscalaPrecios(event)" class="space-y-3">
-          <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Precio Docena (12 u.) ($)</label>
-            <input type="number" id="escala-docena" class="w-full border p-2 rounded-lg text-sm bg-slate-50 font-bold" required>
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Precio Media Docena (6 u.) ($)</label>
-            <input type="number" id="escala-media" class="w-full border p-2 rounded-lg text-sm bg-slate-50 font-bold" required>
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Precio Unidad Suelta ($)</label>
-            <input type="number" id="escala-unidad" class="w-full border p-2 rounded-lg text-sm bg-slate-50 font-bold" required>
-          </div>
-          <div class="flex justify-end gap-2 pt-2">
-            <button type="button" onclick="cerrarModalEscala()" class="px-4 py-2 text-sm font-bold text-slate-500 hover:text-slate-700">Cancelar</button>
-            <button type="submit" class="bg-amber-600 hover:bg-amber-700 text-white font-bold px-5 py-2 rounded-lg text-sm transition">
-              <i class="fa-solid fa-check"></i> Actualizar Escala
-            </button>
-          </div>
-        </form>
-      </div>
+    <div class="categoria-card">
+      <h2>🥤 Descartables</h2>
+      <ul id="lista-descartable"></ul>
     </div>
 
-    <!-- MODAL EDITAR PRODUCTO -->
-    <div id="modal-editar-producto" class="fixed inset-0 bg-slate-900/50 flex items-center justify-center p-4 z-50 hidden backdrop-blur-sm">
-      <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full p-6 space-y-4">
-        <div class="flex justify-between items-center border-b pb-3">
-          <h3 class="font-bold text-slate-800 text-lg flex items-center gap-2">
-            <i class="fa-solid fa-pen-to-square text-amber-600"></i> Editar Producto
-          </h3>
-          <button onclick="cerrarModalEditar()" class="text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
-        </div>
-        <form onsubmit="actualizarProducto(event)" class="space-y-4">
-          <input type="hidden" id="edit-prod-id">
-          <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Categoría</label>
-            <select id="edit-prod-categoria" onchange="cambiarTipoFormularioEdicion()" class="w-full border p-2 rounded-lg text-sm bg-slate-50">
-              <option value="Empanadas">Empanadas</option>
-              <option value="Pizza">Pizza</option>
-              <option value="Vianda">Vianda</option>
-              <option value="Bebidas">Bebidas</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Nombre / Sabor</label>
-            <input type="text" id="edit-prod-nombre" class="w-full border p-2 rounded-lg text-sm bg-slate-50" required>
-          </div>
-          <div id="edit-campo-litros" class="hidden">
-            <label class="block text-xs font-bold text-slate-600 mb-1">Capacidad / Tamaño</label>
-            <input type="text" id="edit-prod-litros" class="w-full border p-2 rounded-lg text-sm bg-slate-50">
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Precio de Venta ($)</label>
-            <input type="number" id="edit-prod-precio" class="w-full border p-2 rounded-lg text-sm bg-slate-50" required>
-          </div>
-          <div class="flex justify-end gap-2 pt-2">
-            <button type="button" onclick="cerrarModalEditar()" class="px-4 py-2 text-sm font-bold text-slate-500 hover:text-slate-700">Cancelar</button>
-            <button type="submit" class="bg-amber-600 hover:bg-amber-700 text-white font-bold px-5 py-2 rounded-lg text-sm transition">
-              <i class="fa-solid fa-check"></i> Actualizar Producto
-            </button>
-          </div>
-        </form>
-      </div>
+    <div class="categoria-card">
+      <h2>🍾 Bebidas</h2>
+      <ul id="lista-bebidas"></ul>
     </div>
 
-    <!-- VISTA INSUMOS -->
-    <section id="vista-ingredientes" class="hidden max-w-5xl mx-auto space-y-6">
-      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-        <h2 class="font-bold text-slate-800 text-lg mb-4 flex items-center gap-2">
-          <i class="fa-solid fa-box-open text-amber-600"></i> Registrar Insumo / Materia Prima
-        </h2>
-        <form onsubmit="guardarIngrediente(event)" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          <div class="lg:col-span-2">
-            <label class="block text-xs font-bold text-slate-600 mb-1">Nombre del Insumo</label>
-            <input type="text" id="ing-nombre" placeholder="Ej: Queso Mozzarella" class="w-full border p-2 rounded-lg text-sm bg-slate-50" required>
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Cant. Paquete/Compra</label>
-            <input type="number" step="0.01" id="ing-cantidad-paquete" placeholder="Ej: 5" class="w-full border p-2 rounded-lg text-sm bg-slate-50" required>
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Unidad Medida</label>
-            <select id="ing-unidad" class="w-full border p-2 rounded-lg text-sm bg-slate-50">
-              <option value="kg">Kilogramos (kg)</option>
-              <option value="gr">Gramos (gr)</option>
-              <option value="lt">Litros (lt)</option>
-              <option value="ml">Mililitros (ml)</option>
-              <option value="unid">Unidades (unid)</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Costo Paquete ($)</label>
-            <input type="number" step="0.01" id="ing-precio-paquete" placeholder="Ej: 25000" class="w-full border p-2 rounded-lg text-sm bg-slate-50" required>
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Stock Inicial</label>
-            <input type="number" step="0.01" id="ing-stock-actual" placeholder="Ej: 10" class="w-full border p-2 rounded-lg text-sm bg-slate-50" required>
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Stock Mínimo (Alerta)</label>
-            <input type="number" step="0.01" id="ing-stock-minimo" placeholder="Ej: 2" class="w-full border p-2 rounded-lg text-sm bg-slate-50" value="0">
-          </div>
-          <div class="lg:col-span-5 flex items-end justify-end">
-            <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-2 rounded-lg text-sm transition">
-              <i class="fa-solid fa-plus"></i> Guardar Insumo
-            </button>
-          </div>
-        </form>
-      </div>
+  </div>
 
-      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-        <h2 class="font-bold text-slate-800 text-lg mb-4">Insumos y Estado de Inventario</h2>
-        <div id="lista-ingredientes-base" class="divide-y divide-slate-100"></div>
-      </div>
-    </section>
+  <script>
+    // Estado inicial del inventario
+    let inventario = [
+      { id: 1, nombre: 'Harina de Trigo (kg)', categoria: 'materiaPrima', cantidad: 25 },
+      { id: 2, nombre: 'Vasos Plásticos 330ml', categoria: 'descartable', cantidad: 150 },
+      { id: 3, nombre: 'Agua Mineral 500ml', categoria: 'bebidas', cantidad: 48 }
+    ];
 
-    <!-- VISTA COSTOS Y RECETAS -->
-    <section id="vista-costos" class="hidden max-w-5xl mx-auto space-y-6">
-      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-        <h2 class="font-bold text-slate-800 text-lg mb-4 flex items-center gap-2">
-          <i class="fa-solid fa-book-open text-amber-600"></i> Crear Ficha Técnica de Receta
-        </h2>
-        <form onsubmit="guardarCostosReceta(event)" class="space-y-4">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">Nombre Exacto del Producto</label>
-              <input type="text" id="costo-nombre-receta" placeholder="Ej: Carne, Jamón y Queso, Pollo" class="w-full border p-2 rounded-lg text-sm bg-slate-50" required>
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">Rendimiento (Cant. producida por receta)</label>
-              <input type="number" id="costo-rendimiento" placeholder="Ej: 12 (para 1 docena)" class="w-full border p-2 rounded-lg text-sm bg-slate-50" required>
-            </div>
-          </div>
+    function renderizarInventario() {
+      // Limpiar listas
+      document.getElementById('lista-materiaPrima').innerHTML = '';
+      document.getElementById('lista-descartable').innerHTML = '';
+      document.getElementById('lista-bebidas').innerHTML = '';
 
-          <div class="border-t pt-4">
-            <div class="flex justify-between items-center mb-2">
-              <label class="block text-xs font-bold text-slate-600">Insumos de la Receta</label>
-              <button type="button" onclick="agregarFilaIngredienteReceta()" class="text-xs bg-amber-100 hover:bg-amber-200 text-amber-800 font-bold px-3 py-1 rounded-lg">
-                <i class="fa-solid fa-plus"></i> Agregar Insumo
-              </button>
-            </div>
-            <div id="contenedor-ingredientes-receta" class="space-y-2"></div>
-          </div>
+      inventario.forEach(item => {
+        const ulTarget = document.getElementById(`lista-${item.categoria}`);
+        if (!ulTarget) return;
 
-          <div class="flex justify-end pt-2">
-            <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-2 rounded-lg text-sm transition">
-              <i class="fa-solid fa-floppy-disk"></i> Guardar Ficha Técnica
-            </button>
-          </div>
-        </form>
-      </div>
-
-      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-        <h2 class="font-bold text-slate-800 text-lg mb-4">Fichas Técnicas Guardadas</h2>
-        <div id="lista-recetas-costos" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
-      </div>
-    </section>
-
-    <!-- VISTA MÁRGENES -->
-    <section id="vista-margenes" class="hidden max-w-5xl mx-auto space-y-6">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-          <span class="text-xs font-bold text-slate-400 block">Productos Vinculados</span>
-          <span id="stat-prod-vinculados" class="text-2xl font-black text-slate-800">0 / 0</span>
-        </div>
-        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-          <span class="text-xs font-bold text-slate-400 block">Margen Promedio</span>
-          <span id="stat-margen-promedio" class="text-2xl font-black text-emerald-600">0%</span>
-        </div>
-        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-          <span class="text-xs font-bold text-slate-400 block">Ganancia Promedio / Unid</span>
-          <span id="stat-ganancia-promedio" class="text-2xl font-black text-amber-600">$0</span>
-        </div>
-      </div>
-
-      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-        <div class="p-5 border-b">
-          <h2 class="font-bold text-slate-800 text-lg">Análisis de Márgenes por Producto</h2>
-        </div>
-        <div class="overflow-x-auto">
-          <table class="w-full text-left text-sm text-slate-600">
-            <thead class="bg-slate-50 text-xs uppercase font-bold text-slate-400 border-b">
-              <tr>
-                <th class="p-3">Producto</th>
-                <th class="p-3">P. Venta</th>
-                <th class="p-3">Estado Ficha</th>
-                <th class="p-3">Costo Est.</th>
-                <th class="p-3">Ganancia</th>
-                <th class="p-3">Margen %</th>
-              </tr>
-            </thead>
-            <tbody id="tabla-margenes-body" class="divide-y divide-slate-100"></tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <!-- VISTA ARQUEO DE CAJA -->
-    <section id="vista-arqueo" class="hidden max-w-4xl mx-auto space-y-6">
-      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-wrap justify-between items-center gap-4">
-        <div>
-          <h2 class="font-bold text-slate-800 text-lg">Arqueo Diarios de Ventas</h2>
-          <p class="text-xs text-slate-400">Filtra por fecha para auditar la caja</p>
-        </div>
-        <div class="flex items-center gap-3">
-          <input type="date" id="filtro-fecha-arqueo" onchange="cargarArqueoDia()" class="border p-2 rounded-lg text-sm bg-slate-50 font-bold text-slate-700">
-          <button onclick="eliminarVentasDelDia()" class="bg-red-50 hover:bg-red-100 text-red-600 font-bold p-2.5 rounded-lg text-xs border border-red-200">
-            <i class="fa-solid fa-trash"></i> Resetear Día
-          </button>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-          <span class="text-xs font-bold text-slate-400 block">Total Facturado</span>
-          <span id="arqueo-total-ventas" class="text-2xl font-black text-amber-600">$0</span>
-          <span id="arqueo-cant-pedidos" class="text-xs text-slate-400 block mt-1">0 pedidos registrados</span>
-        </div>
-        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-          <span class="text-xs font-bold text-slate-400 block">En Efectivo (Caja)</span>
-          <span id="arqueo-efectivo" class="text-2xl font-black text-emerald-600">$0</span>
-        </div>
-        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-          <span class="text-xs font-bold text-slate-400 block">Transferencias / MercadoPago</span>
-          <span id="arqueo-transferencia" class="text-2xl font-black text-blue-600">$0</span>
-          <span id="arqueo-fiado" class="text-xs text-amber-600 font-bold block mt-1">Paga luego: $0</span>
-        </div>
-      </div>
-
-      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
-        <h3 class="font-bold text-slate-800 text-base">Cierre y Conteo de Caja Registradora</h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Efectivo Contado en Caja ($)</label>
-            <input type="number" id="arqueo-efectivo-real" oninput="calcularDiferenciaArqueo()" placeholder="Ingresá lo que contaste" class="w-full border p-2.5 rounded-lg text-sm bg-slate-50 font-bold">
-          </div>
-          <div id="box-diferencia" class="p-4 rounded-xl border bg-slate-50 border-slate-200 flex justify-between items-center">
-            <span class="text-xs font-bold">Diferencia:</span>
-            <span id="arqueo-diferencia-monto" class="text-xl font-black">$0</span>
-          </div>
-        </div>
-        <button onclick="guardarCierreCaja()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-3 rounded-xl transition">
-          <i class="fa-solid fa-lock"></i> Guardar Cierre de Caja
-        </button>
-      </div>
-
-      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-        <h3 class="font-bold text-slate-800 text-base mb-4">Detalle de Ventas del Día</h3>
-        <div id="lista-ventas-arqueo" class="divide-y divide-slate-100"></div>
-      </div>
-    </section>
-
-  </main>
-
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { 
-      getFirestore, collection, addDoc, getDocs, query, where, doc, deleteDoc, setDoc, updateDoc, serverTimestamp, onSnapshot 
-    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyBLkWuMHj3hEXQ7b6Fr0I5Eu8B4I8KqlGk",
-      authDomain: "entrefuegos-c5b78.firebaseapp.com",
-      projectId: "entrefuegos-c5b78",
-      storageBucket: "entrefuegos-c5b78.firebasestorage.app",
-      messagingSenderId: "170507928754",
-      appId: "1:170507928754:web:e14fd77c535494afe975ab",
-      measurementId: "G-JRP0T5W9SJ"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    // Listas globales
-    let catalogo = [];
-    let materiasPrimas = [];
-    let recetasCostos = [];
-    let ventasTotales = [];
-
-    let carrito = [];
-    let medioPagoSeleccionado = 'Efectivo';
-    let chartInstance = null;
-
-    // Escala de precios configurable
-    let escalaPrecios = {
-      docena: 20000,
-      media: 10000,
-      unidad: 1800
-    };
-
-    const hoy = new Date().toISOString().split('T')[0];
-
-    document.addEventListener("DOMContentLoaded", () => {
-      const fechaInput = document.getElementById('fecha-venta-pos');
-      if (fechaInput) fechaInput.value = hoy;
-      actualizarBadgeEscala();
-    });
-
-    // --- ESCUCHADORES EN TIEMPO REAL ---
-    function iniciarEscuchadores() {
-      // 1. Productos
-      onSnapshot(collection(db, "productos"), (snapshot) => {
-        catalogo = [];
-        snapshot.forEach(docSnap => catalogo.push({ firestoreId: docSnap.id, ...docSnap.data() }));
-        if (catalogo.length === 0) cargarCatalogoInicial();
-        else {
-          renderizarPOS();
-          renderizarAdminProductos();
-          renderizarMargenes();
-        }
-      });
-
-      // 2. Insumos
-      onSnapshot(collection(db, "insumos"), (snapshot) => {
-        materiasPrimas = [];
-        snapshot.forEach(docSnap => materiasPrimas.push({ firestoreId: docSnap.id, ...docSnap.data() }));
-        renderizarIngredientesBase();
-        renderizarMargenes();
-      });
-
-      // 3. Recetas
-      onSnapshot(collection(db, "recetas"), (snapshot) => {
-        recetasCostos = [];
-        snapshot.forEach(docSnap => recetasCostos.push({ firestoreId: docSnap.id, ...docSnap.data() }));
-        renderizarRecetas();
-        renderizarMargenes();
-      });
-
-      // 4. Ventas
-      onSnapshot(collection(db, "ventas"), (snapshot) => {
-        ventasTotales = [];
-        snapshot.forEach(docSnap => ventasTotales.push({ firestoreId: docSnap.id, ...docSnap.data() }));
-        renderizarEstadisticasEmpanadas();
-      });
-    }
-
-    iniciarEscuchadores();
-
-    async function cargarCatalogoInicial() {
-      const iniciales = [
-        { categoria: 'Empanadas', nombre: 'Carne', precio: 1800 },
-        { categoria: 'Empanadas', nombre: 'Jamón y Queso', precio: 1800 },
-        { categoria: 'Empanadas', nombre: 'Pollo', precio: 1800 },
-        { categoria: 'Pizza', nombre: 'Pizza Muzzarella', precio: 15000 },
-        { categoria: 'Vianda', nombre: 'Vianda Diaria', precio: 18000 }
-      ];
-      for (const item of iniciales) {
-        await addDoc(collection(db, "productos"), item);
-      }
-    }
-
-    // NAVEGACIÓN
-    window.cambiarPestana = function(pestana) {
-      const vistas = ['pos', 'stats', 'admin', 'ingredientes', 'costos', 'margenes', 'arqueo'];
-      vistas.forEach(v => {
-        const elVista = document.getElementById(`vista-${v}`);
-        const elTab = document.getElementById(`tab-${v}`);
-        if (elVista) elVista.classList.add('hidden');
-        if (elTab) elTab.className = "py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap";
-      });
-
-      const targetVista = document.getElementById(`vista-${pestana}`);
-      const targetTab = document.getElementById(`tab-${pestana}`);
-      if (targetVista) targetVista.classList.remove('hidden');
-      if (targetTab) targetTab.className = "py-2.5 px-4 font-bold text-sm border-b-4 border-white text-white flex items-center gap-2 whitespace-nowrap";
-
-      if (pestana === 'pos') renderizarPOS();
-      else if (pestana === 'stats') renderizarEstadisticasEmpanadas();
-      else if (pestana === 'admin') renderizarAdminProductos();
-      else if (pestana === 'ingredientes') renderizarIngredientesBase();
-      else if (pestana === 'costos') renderizarRecetas();
-      else if (pestana === 'margenes') renderizarMargenes();
-      else if (pestana === 'arqueo') {
-        document.getElementById('filtro-fecha-arqueo').value = hoy;
-        window.cargarArqueoDia();
-      }
-    };
-
-    // --- MODAL ESCALA DE PRECIOS ---
-    window.abrirModalEscala = function() {
-      document.getElementById('escala-docena').value = escalaPrecios.docena;
-      document.getElementById('escala-media').value = escalaPrecios.media;
-      document.getElementById('escala-unidad').value = escalaPrecios.unidad;
-      document.getElementById('modal-escala').classList.remove('hidden');
-    };
-
-    window.cerrarModalEscala = function() {
-      document.getElementById('modal-escala').classList.add('hidden');
-    };
-
-    window.guardarEscalaPrecios = function(e) {
-      e.preventDefault();
-      escalaPrecios.docena = parseFloat(document.getElementById('escala-docena').value) || 0;
-      escalaPrecios.media = parseFloat(document.getElementById('escala-media').value) || 0;
-      escalaPrecios.unidad = parseFloat(document.getElementById('escala-unidad').value) || 0;
-
-      actualizarBadgeEscala();
-      window.calcularPromocionEmpanadas();
-      cerrarModalEscala();
-    };
-
-    function actualizarBadgeEscala() {
-      const badge = document.getElementById('badge-escala-precios');
-      if (badge) {
-        badge.innerText = `Escala: $${escalaPrecios.docena.toLocaleString()} / docena | $${escalaPrecios.media.toLocaleString()} / 6 u. | $${escalaPrecios.unidad.toLocaleString()} / c.u`;
-      }
-    }
-
-    // --- POS Y VENTAS ---
-    function renderizarPOS() {
-      const gridEmp = document.getElementById('grid-empanadas');
-      const gridPiz = document.getElementById('grid-pizzas-viandas');
-      const gridBeb = document.getElementById('grid-bebidas');
-
-      if (!gridEmp || !gridPiz || !gridBeb) return;
-
-      gridEmp.innerHTML = ''; gridPiz.innerHTML = ''; gridBeb.innerHTML = '';
-
-      catalogo.forEach(prod => {
-        const btnHtml = `
-          <button onclick="agregarAlCarrito('${prod.firestoreId}')" class="p-3 bg-slate-50 hover:bg-amber-50 border border-slate-200 rounded-lg font-semibold text-left transition flex justify-between items-center">
-            <div>
-              <div class="text-xs font-bold text-slate-800">${prod.nombre} ${prod.litros ? `(${prod.litros})` : ''}</div>
-              <div class="text-xs text-amber-600 font-black">$${(prod.precio || 0).toLocaleString()}</div>
-            </div>
-            <i class="fa-solid fa-plus text-amber-600 text-xs"></i>
-          </button>
-        `;
-        if (prod.categoria === 'Empanadas') gridEmp.innerHTML += btnHtml;
-        else if (prod.categoria === 'Pizza' || prod.categoria === 'Vianda') gridPiz.innerHTML += btnHtml;
-        else if (prod.categoria === 'Bebidas') gridBeb.innerHTML += btnHtml;
-      });
-
-      renderizarCarrito();
-    }
-
-    window.calcularPromocionEmpanadas = function() {
-      const jyq = parseInt(document.getElementById('sabor-jyq').value) || 0;
-      const carne = parseInt(document.getElementById('sabor-carne').value) || 0;
-      const pollo = parseInt(document.getElementById('sabor-pollo').value) || 0;
-
-      const totalUnidades = jyq + carne + pollo;
-
-      let docenas = Math.floor(totalUnidades / 12);
-      let remanente = totalUnidades % 12;
-
-      let mediasDocenas = 0;
-      let unidadesSueltas = 0;
-
-      if (remanente >= 6) {
-        mediasDocenas = 1;
-        unidadesSueltas = remanente - 6;
-      } else {
-        unidadesSueltas = remanente;
-      }
-
-      const totalMonto = (docenas * escalaPrecios.docena) + (mediasDocenas * escalaPrecios.media) + (unidadesSueltas * escalaPrecios.unidad);
-
-      document.getElementById('resumen-empanadas-promo').innerText = `${totalUnidades} empanadas ($${totalMonto.toLocaleString()})`;
-      document.getElementById('desglose-empanadas-promo').innerText = `${docenas} docenas, ${mediasDocenas} medias, ${unidadesSueltas} sueltas`;
-    };
-
-    window.agregarEmpanadasEspecialesAlCarrito = function() {
-      const jyq = parseInt(document.getElementById('sabor-jyq').value) || 0;
-      const carne = parseInt(document.getElementById('sabor-carne').value) || 0;
-      const pollo = parseInt(document.getElementById('sabor-pollo').value) || 0;
-
-      const totalUnidades = jyq + carne + pollo;
-      if (totalUnidades === 0) return;
-
-      let docenas = Math.floor(totalUnidades / 12);
-      let remanente = totalUnidades % 12;
-      let mediasDocenas = remanente >= 6 ? 1 : 0;
-      let unidadesSueltas = remanente >= 6 ? remanente - 6 : remanente;
-
-      const totalMonto = (docenas * escalaPrecios.docena) + (mediasDocenas * escalaPrecios.media) + (unidadesSueltas * escalaPrecios.unidad);
-
-      let detalles = [];
-      if (jyq > 0) detalles.push(`${jyq} J&Q`);
-      if (carne > 0) detalles.push(`${carne} Carne`);
-      if (pollo > 0) detalles.push(`${pollo} Pollo`);
-
-      carrito.push({
-        id: 'promo-' + Date.now(),
-        nombre: `Promo Empanadas (${detalles.join(', ')})`,
-        precio: totalMonto,
-        cantidad: 1,
-        desgloseSabores: { 'Jamón y Queso': jyq, 'Carne': carne, 'Pollo': pollo }
-      });
-
-      document.getElementById('sabor-jyq').value = 0;
-      document.getElementById('sabor-carne').value = 0;
-      document.getElementById('sabor-pollo').value = 0;
-      window.calcularPromocionEmpanadas();
-      renderizarCarrito();
-    };
-
-    window.agregarAlCarrito = function(idProd) {
-      const prod = catalogo.find(p => p.firestoreId === idProd);
-      if (!prod) return;
-
-      const existente = carrito.find(item => item.firestoreId === idProd);
-      if (existente) {
-        existente.cantidad += 1;
-      } else {
-        let desglose = null;
-        if (prod.categoria === 'Empanadas') {
-          desglose = {};
-          desglose[prod.nombre] = 1;
-        }
-        carrito.push({
-          firestoreId: prod.firestoreId,
-          nombre: prod.nombre,
-          precio: prod.precio,
-          cantidad: 1,
-          desgloseSabores: desglose
-        });
-      }
-      renderizarCarrito();
-    };
-
-    function renderizarCarrito() {
-      const contenedor = document.getElementById('lista-pedido');
-      if (!contenedor) return;
-      contenedor.innerHTML = '';
-
-      let total = 0;
-
-      carrito.forEach((item, index) => {
-        const subtotal = item.precio * item.cantidad;
-        total += subtotal;
-
-        contenedor.innerHTML += `
-          <div class="flex justify-between items-center bg-slate-50 p-2.5 rounded-xl border border-slate-200">
-            <div>
-              <div class="text-xs font-bold text-slate-800">${item.nombre}</div>
-              <div class="text-xs text-amber-600 font-bold">$${subtotal.toLocaleString()}</div>
-            </div>
-            <div class="flex items-center gap-2">
-              <button onclick="cambiarCantidadCarrito(${index}, -1)" class="w-6 h-6 bg-slate-200 rounded-lg text-xs font-bold">-</button>
-              <span class="text-xs font-bold">${item.cantidad}</span>
-              <button onclick="cambiarCantidadCarrito(${index}, 1)" class="w-6 h-6 bg-slate-200 rounded-lg text-xs font-bold">+</button>
-            </div>
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <span><strong>${item.nombre}</strong>: ${item.cantidad} unidades</span>
+          <div class="acciones">
+            <button class="btn-sumar" onclick="modificarCantidad(${item.id}, 1)">+</button>
+            <button class="btn-restar" onclick="modificarCantidad(${item.id}, -1)">-</button>
+            <button class="btn-eliminar" onclick="eliminarInsumo(${item.id})">×</button>
           </div>
         `;
+        ulTarget.appendChild(li);
       });
-
-      document.getElementById('total-monto').innerText = `$${total.toLocaleString()}`;
     }
 
-    window.cambiarCantidadCarrito = function(index, cambio) {
-      carrito[index].cantidad += cambio;
-      if (carrito[index].cantidad <= 0) {
-        carrito.splice(index, 1);
-      }
-      renderizarCarrito();
-    };
-
-    window.vaciarCarrito = function() {
-      carrito = [];
-      renderizarCarrito();
-    };
-
-    window.seleccionarPago = function(metodo) {
-      medioPagoSeleccionado = metodo;
-      ['Efectivo', 'Transferencia', 'Paga Luego'].forEach(m => {
-        const btn = document.getElementById(`btn-${m}`);
-        if (btn) {
-          if (m === metodo) {
-            btn.className = "btn-pago border p-2 text-xs rounded-lg font-bold text-white bg-amber-600 border-amber-600";
-          } else {
-            btn.className = "btn-pago border p-2 text-xs rounded-lg font-bold text-slate-600 border-slate-300";
-          }
+    // Función para sumar o descontar stock
+    function modificarCantidad(id, cambio) {
+      const insumo = inventario.find(i => i.id === id);
+      if (insumo) {
+        if (insumo.cantidad + cambio < 0) {
+          alert("El stock no puede ser negativo.");
+          return;
         }
-      });
-    };
+        insumo.cantidad += cambio;
+        renderizarInventario();
+      }
+    }
 
-    window.registrarVenta = async function() {
-      if (carrito.length === 0) return alert("El carrito está vacío.");
+    // Agregar nuevo insumo
+    function agregarInsumo() {
+      const nombre = document.getElementById('nombreInsumo').value.trim();
+      const categoria = document.getElementById('categoriaInsumo').value;
+      const cantidad = parseInt(document.getElementById('cantidadInsumo').value, 10);
 
-      const fecha = document.getElementById('fecha-venta-pos').value || hoy;
-      const totalMonto = carrito.reduce((acc, i) => acc + (i.precio * i.cantidad), 0);
+      if (!nombre || isNaN(cantidad) || cantidad < 0) {
+        alert("Por favor ingresa un nombre y cantidad válidos.");
+        return;
+      }
 
-      const venta = {
-        fecha: fecha,
-        total: totalMonto,
-        medioPago: medioPagoSeleccionado,
-        items: carrito,
-        creadoEn: serverTimestamp()
+      const nuevoInsumo = {
+        id: Date.now(),
+        nombre: nombre,
+        categoria: categoria,
+        cantidad: cantidad
       };
 
-      try {
-        await addDoc(collection(db, "ventas"), venta);
-
-        // Descontar Stock de Insumos según Recetas
-        for (const item of carrito) {
-          const receta = recetasCostos.find(r => r.nombre.toLowerCase() === item.nombre.toLowerCase());
-          if (receta && receta.ingredientes) {
-            for (const ingReceta of receta.ingredientes) {
-              const ingBase = materiasPrimas.find(m => m.firestoreId === ingReceta.idInsumo);
-              if (ingBase) {
-                const descuentoTotal = (ingReceta.cantidad / (receta.rendimiento || 1)) * item.cantidad;
-                const nuevoStock = Math.max(0, (ingBase.stockActual || 0) - descuentoTotal);
-                await updateDoc(doc(db, "insumos", ingBase.firestoreId), { stockActual: nuevoStock });
-              }
-            }
-          }
-        }
-
-        vaciarCarrito();
-        alert("¡Venta registrada con éxito!");
-      } catch (e) {
-        console.error(e);
-        alert("Error al registrar venta.");
-      }
-    };
-
-    // --- VISTA RANKING / ESTADÍSTICAS DE EMPANADAS ---
-    function renderizarEstadisticasEmpanadas() {
-      const contadorSabores = {};
-      let totalEmpanadas = 0;
-
-      ventasTotales.forEach(venta => {
-        if (!venta.items) return;
-        venta.items.forEach(item => {
-          if (item.desgloseSabores) {
-            Object.entries(item.desgloseSabores).forEach(([sabor, cant]) => {
-              const u = cant * (item.cantidad || 1);
-              contadorSabores[sabor] = (contadorSabores[sabor] || 0) + u;
-              totalEmpanadas += u;
-            });
-          }
-        });
-      });
-
-      // Determinar sabor más vendido
-      let topSabor = "Sin datos";
-      let topCant = 0;
-      Object.entries(contadorSabores).forEach(([sabor, cant]) => {
-        if (cant > topCant) {
-          topCant = cant;
-          topSabor = sabor;
-        }
-      });
-
-      document.getElementById('top-sabor-nombre').innerText = topSabor;
-      document.getElementById('top-sabor-unidades').innerText = `${topCant} unidades vendidas`;
-      document.getElementById('total-empanadas-vendidas').innerText = `${totalEmpanadas} u.`;
-
-      // Renderizar grid de contadores
-      const gridContador = document.getElementById('contenedor-contador-sabores');
-      if (gridContador) {
-        gridContador.innerHTML = '';
-        const saboresList = Object.keys(contadorSabores).length > 0 ? Object.entries(contadorSabores) : [['Carne', 0], ['Jamón y Queso', 0], ['Pollo', 0]];
-        saboresList.forEach(([sabor, cant]) => {
-          gridContador.innerHTML += `
-            <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl text-center">
-              <span class="text-xs font-bold text-slate-500 block uppercase">${sabor}</span>
-              <span class="text-2xl font-black text-amber-600 block mt-1">${cant}</span>
-              <span class="text-xs text-slate-400 font-semibold">unidades</span>
-            </div>
-          `;
-        });
-      }
-
-      // Renderizar Gráfico de Torta
-      const canvas = document.getElementById('chart-empanadas');
-      if (canvas) {
-        const labels = Object.keys(contadorSabores).length > 0 ? Object.keys(contadorSabores) : ['Carne', 'Jamón y Queso', 'Pollo'];
-        const data = Object.keys(contadorSabores).length > 0 ? Object.values(contadorSabores) : [0, 0, 0];
-
-        if (chartInstance) chartInstance.destroy();
-
-        chartInstance = new Chart(canvas, {
-          type: 'pie',
-          data: {
-            labels: labels,
-            datasets: [{
-              data: data,
-              backgroundColor: ['#d97706', '#f59e0b', '#fbbf24', '#fef3c7', '#78350f', '#b45309']
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              legend: { position: 'bottom' }
-            }
-          }
-        });
-      }
+      inventario.push(nuevoInsumo);
+      document.getElementById('nombreInsumo').value = '';
+      document.getElementById('cantidadInsumo').value = '0';
+      renderizarInventario();
     }
 
-    // --- ADMINISTRACIÓN DE PRODUCTOS Y MÁRGENES ---
-    function renderizarAdminProductos() {
-      const list = document.getElementById('lista-admin-productos');
-      if (!list) return;
-      list.innerHTML = '';
-
-      catalogo.forEach(prod => {
-        list.innerHTML += `
-          <div class="py-3 flex justify-between items-center">
-            <div>
-              <span class="text-xs font-bold bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full">${prod.categoria}</span>
-              <span class="font-bold text-slate-800 ml-2 text-sm">${prod.nombre} ${prod.litros ? `(${prod.litros})` : ''}</span>
-            </div>
-            <div class="flex items-center gap-3">
-              <span class="font-black text-amber-600 text-sm">$${(prod.precio || 0).toLocaleString()}</span>
-              <button onclick="abrirModalEditar('${prod.firestoreId}')" class="text-amber-600 hover:text-amber-800"><i class="fa-solid fa-pen"></i></button>
-              <button onclick="eliminarProducto('${prod.firestoreId}')" class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button>
-            </div>
-          </div>
-        `;
-      });
+    // Eliminar insumo del registro
+    function eliminarInsumo(id) {
+      inventario = inventario.filter(i => i.id !== id);
+      renderizarInventario();
     }
 
-    window.guardarNuevoProducto = async function(e) {
-      e.preventDefault();
-      const cat = document.getElementById('prod-categoria').value;
-      const nom = document.getElementById('prod-nombre').value;
-      const lit = document.getElementById('prod-litros').value;
-      const pre = parseFloat(document.getElementById('prod-precio').value) || 0;
-
-      await addDoc(collection(db, "productos"), {
-        categoria: cat,
-        nombre: nom,
-        litros: lit,
-        precio: pre
-      });
-
-      document.getElementById('prod-nombre').value = '';
-      document.getElementById('prod-precio').value = '';
-    };
-
-    window.eliminarProducto = async function(id) {
-      if (confirm("¿Borrar producto del menú?")) {
-        await deleteDoc(doc(db, "productos", id));
-      }
-    };
-
-    window.abrirModalEditar = function(id) {
-      const p = catalogo.find(item => item.firestoreId === id);
-      if (!p) return;
-      document.getElementById('edit-prod-id').value = id;
-      document.getElementById('edit-prod-categoria').value = p.categoria;
-      document.getElementById('edit-prod-nombre').value = p.nombre;
-      document.getElementById('edit-prod-litros').value = p.litros || '';
-      document.getElementById('edit-prod-precio').value = p.precio;
-      document.getElementById('modal-editar-producto').classList.remove('hidden');
-    };
-
-    window.cerrarModalEditar = function() {
-      document.getElementById('modal-editar-producto').classList.add('hidden');
-    };
-
-    window.actualizarProducto = async function(e) {
-      e.preventDefault();
-      const id = document.getElementById('edit-prod-id').value;
-      await updateDoc(doc(db, "productos", id), {
-        categoria: document.getElementById('edit-prod-categoria').value,
-        nombre: document.getElementById('edit-prod-nombre').value,
-        litros: document.getElementById('edit-prod-litros').value,
-        precio: parseFloat(document.getElementById('edit-prod-precio').value) || 0
-      });
-      cerrarModalEditar();
-    };
-
-    window.cambiarTipoFormulario = function() {
-      const cat = document.getElementById('prod-categoria').value;
-      const campo = document.getElementById('campo-litros');
-      if (cat === 'Bebidas') campo.classList.remove('hidden');
-      else campo.classList.add('hidden');
-    };
-
-    window.cambiarTipoFormularioEdicion = function() {
-      const cat = document.getElementById('edit-prod-categoria').value;
-      const campo = document.getElementById('edit-campo-litros');
-      if (cat === 'Bebidas') campo.classList.remove('hidden');
-      else campo.classList.add('hidden');
-    };
-
-    // --- INSUMOS & RECETAS ---
-    window.guardarIngrediente = async function(e) {
-      e.preventDefault();
-      await addDoc(collection(db, "insumos"), {
-        nombre: document.getElementById('ing-nombre').value,
-        cantidadPaquete: parseFloat(document.getElementById('ing-cantidad-paquete').value) || 0,
-        unidad: document.getElementById('ing-unidad').value,
-        precioPaquete: parseFloat(document.getElementById('ing-precio-paquete').value) || 0,
-        stockActual: parseFloat(document.getElementById('ing-stock-actual').value) || 0,
-        stockMinimo: parseFloat(document.getElementById('ing-stock-minimo').value) || 0
-      });
-      e.target.reset();
-    };
-
-    function renderizarIngredientesBase() {
-      const list = document.getElementById('lista-ingredientes-base');
-      if (!list) return;
-      list.innerHTML = '';
-
-      materiasPrimas.forEach(ing => {
-        const costoUnidad = ing.cantidadPaquete > 0 ? (ing.precioPaquete / ing.cantidadPaquete) : 0;
-        const alertaStock = ing.stockActual <= ing.stockMinimo;
-
-        list.innerHTML += `
-          <div class="py-3 flex justify-between items-center">
-            <div>
-              <div class="font-bold text-slate-800 text-sm">${ing.nombre}</div>
-              <div class="text-xs text-slate-400">Costo Unitario: $${costoUnidad.toFixed(2)} / ${ing.unidad}</div>
-            </div>
-            <div class="text-right">
-              <span class="text-xs font-bold ${alertaStock ? 'text-red-600 bg-red-100' : 'text-emerald-600 bg-emerald-100'} px-2 py-0.5 rounded-full">
-                Stock: ${ing.stockActual} ${ing.unidad}
-              </span>
-              <button onclick="eliminarIngrediente('${ing.firestoreId}')" class="text-red-500 hover:text-red-700 ml-3 text-xs"><i class="fa-solid fa-trash"></i></button>
-            </div>
-          </div>
-        `;
-      });
-    }
-
-    window.eliminarIngrediente = async function(id) {
-      if (confirm("¿Borrar insumo?")) await deleteDoc(doc(db, "insumos", id));
-    };
-
-    // --- RECETAS Y MÁRGENES ---
-    window.agregarFilaIngredienteReceta = function() {
-      const cont = document.getElementById('contenedor-ingredientes-receta');
-      let opciones = `<option value="">Seleccionar Insumo...</option>`;
-      materiasPrimas.forEach(m => {
-        opciones += `<option value="${m.firestoreId}">${m.nombre} (${m.unidad})</option>`;
-      });
-
-      const div = document.createElement('div');
-      div.className = "flex gap-2 items-center fila-ing-receta";
-      div.innerHTML = `
-        <select class="border p-2 rounded-lg text-sm bg-slate-50 flex-1 rec-insumo">${opciones}</select>
-        <input type="number" step="0.01" placeholder="Cantidad" class="border p-2 rounded-lg text-sm bg-slate-50 w-28 rec-cantidad">
-        <button type="button" onclick="this.parentElement.remove()" class="text-red-500 font-bold px-2">&times;</button>
-      `;
-      cont.appendChild(div);
-    };
-
-    window.guardarCostosReceta = async function(e) {
-      e.preventDefault();
-      const nombre = document.getElementById('costo-nombre-receta').value;
-      const rendimiento = parseFloat(document.getElementById('costo-rendimiento').value) || 1;
-
-      const filas = document.querySelectorAll('.fila-ing-receta');
-      const ingredientes = [];
-
-      filas.forEach(f => {
-        const idIns = f.querySelector('.rec-insumo').value;
-        const cant = parseFloat(f.querySelector('.rec-cantidad').value) || 0;
-        if (idIns && cant > 0) {
-          ingredientes.push({ idInsumo: idIns, cantidad: cant });
-        }
-      });
-
-      await addDoc(collection(db, "recetas"), { nombre, rendimiento, ingredientes });
-      e.target.reset();
-      document.getElementById('contenedor-ingredientes-receta').innerHTML = '';
-    };
-
-    function renderizarRecetas() {
-      const list = document.getElementById('lista-recetas-costos');
-      if (!list) return;
-      list.innerHTML = '';
-
-      recetasCostos.forEach(rec => {
-        let costoTotalBatch = 0;
-        let listaIng = '';
-
-        (rec.ingredientes || []).forEach(item => {
-          const ing = materiasPrimas.find(m => m.firestoreId === item.idInsumo);
-          if (ing) {
-            const costoUnit = ing.cantidadPaquete > 0 ? (ing.precioPaquete / ing.cantidadPaquete) : 0;
-            const sub = costoUnit * item.cantidad;
-            costoTotalBatch += sub;
-            listaIng += `<li class="text-xs text-slate-500">${ing.nombre}: ${item.cantidad} ${ing.unidad} ($${sub.toFixed(0)})</li>`;
-          }
-        });
-
-        const costoPorUnidad = rec.rendimiento > 0 ? (costoTotalBatch / rec.rendimiento) : 0;
-
-        list.innerHTML += `
-          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
-            <div class="flex justify-between items-center border-b pb-2 mb-2">
-              <span class="font-bold text-slate-800 text-sm">${rec.nombre}</span>
-              <span class="text-xs font-black bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full">Rinde: ${rec.rendimiento} u.</span>
-            </div>
-            <ul class="space-y-1 mb-3">${listaIng}</ul>
-            <div class="border-t pt-2 flex justify-between items-center">
-              <span class="text-xs text-slate-400">Costo / Unid:</span>
-              <span class="text-sm font-black text-amber-600">$${costoPorUnidad.toFixed(0)}</span>
-            </div>
-          </div>
-        `;
-      });
-    }
-
-    function renderizarMargenes() {
-      const body = document.getElementById('tabla-margenes-body');
-      if (!body) return;
-      body.innerHTML = '';
-
-      let vinculados = 0;
-      let sumaMargenes = 0;
-      let sumaGanancias = 0;
-
-      catalogo.forEach(prod => {
-        const receta = recetasCostos.find(r => r.nombre.toLowerCase() === prod.nombre.toLowerCase());
-
-        let costoUnidad = 0;
-        let estado = `<span class="text-xs text-red-500 font-bold">Sin Ficha</span>`;
-
-        if (receta) {
-          vinculados++;
-          let costoBatch = 0;
-          (receta.ingredientes || []).forEach(i => {
-            const ing = materiasPrimas.find(m => m.firestoreId === i.idInsumo);
-            if (ing && ing.cantidadPaquete > 0) {
-              costoBatch += (ing.precioPaquete / ing.cantidadPaquete) * i.cantidad;
-            }
-          });
-          costoUnidad = receta.rendimiento > 0 ? (costoBatch / receta.rendimiento) : 0;
-          estado = `<span class="text-xs text-emerald-600 font-bold">Vinculado</span>`;
-        }
-
-        const pVenta = prod.precio || 0;
-        const ganancia = pVenta - costoUnidad;
-        const margenPct = pVenta > 0 ? ((ganancia / pVenta) * 100) : 0;
-
-        if (receta) {
-          sumaMargenes += margenPct;
-          sumaGanancias += ganancia;
-        }
-
-        body.innerHTML += `
-          <tr class="border-b">
-            <td class="p-3 font-bold text-slate-800">${prod.nombre}</td>
-            <td class="p-3 font-bold text-slate-600">$${pVenta.toLocaleString()}</td>
-            <td class="p-3">${estado}</td>
-            <td class="p-3 text-slate-500">$${costoUnidad.toFixed(0)}</td>
-            <td class="p-3 font-bold text-emerald-600">$${ganancia.toFixed(0)}</td>
-            <td class="p-3 font-black text-amber-600">${margenPct.toFixed(1)}%</td>
-          </tr>
-        `;
-      });
-
-      document.getElementById('stat-prod-vinculados').innerText = `${vinculados} / ${catalogo.length}`;
-      document.getElementById('stat-margen-promedio').innerText = vinculados > 0 ? `${(sumaMargenes / vinculados).toFixed(1)}%` : '0%';
-      document.getElementById('stat-ganancia-promedio').innerText = vinculados > 0 ? `$${(sumaGanancias / vinculados).toFixed(0)}` : '$0';
-    }
-
-    // --- ARQUEO Y CIERRE ---
-    window.cargarArqueoDia = async function() {
-      const fecha = document.getElementById('filtro-fecha-arqueo').value;
-      if (!fecha) return;
-
-      const q = query(collection(db, "ventas"), where("fecha", "==", fecha));
-      const snap = await getDocs(q);
-
-      let totalVentas = 0;
-      let efectivo = 0;
-      let transferencia = 0;
-      let fiado = 0;
-      let pedidos = 0;
-
-      const lista = document.getElementById('lista-ventas-arqueo');
-      if (lista) lista.innerHTML = '';
-
-      snap.forEach(docSnap => {
-        const v = docSnap.data();
-        pedidos++;
-        totalVentas += (v.total || 0);
-
-        if (v.medioPago === 'Efectivo') efectivo += v.total;
-        else if (v.medioPago === 'Transferencia') transferencia += v.total;
-        else if (v.medioPago === 'Paga Luego') fiado += v.total;
-
-        if (lista) {
-          lista.innerHTML += `
-            <div class="py-2.5 flex justify-between items-center text-sm">
-              <div>
-                <span class="font-bold text-slate-800">$${v.total.toLocaleString()}</span>
-                <span class="text-xs text-slate-400 ml-2">(${v.medioPago})</span>
-              </div>
-              <span class="text-xs text-slate-400">${v.items ? v.items.length : 0} items</span>
-            </div>
-          `;
-        }
-      });
-
-      document.getElementById('arqueo-total-ventas').innerText = `$${totalVentas.toLocaleString()}`;
-      document.getElementById('arqueo-cant-pedidos').innerText = `${pedidos} pedidos registrados`;
-      document.getElementById('arqueo-efectivo').innerText = `$${efectivo.toLocaleString()}`;
-      document.getElementById('arqueo-transferencia').innerText = `$${transferencia.toLocaleString()}`;
-      document.getElementById('arqueo-fiado').innerText = `Paga luego: $${fiado.toLocaleString()}`;
-    };
-
-    window.calcularDiferenciaArqueo = function() {
-      const contado = parseFloat(document.getElementById('arqueo-efectivo-real').value) || 0;
-      const textoEfectivo = document.getElementById('arqueo-efectivo').innerText.replace('$', '').replace('.', '').trim();
-      const efectivoSistema = parseFloat(textoEfectivo) || 0;
-
-      const dif = contado - efectivoSistema;
-      const elDif = document.getElementById('arqueo-diferencia-monto');
-
-      if (dif < 0) elDif.className = "text-xl font-black text-red-600";
-      else if (dif > 0) elDif.className = "text-xl font-black text-emerald-600";
-      else elDif.className = "text-xl font-black text-slate-800";
-
-      elDif.innerText = `$${dif.toLocaleString()}`;
-    };
-
-    window.guardarCierreCaja = function() {
-      alert("Cierre de caja guardado con éxito.");
-    };
-
-    window.eliminarVentasDelDia = async function() {
-      const fecha = document.getElementById('filtro-fecha-arqueo').value;
-      if (confirm(`¿Estás seguro de eliminar todas las ventas del día ${fecha}?`)) {
-        const q = query(collection(db, "ventas"), where("fecha", "==", fecha));
-        const snap = await getDocs(q);
-        for (const docSnap of snap.docs) {
-          await deleteDoc(doc(db, "ventas", docSnap.id));
-        }
-        cargarArqueoDia();
-      }
-    };
+    // Carga inicial
+    renderizarInventario();
   </script>
+
 </body>
 </html>
