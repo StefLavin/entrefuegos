@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+html_code = """<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -29,7 +29,7 @@
         <i class="fa-solid fa-boxes-packing"></i> Menú de Ventas
       </button>
       <button onclick="cambiarPestana('ingredientes')" id="tab-ingredientes" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
-        <i class="fa-solid fa-carrot"></i> Materias Primas / Insumos
+        <i class="fa-solid fa-carrot"></i> Catálogo de Insumos
       </button>
       <button onclick="cambiarPestana('costos')" id="tab-costos" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
         <i class="fa-solid fa-calculator"></i> Recetas y Fichas Técnicas
@@ -41,11 +41,7 @@
 
     <!-- PESTAÑA 1: VENTAS (POS) -->
     <div id="vista-pos" class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      
-      <!-- Catálogo de Ventas -->
       <section class="md:col-span-2 space-y-6">
-        
-        <!-- Empanadas -->
         <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
           <h2 class="text-lg font-bold text-slate-700 mb-3 flex items-center gap-2">
             <i class="fa-solid fa-box-tissue text-amber-600"></i> Empanadas
@@ -53,7 +49,6 @@
           <div id="grid-empanadas" class="grid grid-cols-1 sm:grid-cols-3 gap-3"></div>
         </div>
 
-        <!-- Pizzas y Viandas -->
         <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
           <h2 class="text-lg font-bold text-slate-700 mb-3 flex items-center gap-2">
             <i class="fa-solid fa-pizza-slice text-amber-600"></i> Pizzas y Viandas
@@ -61,24 +56,20 @@
           <div id="grid-pizzas-viandas" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
         </div>
 
-        <!-- Bebidas -->
         <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
           <h2 class="text-lg font-bold text-slate-700 mb-3 flex items-center gap-2">
             <i class="fa-solid fa-bottle-water text-amber-600"></i> Bebidas
           </h2>
           <div id="grid-bebidas" class="grid grid-cols-1 sm:grid-cols-3 gap-3"></div>
         </div>
-
       </section>
 
-      <!-- Pedido Actual -->
       <section class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col justify-between h-fit">
         <div>
           <h2 class="text-lg font-bold text-slate-800 border-b pb-2 mb-4 flex justify-between items-center">
             <span>Pedido Actual</span>
             <button onclick="vaciarCarrito()" class="text-xs text-red-500 hover:underline">Vaciar</button>
           </h2>
-
           <div id="lista-pedido" class="space-y-3 min-h-[150px] max-h-[300px] overflow-y-auto mb-4">
             <p class="text-sm text-slate-400 text-center py-8">No hay productos en el pedido.</p>
           </div>
@@ -104,18 +95,14 @@
           </button>
         </div>
       </section>
-
     </div>
 
     <!-- PESTAÑA 2: GESTOR DE MENÚ DE VENTAS -->
     <div id="vista-admin" class="hidden space-y-6">
-      
-      <!-- Carga de Producto -->
       <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
         <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
           <i class="fa-solid fa-plus text-amber-600"></i> Agregar Producto al Menú de Ventas
         </h2>
-
         <form onsubmit="guardarNuevoProducto(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label class="block text-xs font-bold text-slate-600 mb-1">Categoría</label>
@@ -126,22 +113,18 @@
               <option value="Bebidas">Bebidas</option>
             </select>
           </div>
-
           <div>
             <label class="block text-xs font-bold text-slate-600 mb-1">Nombre / Sabor</label>
             <input type="text" id="prod-nombre" placeholder="Ej: Humita, Coca Cola" required class="w-full border p-2 rounded-lg text-sm bg-slate-50">
           </div>
-
           <div id="campo-litros" class="hidden">
             <label class="block text-xs font-bold text-slate-600 mb-1">Tamaño / Litros</label>
             <input type="text" id="prod-litros" placeholder="Ej: 1.5L, 500ml" class="w-full border p-2 rounded-lg text-sm bg-slate-50">
           </div>
-
           <div>
             <label class="block text-xs font-bold text-slate-600 mb-1">Precio de Venta ($)</label>
             <input type="number" id="prod-precio" placeholder="2000" required class="w-full border p-2 rounded-lg text-sm bg-slate-50">
           </div>
-
           <div class="sm:col-span-2 flex justify-end">
             <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 text-sm font-bold rounded-lg shadow">
               <i class="fa-solid fa-save mr-1"></i> Guardar en Menú
@@ -150,33 +133,29 @@
         </form>
       </div>
 
-      <!-- Lista de Gestión -->
       <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
         <h2 class="text-lg font-bold text-slate-800 mb-4">Productos Actuales en Catálogo de Venta</h2>
         <div id="lista-admin-productos" class="divide-y divide-slate-100"></div>
       </div>
-
     </div>
 
-    <!-- PESTAÑA 3: MATERIAS PRIMAS E INSUMOS -->
+    <!-- PESTAÑA 3: CATÁLOGO DE MATERIAS PRIMAS E INSUMOS -->
     <div id="vista-ingredientes" class="hidden space-y-6">
       <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
         <h2 class="text-lg font-bold text-slate-800 mb-2 flex items-center gap-2">
-          <i class="fa-solid fa-carrot text-amber-600"></i> Catálogo de Materias Primas e Insumos
+          <i class="fa-solid fa-carrot text-amber-600"></i> Alta de Materia Prima / Insumo
         </h2>
-        <p class="text-xs text-slate-500 mb-6">Cargá tus compras (por kg, gr, litro o unidad) con su precio pagado. La app calculará automáticamente el costo unitario exacto para usar en tus recetas.</p>
+        <p class="text-xs text-slate-500 mb-6">Agregá acá los insumos que compras con su precio. Todo lo que cargues en este catálogo aparecerá automáticamente disponible en el menú desplegable al armar tus recetas.</p>
 
         <form onsubmit="guardarIngrediente(event)" class="grid grid-cols-1 sm:grid-cols-4 gap-4">
           <div class="sm:col-span-1">
             <label class="block text-xs font-bold text-slate-600 mb-1">Ingrediente / Insumo</label>
             <input type="text" id="ing-nombre" placeholder="Ej: Harina 0000, Carne picada" required class="w-full border p-2 rounded-lg text-sm bg-slate-50">
           </div>
-
           <div>
             <label class="block text-xs font-bold text-slate-600 mb-1">Cantidad Comprada</label>
             <input type="number" step="0.01" id="ing-cantidad-paquete" placeholder="Ej: 1 (si es 1 kg) o 500 (gr)" required class="w-full border p-2 rounded-lg text-sm bg-slate-50">
           </div>
-
           <div>
             <label class="block text-xs font-bold text-slate-600 mb-1">Unidad de Compra</label>
             <select id="ing-unidad" class="w-full border p-2 rounded-lg text-sm bg-slate-50">
@@ -187,36 +166,31 @@
               <option value="unid">Unidades / Pack (unid)</option>
             </select>
           </div>
-
           <div>
             <label class="block text-xs font-bold text-slate-600 mb-1">Precio Total Pagado ($)</label>
             <input type="number" step="0.01" id="ing-precio-paquete" placeholder="Ej: 1200" required class="w-full border p-2 rounded-lg text-sm bg-slate-50">
           </div>
-
           <div class="sm:col-span-4 flex justify-end">
             <button type="submit" class="bg-amber-600 hover:bg-amber-700 text-white px-6 py-2.5 text-sm font-bold rounded-lg shadow flex items-center gap-2">
-              <i class="fa-solid fa-plus"></i> Guardar Materia Prima
+              <i class="fa-solid fa-plus"></i> Guardar en Catálogo de Insumos
             </button>
           </div>
         </form>
       </div>
 
-      <!-- Tabla de Materias Primas -->
       <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-        <h2 class="text-lg font-bold text-slate-800 mb-4">Stock de Insumos / Precios Unitarios Base</h2>
+        <h2 class="text-lg font-bold text-slate-800 mb-4">Catálogo Completo de Insumos Guardados</h2>
         <div id="lista-ingredientes-base" class="divide-y divide-slate-100"></div>
       </div>
     </div>
 
     <!-- PESTAÑA 4: RECETAS Y FICHAS TÉCNICAS -->
     <div id="vista-costos" class="hidden space-y-6">
-      
-      <!-- Carga de Receta / Escandallo -->
       <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
         <h2 class="text-lg font-bold text-slate-800 mb-2 flex items-center gap-2">
           <i class="fa-solid fa-book-open text-amber-600"></i> Armador de Recetas y Fichas Técnicas
         </h2>
-        <p class="text-xs text-slate-500 mb-6">Seleccioná los insumos de tu catálogo, indicá la cantidad utilizada y las unidades que rinde la mezcla. El costo total y por unidad se calculará al instante.</p>
+        <p class="text-xs text-slate-500 mb-6">Seleccioná los insumos de tu catálogo en el menú desplegable, indicá la cantidad utilizada y las unidades que rinde la mezcla. El costo total y por unidad se calculará al instante.</p>
 
         <form onsubmit="guardarCostosReceta(event)" class="space-y-4">
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -230,12 +204,9 @@
             </div>
           </div>
 
-          <!-- Selección de Insumos Dinámicos -->
           <div>
             <label class="block text-xs font-bold text-slate-600 mb-2">Seleccionar Insumos y Cantidades Usadas</label>
-            <div id="contenedor-ingredientes-receta" class="space-y-2">
-              <!-- Se agregan filas con desplegable -->
-            </div>
+            <div id="contenedor-ingredientes-receta" class="space-y-2"></div>
             <button type="button" onclick="agregarFilaIngredienteReceta()" class="mt-3 text-xs text-amber-700 font-bold hover:underline flex items-center gap-1">
               <i class="fa-solid fa-plus"></i> + Agregar insumo a esta receta
             </button>
@@ -249,12 +220,10 @@
         </form>
       </div>
 
-      <!-- Resumen de Recetas y Fichas Técnicas -->
       <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
         <h2 class="text-lg font-bold text-slate-800 mb-4">Recetas y Fichas Técnicas Guardadas</h2>
         <div id="lista-recetas-costos" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
       </div>
-
     </div>
 
   </main>
@@ -269,9 +238,7 @@
         <button onclick="cerrarFichaTecnica()" class="text-amber-100 hover:text-white text-xl font-bold">&times;</button>
       </div>
       
-      <div id="contenido-ficha-modal" class="p-6 space-y-6 max-h-[80vh] overflow-y-auto">
-        <!-- Renderizado dinámico de la Ficha -->
-      </div>
+      <div id="contenido-ficha-modal" class="p-6 space-y-6 max-h-[80vh] overflow-y-auto"></div>
 
       <div class="bg-slate-50 p-4 border-t flex justify-between items-center">
         <button onclick="window.print()" class="bg-slate-700 hover:bg-slate-800 text-white px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-2">
@@ -302,7 +269,6 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // BBDD LocalStorage
     let catalogo = JSON.parse(localStorage.getItem('catalogo_entrefuegos')) || [
       { id: 1, categoria: 'Empanadas', nombre: 'Carne', precio: 2000, docena: 20000 },
       { id: 2, categoria: 'Empanadas', nombre: 'Pollo', precio: 2000, docena: 20000 },
@@ -312,18 +278,16 @@
     ];
 
     let materiasPrimas = JSON.parse(localStorage.getItem('materias_primas_entrefuegos')) || [
-      { id: 101, nombre: 'Harina 0000', cantidadPaquete: 1, unidad: 'kg', precioPaquete: 1200, costoUnitarioStandard: 1.2 }, // $1.2 por gramo/unidad base
+      { id: 101, nombre: 'Harina 0000', cantidadPaquete: 1, unidad: 'kg', precioPaquete: 1200, costoUnitarioStandard: 1.2 },
       { id: 102, nombre: 'Carne Picada Especial', cantidadPaquete: 1, unidad: 'kg', precioPaquete: 7500, costoUnitarioStandard: 7.5 },
       { id: 103, nombre: 'Cebolla', cantidadPaquete: 1, unidad: 'kg', precioPaquete: 1000, costoUnitarioStandard: 1.0 },
       { id: 104, nombre: 'Queso Muzzarella', cantidadPaquete: 1, unidad: 'kg', precioPaquete: 8000, costoUnitarioStandard: 8.0 }
     ];
 
     let recetasCostos = JSON.parse(localStorage.getItem('recetas_costos_entrefuegos')) || [];
-
     let carrito = [];
     let medioPagoSeleccionado = 'Efectivo';
 
-    // Navegación de Pestañas
     window.cambiarPestana = function(pestana) {
       const vPos = document.getElementById('vista-pos');
       const vAdmin = document.getElementById('vista-admin');
@@ -348,7 +312,6 @@
       else if (pestana === 'costos') { vCostos.classList.remove('hidden'); tCostos.className = activeStyle; }
     };
 
-    // MATERIAS PRIMAS (INSUMOS)
     window.guardarIngrediente = function(e) {
       e.preventDefault();
       const nombre = document.getElementById('ing-nombre').value;
@@ -356,12 +319,11 @@
       const unidad = document.getElementById('ing-unidad').value;
       const precioPaquete = parseFloat(document.getElementById('ing-precio-paquete').value);
 
-      // Calcular costo normalizado por unidad base (gr, ml, unid)
       let factorConversion = 1;
-      if (unidad === 'kg' || unidad === 'lt') factorConversion = cantPaquete * 1000; // a gr o ml
+      if (unidad === 'kg' || unidad === 'lt') factorConversion = cantPaquete * 1000;
       else factorConversion = cantPaquete;
 
-      const costoUnitarioStandard = precioPaquete / factorConversion; // costo por gr, ml o unid
+      const costoUnitarioStandard = precioPaquete / factorConversion;
 
       const nuevoInsumo = {
         id: Date.now(),
@@ -378,11 +340,11 @@
       e.target.reset();
       renderizarMateriasPrimas();
       renderizarSelectoresInsumos();
-      alert('¡Materia prima guardada correctamente!');
+      alert('¡Insumo agregado al catálogo con éxito!');
     };
 
     window.eliminarMateriaPrima = function(id) {
-      if (confirm('¿Eliminar esta materia prima del catálogo?')) {
+      if (confirm('¿Eliminar este insumo del catálogo?')) {
         materiasPrimas = materiasPrimas.filter(m => m.id !== id);
         localStorage.setItem('materias_primas_entrefuegos', JSON.stringify(materiasPrimas));
         renderizarMateriasPrimas();
@@ -395,7 +357,7 @@
       container.innerHTML = '';
 
       if (materiasPrimas.length === 0) {
-        container.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">No hay materias primas registradas. Agregá la primera arriba.</p>`;
+        container.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">No hay insumos en el catálogo. Cargá el primero arriba.</p>`;
         return;
       }
 
@@ -420,7 +382,6 @@
       });
     }
 
-    // ARMAR RECETAS / ESCANDALLO
     window.agregarFilaIngredienteReceta = function() {
       const contenedor = document.getElementById('contenedor-ingredientes-receta');
       const div = document.createElement('div');
@@ -536,7 +497,6 @@
       });
     }
 
-    // MODAL FICHA TÉCNICA
     window.abrirFichaTecnica = function(id) {
       const receta = recetasCostos.find(r => r.id === id);
       if (!receta) return;
@@ -600,7 +560,6 @@
       document.getElementById('modal-ficha').classList.add('hidden');
     };
 
-    // FUNCIONALIDADES POS Y VENTA
     window.cambiarTipoFormulario = function() {
       const cat = document.getElementById('prod-categoria').value;
       const campoLitros = document.getElementById('campo-litros');
@@ -814,9 +773,13 @@
       }
     };
 
-    // Inicialización
     window.seleccionarPago('Efectivo');
     renderizarTodo();
   </script>
 </body>
-</html>
+</html>"""
+
+with open("index.html", "w", encoding="utf-8") as f:
+    f.write(html_code)
+
+print("Actualizado index.html correctamente.")
