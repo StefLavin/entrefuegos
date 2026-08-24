@@ -150,6 +150,48 @@
       </div>
     </section>
 
+    <!-- MODAL DE EDICIÓN DE PRODUCTO DEL MENÚ -->
+    <div id="modal-editar-producto" class="fixed inset-0 bg-slate-900/50 flex items-center justify-center p-4 z-50 hidden backdrop-blur-sm">
+      <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full p-6 space-y-4">
+        <div class="flex justify-between items-center border-b pb-3">
+          <h3 class="font-bold text-slate-800 text-lg flex items-center gap-2">
+            <i class="fa-solid fa-pen-to-square text-amber-600"></i> Editar Producto
+          </h3>
+          <button onclick="cerrarModalEditar()" class="text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
+        </div>
+        <form onsubmit="actualizarProducto(event)" class="space-y-4">
+          <input type="hidden" id="edit-prod-id">
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Categoría</label>
+            <select id="edit-prod-categoria" onchange="cambiarTipoFormularioEdicion()" class="w-full border p-2 rounded-lg text-sm bg-slate-50">
+              <option value="Empanadas">Empanadas</option>
+              <option value="Pizza">Pizza</option>
+              <option value="Vianda">Vianda</option>
+              <option value="Bebidas">Bebidas</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Nombre / Sabor</label>
+            <input type="text" id="edit-prod-nombre" class="w-full border p-2 rounded-lg text-sm bg-slate-50" required>
+          </div>
+          <div id="edit-campo-litros" class="hidden">
+            <label class="block text-xs font-bold text-slate-600 mb-1">Capacidad / Tamaño</label>
+            <input type="text" id="edit-prod-litros" class="w-full border p-2 rounded-lg text-sm bg-slate-50">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Precio de Venta ($)</label>
+            <input type="number" id="edit-prod-precio" class="w-full border p-2 rounded-lg text-sm bg-slate-50" required>
+          </div>
+          <div class="flex justify-end gap-2 pt-2">
+            <button type="button" onclick="cerrarModalEditar()" class="px-4 py-2 text-sm font-bold text-slate-500 hover:text-slate-700">Cancelar</button>
+            <button type="submit" class="bg-amber-600 hover:bg-amber-700 text-white font-bold px-5 py-2 rounded-lg text-sm transition">
+              <i class="fa-solid fa-check"></i> Actualizar Producto
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
     <!-- VISTA 3: CATÁLOGO DE INSUMOS Y CONTROL DE STOCK -->
     <section id="vista-ingredientes" class="hidden max-w-5xl mx-auto space-y-6">
       <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
@@ -339,7 +381,7 @@
 
   </main>
 
-  <!-- FIREBASE ENGINE (SINCRONIZACIÓN TOTAL EN TIEMPO REAL CON CONTROL DE STOCK) -->
+  <!-- FIREBASE ENGINE -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { 
@@ -372,7 +414,6 @@
     const hoy = new Date().toISOString().split('T')[0];
 
     // --- ESCUCHADORES DE FIREBASE EN TIEMPO REAL ---
-
     function iniciarEscuchadores() {
       // 1. Productos
       onSnapshot(collection(db, "productos"), (snapshot) => {
@@ -402,6 +443,8 @@
         renderizarMargenes();
       });
     }
+
+    iniciarEscuchadores();
 
     async function cargarCatalogoInicial() {
       const iniciales = [
@@ -546,10 +589,17 @@
       document.getElementById('total-monto').innerText = `$${total.toLocaleString()}`;
     }
 
-    // --- MENÚ DE VENTAS ---
+    // --- MENÚ DE VENTAS (ALTA, EDICIÓN Y BAJA) ---
     window.cambiarTipoFormulario = function() {
       const cat = document.getElementById('prod-categoria').value;
       const campoLitros = document.getElementById('campo-litros');
+      if (cat === 'Bebidas') campoLitros.classList.remove('hidden');
+      else campoLitros.classList.add('hidden');
+    };
+
+    window.cambiarTipoFormularioEdicion = function() {
+      const cat = document.getElementById('edit-prod-categoria').value;
+      const campoLitros = document.getElementById('edit-campo-litros');
       if (cat === 'Bebidas') campoLitros.classList.remove('hidden');
       else campoLitros.classList.add('hidden');
     };
@@ -567,6 +617,46 @@
         window.cambiarTipoFormulario();
       } catch (err) {
         alert('Error al guardar el producto.');
+      }
+    };
+
+    window.prepararEdicionProducto = function(firestoreId) {
+      const prod = catalogo.find(p => p.firestoreId === firestoreId);
+      if (!prod) return;
+
+      document.getElementById('edit-prod-id').value = prod.firestoreId;
+      document.getElementById('edit-prod-categoria').value = prod.categoria || 'Empanadas';
+      document.getElementById('edit-prod-nombre').value = prod.nombre || '';
+      document.getElementById('edit-prod-litros').value = prod.litros || '';
+      document.getElementById('edit-prod-precio').value = prod.precio || 0;
+
+      window.cambiarTipoFormularioEdicion();
+      document.getElementById('modal-editar-producto').classList.remove('hidden');
+    };
+
+    window.cerrarModalEditar = function() {
+      document.getElementById('modal-editar-producto').classList.add('hidden');
+    };
+
+    window.actualizarProducto = async function(e) {
+      e.preventDefault();
+      const id = document.getElementById('edit-prod-id').value;
+      const categoria = document.getElementById('edit-prod-categoria').value;
+      const nombre = document.getElementById('edit-prod-nombre').value.trim();
+      const litros = document.getElementById('edit-prod-litros').value.trim();
+      const precio = parseFloat(document.getElementById('edit-prod-precio').value);
+
+      try {
+        await updateDoc(doc(db, "productos", id), {
+          categoria,
+          nombre,
+          litros,
+          precio
+        });
+        window.cerrarModalEditar();
+      } catch (err) {
+        console.error("Error al actualizar: ", err);
+        alert('Error al actualizar el producto.');
       }
     };
 
@@ -596,7 +686,14 @@
             </div>
             <div class="flex items-center gap-4">
               <span class="font-black text-emerald-600">$${(p.precio || 0).toLocaleString()}</span>
-              <button onclick="eliminarProducto('${p.firestoreId}')" class="text-red-500 hover:text-red-700 text-xs font-bold"><i class="fa-solid fa-trash"></i> Borrar</button>
+              <div class="flex items-center gap-2">
+                <button onclick="prepararEdicionProducto('${p.firestoreId}')" class="text-amber-600 hover:text-amber-800 text-xs font-bold flex items-center gap-1">
+                  <i class="fa-solid fa-pen-to-square"></i> Editar
+                </button>
+                <button onclick="eliminarProducto('${p.firestoreId}')" class="text-red-500 hover:text-red-700 text-xs font-bold flex items-center gap-1">
+                  <i class="fa-solid fa-trash"></i> Borrar
+                </button>
+              </div>
             </div>
           </div>
         `;
@@ -626,27 +723,6 @@
       }
     };
 
-    window.ajustarStockRapido = async function(firestoreId, delta) {
-      const insumo = materiasPrimas.find(m => m.firestoreId === firestoreId);
-      if (!insumo) return;
-
-      const nuevoStock = Math.max(0, (insumo.stockActual || 0) + delta);
-      try {
-        await updateDoc(doc(db, "insumos", firestoreId), { stockActual: nuevoStock });
-      } catch (e) {
-        alert('Error al actualizar stock.');
-      }
-    };
-
-    window.eliminarIngrediente = async function(firestoreId) {
-      if (!confirm('¿Seguro que querés borrar este insumo?')) return;
-      try {
-        await deleteDoc(doc(db, "insumos", firestoreId));
-      } catch (err) {
-        alert('Error al borrar el insumo.');
-      }
-    };
-
     function renderizarIngredientesBase() {
       const cont = document.getElementById('lista-ingredientes-base');
       if (!cont) return;
@@ -655,89 +731,67 @@
         return;
       }
       cont.innerHTML = '';
-      materiasPrimas.forEach(m => {
-        let unidadStd = (m.unidad === 'kg' || m.unidad === 'gr') ? 'gr' : (m.unidad === 'lt' || m.unidad === 'ml' ? 'ml' : 'unid');
-        const stActual = m.stockActual || 0;
-        const stMin = m.stockMinimo || 0;
-
-        // Identificación visual por Estado del Stock
-        let badgeStock = `<span class="bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] font-black px-2 py-0.5 rounded-full uppercase">Stock OK</span>`;
-        if (stActual <= 0) {
-          badgeStock = `<span class="bg-red-100 text-red-800 border border-red-300 text-[10px] font-black px-2 py-0.5 rounded-full uppercase animate-pulse">Sin Stock</span>`;
-        } else if (stActual <= stMin) {
-          badgeStock = `<span class="bg-amber-100 text-amber-800 border border-amber-300 text-[10px] font-black px-2 py-0.5 rounded-full uppercase">Poco Stock</span>`;
-        }
-
+      materiasPrimas.forEach(i => {
+        const alerteStock = i.stockActual <= i.stockMinimo;
         cont.innerHTML += `
-          <div class="py-3 flex flex-wrap justify-between items-center gap-3">
+          <div class="py-3 flex justify-between items-center border-b border-slate-100">
             <div>
-              <div class="flex items-center gap-2">
-                <span class="font-bold text-slate-800 text-sm">${m.nombre}</span>
-                ${badgeStock}
-              </div>
-              <span class="text-xs text-slate-500 block">Compra: ${m.cantidad} ${m.unidad} x $${m.precio.toLocaleString()} ($${(m.costoUnitarioStandard || 0).toFixed(2)} / ${unidadStd})</span>
+              <span class="font-bold text-slate-800">${i.nombre}</span>
+              <span class="text-xs text-slate-400 block">$${i.precio} por ${i.cantidad} ${i.unidad} ($${i.costoUnitarioStandard ? i.costoUnitarioStandard.toFixed(2) : 0}/unidad base)</span>
             </div>
-
             <div class="flex items-center gap-4">
-              <!-- Control Rápido de Stock -->
-              <div class="flex items-center gap-1 bg-slate-100 p-1 rounded-lg border border-slate-200">
-                <button onclick="ajustarStockRapido('${m.firestoreId}', -1)" class="w-6 h-6 bg-white border border-slate-300 rounded font-bold text-xs hover:bg-slate-200 text-slate-700 flex items-center justify-center">-</button>
-                <span class="text-xs font-black text-slate-800 px-2">${stActual} ${m.unidad}</span>
-                <button onclick="ajustarStockRapido('${m.firestoreId}', 1)" class="w-6 h-6 bg-white border border-slate-300 rounded font-bold text-xs hover:bg-slate-200 text-slate-700 flex items-center justify-center">+</button>
-              </div>
-
-              <button onclick="eliminarIngrediente('${m.firestoreId}')" class="text-red-500 hover:text-red-700 text-xs font-bold"><i class="fa-solid fa-trash"></i></button>
+              <span class="text-xs font-bold ${alerteStock ? 'text-red-600 bg-red-50' : 'text-slate-600 bg-slate-100'} px-2.5 py-1 rounded-lg">
+                Stock: ${i.stockActual} ${i.unidad}
+              </span>
+              <button onclick="eliminarInsumo('${i.firestoreId}')" class="text-red-500 hover:text-red-700 text-xs font-bold"><i class="fa-solid fa-trash"></i></button>
             </div>
           </div>
         `;
       });
     }
 
-    // --- RECETAS Y DESCUENTO MANUAL DE STOCK ---
+    window.eliminarInsumo = async function(id) {
+      if (!confirm('¿Borrar insumo?')) return;
+      await deleteDoc(doc(db, "insumos", id));
+    };
+
+    // --- RECETAS Y FICHAS TÉCNICAS ---
     window.agregarFilaIngredienteReceta = function() {
       const cont = document.getElementById('contenedor-ingredientes-receta');
-      let opcionesInsumos = materiasPrimas.length === 0 
-        ? `<option value="">Cargá insumos primero en el Catálogo</option>`
-        : materiasPrimas.map(m => `<option value="${m.firestoreId}">${m.nombre} (por ${m.unidad})</option>`).join('');
+      const index = cont.children.length;
+      let opciones = `<option value="">Seleccionar Insumo...</option>`;
+      materiasPrimas.forEach(m => {
+        opciones += `<option value="${m.firestoreId}">${m.nombre} (${m.unidad})</option>`;
+      });
 
-      const div = document.createElement('div');
-      div.className = "flex gap-2 items-center fila-ingrediente-receta";
-      div.innerHTML = `
-        <select class="border p-2 rounded-lg text-sm bg-slate-50 flex-1 sel-insumo">${opcionesInsumos}</select>
-        <input type="number" step="0.01" placeholder="Cant. usada" class="border p-2 rounded-lg text-sm bg-slate-50 w-28 input-cant-usada" required>
-        <button type="button" onclick="this.parentElement.remove()" class="text-red-500 hover:text-red-700 p-2"><i class="fa-solid fa-times"></i></button>
+      const row = document.createElement('div');
+      row.className = "flex gap-2 items-center";
+      row.innerHTML = `
+        <select class="receta-ing-id w-1/2 border p-2 rounded-lg text-sm bg-slate-50">${opciones}</select>
+        <input type="number" step="0.01" placeholder="Cant." class="receta-ing-cant w-1/3 border p-2 rounded-lg text-sm bg-slate-50">
+        <button type="button" onclick="this.parentElement.remove()" class="text-red-500 hover:text-red-700 text-sm font-bold px-2">&times;</button>
       `;
-      cont.appendChild(div);
+      cont.appendChild(row);
     };
 
     window.guardarCostosReceta = async function(e) {
       e.preventDefault();
-      const nombre = document.getElementById('costo-nombre-receta').value.trim();
+      const nombreReceta = document.getElementById('costo-nombre-receta').value.trim();
       const rendimiento = parseFloat(document.getElementById('costo-rendimiento').value);
 
-      const filas = document.querySelectorAll('.fila-ingrediente-receta');
-      if (filas.length === 0) return alert('Debes agregar al menos un insumo.');
+      const filas = document.getElementById('contenedor-ingredientes-receta').children;
+      const ingredientes = [];
 
-      let costoTotalReceta = 0;
-      let insumosDetalle = [];
-
-      filas.forEach(f => {
-        const insumoId = f.querySelector('.sel-insumo').value;
-        const cantUsada = parseFloat(f.querySelector('.input-cant-usada').value);
-
-        const insumoObj = materiasPrimas.find(m => m.firestoreId === insumoId);
-        if (insumoObj) {
-          let factor = (insumoObj.unidad === 'kg' || insumoObj.unidad === 'lt') ? cantUsada * 1000 : cantUsada;
-          let costoSub = factor * insumoObj.costoUnitarioStandard;
-          costoTotalReceta += costoSub;
-          insumosDetalle.push({ insumoId: insumoObj.firestoreId, nombre: insumoObj.nombre, cantUsada, unidad: insumoObj.unidad, costoSub });
+      for (let f of filas) {
+        const idInsumo = f.querySelector('.receta-ing-id').value;
+        const cant = parseFloat(f.querySelector('.receta-ing-cant').value);
+        if (idInsumo && cant) {
+          ingredientes.push({ idInsumo, cantidadUsada: cant });
         }
-      });
-
-      const costoUnitario = costoTotalReceta / rendimiento;
+      }
 
       try {
-        await addDoc(collection(db, "recetas"), { nombre, rendimiento, costoTotal: costoTotalReceta, costoUnitario, insumosDetalle });
+        await addDoc(collection(db, "recetas"), { nombreReceta, rendimiento, ingredientes });
         e.target.reset();
         document.getElementById('contenedor-ingredientes-receta').innerHTML = '';
       } catch (err) {
@@ -745,163 +799,146 @@
       }
     };
 
-    // Descuento manual de stock al elaborar un lote de recetas
-    window.elaborarRecetaYDescontarStock = async function(firestoreId) {
-      const receta = recetasCostos.find(r => r.firestoreId === firestoreId);
-      if (!receta) return;
-
-      const cantProducidaStr = prompt(`¿Cuántas unidades produjiste/elaboraste de "${receta.nombre}"?`, receta.rendimiento);
-      if (!cantProducidaStr) return;
-
-      const cantProducida = parseFloat(cantProducidaStr);
-      if (isNaN(cantProducida) || cantProducida <= 0) return alert('Cantidad inválida.');
-
-      const proporcion = cantProducida / receta.rendimiento;
-
-      try {
-        const actualizaciones = receta.insumosDetalle.map(item => {
-          const insumoDb = materiasPrimas.find(m => m.firestoreId === item.insumoId || m.nombre === item.nombre);
-          if (insumoDb) {
-            const descuento = item.cantUsada * proporcion;
-            const nuevoStock = Math.max(0, (insumoDb.stockActual || 0) - descuento);
-            return updateDoc(doc(db, "insumos", insumoDb.firestoreId), { stockActual: nuevoStock });
-          }
-          return Promise.resolve();
-        });
-
-        await Promise.all(actualizaciones);
-        alert(`¡Stock descontado con éxito para ${cantProducida} unidades de ${receta.nombre}!`);
-      } catch (e) {
-        console.error(e);
-        alert('Error al descontar el stock.');
-      }
-    };
-
-    window.eliminarReceta = async function(firestoreId) {
-      if (!confirm('¿Seguro que querés borrar esta receta?')) return;
-      try {
-        await deleteDoc(doc(db, "recetas", firestoreId));
-      } catch (err) {
-        alert('Error al borrar la receta.');
-      }
-    };
-
     function renderizarRecetas() {
       const cont = document.getElementById('lista-recetas-costos');
       if (!cont) return;
       if (recetasCostos.length === 0) {
-        cont.innerHTML = `<p class="text-xs text-slate-400 py-4 col-span-2">No hay recetas armadas.</p>`;
+        cont.innerHTML = `<p class="text-xs text-slate-400 py-4 col-span-2">No hay fichas técnicas guardadas.</p>`;
         return;
       }
       cont.innerHTML = '';
       recetasCostos.forEach(r => {
+        let costoTotal = 0;
+        let listaIng = '';
+
+        r.ingredientes.forEach(ing => {
+          const insumo = materiasPrimas.find(m => m.firestoreId === ing.idInsumo);
+          if (insumo) {
+            const costoParcial = (insumo.costoUnitarioStandard || 0) * ing.cantidadUsada;
+            costoTotal += costoParcial;
+            listaIng += `<li class="text-xs text-slate-600 flex justify-between"><span>${insumo.nombre} (${ing.cantidadUsada} ${insumo.unidad})</span><span>$${costoParcial.toFixed(1)}</span></li>`;
+          }
+        });
+
+        const costoUnitario = r.rendimiento > 0 ? costoTotal / r.rendimiento : 0;
+
         cont.innerHTML += `
-          <div class="border rounded-xl p-4 bg-slate-50 border-slate-200 flex flex-col justify-between space-y-3 relative shadow-sm">
-            <button onclick="eliminarReceta('${r.firestoreId}')" class="absolute top-3 right-3 text-red-500 hover:text-red-700 text-xs"><i class="fa-solid fa-trash"></i></button>
-            <div>
-              <h3 class="font-bold text-slate-800 text-base pr-6">${r.nombre}</h3>
-              <div class="grid grid-cols-2 gap-2 mt-2 bg-white p-2.5 rounded-lg border border-slate-100 text-xs">
-                <div><span class="text-slate-500 block">Rendimiento:</span> <strong>${r.rendimiento} unid.</strong></div>
-                <div><span class="text-slate-500 block">Costo Unitario:</span> <strong class="text-amber-600 text-sm">$${Math.round(r.costoUnitario || 0).toLocaleString()} c/u</strong></div>
-              </div>
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 relative">
+            <button onclick="eliminarReceta('${r.firestoreId}')" class="absolute top-3 right-3 text-red-500 hover:text-red-700 text-xs font-bold"><i class="fa-solid fa-trash"></i></button>
+            <h3 class="font-bold text-slate-800 text-base mb-1">${r.nombreReceta}</h3>
+            <span class="text-xs font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded">Rinde: ${r.rendimiento} u.</span>
+            <ul class="my-3 space-y-1 border-t border-b py-2">${listaIng}</ul>
+            <div class="flex justify-between items-center text-xs font-bold">
+              <span>Costo Total: $${costoTotal.toFixed(1)}</span>
+              <span class="text-emerald-600 font-black text-sm">C/U: $${costoUnitario.toFixed(1)}</span>
             </div>
-            <button onclick="elaborarRecetaYDescontarStock('${r.firestoreId}')" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-2 rounded-lg text-xs transition flex items-center justify-center gap-2">
-              <i class="fa-solid fa-kitchen-set"></i> Registrar Preparación y Descontar Stock
-            </button>
           </div>
         `;
       });
     }
 
-    // --- MÁRGENES ---
+    window.eliminarReceta = async function(id) {
+      if (!confirm('¿Borrar receta?')) return;
+      await deleteDoc(doc(db, "recetas", id));
+    };
+
+    // --- MÁRGENES Y GANANCIAS ---
     function renderizarMargenes() {
       const tbody = document.getElementById('tabla-margenes-body');
       if (!tbody) return;
-      tbody.innerHTML = '';
 
+      tbody.innerHTML = '';
       let vinculados = 0;
       let sumaMargenes = 0;
       let sumaGanancias = 0;
 
       catalogo.forEach(p => {
-        const receta = recetasCostos.find(r => r.nombre.toLowerCase().trim() === p.nombre.toLowerCase().trim());
-        let costo = receta ? receta.costoUnitario : 0;
-        let ganancia = p.precio - costo;
-        let margen = p.precio > 0 ? ((ganancia / p.precio) * 100) : 0;
+        const receta = recetasCostos.find(r => r.nombreReceta.toLowerCase().trim() === p.nombre.toLowerCase().trim());
+        let costoUnitario = 0;
+        let estado = `<span class="text-xs bg-slate-100 text-slate-400 font-semibold px-2 py-0.5 rounded">Sin Ficha</span>`;
 
         if (receta) {
           vinculados++;
+          let costoTotal = 0;
+          receta.ingredientes.forEach(ing => {
+            const insumo = materiasPrimas.find(m => m.firestoreId === ing.idInsumo);
+            if (insumo) costoTotal += (insumo.costoUnitarioStandard || 0) * ing.cantidadUsada;
+          });
+          costoUnitario = receta.rendimiento > 0 ? costoTotal / receta.rendimiento : 0;
+          estado = `<span class="text-xs bg-emerald-100 text-emerald-800 font-semibold px-2 py-0.5 rounded">Vinculado</span>`;
+        }
+
+        const ganancia = p.precio - costoUnitario;
+        const margen = p.precio > 0 ? ((ganancia / p.precio) * 100) : 0;
+
+        if (receta) {
           sumaMargenes += margen;
           sumaGanancias += ganancia;
         }
 
         tbody.innerHTML += `
-          <tr>
+          <tr class="hover:bg-slate-50 transition">
             <td class="p-3 font-bold text-slate-800">${p.nombre}</td>
-            <td class="p-3 text-slate-600">$${p.precio.toLocaleString()}</td>
-            <td class="p-3 text-xs">${receta ? `<span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-bold">Ficha: ${receta.nombre}</span>` : `<span class="bg-slate-100 text-slate-500 px-2 py-0.5 rounded">Sin Ficha</span>`}</td>
-            <td class="p-3 text-slate-600">${costo > 0 ? '$' + Math.round(costo).toLocaleString() : '-'}</td>
-            <td class="p-3 font-bold text-emerald-600">${costo > 0 ? '$' + Math.round(ganancia).toLocaleString() : '-'}</td>
-            <td class="p-3 font-black ${margen >= 50 ? 'text-emerald-600' : 'text-amber-600'}">${costo > 0 ? margen.toFixed(1) + '%' : '-'}</td>
+            <td class="p-3 font-semibold text-slate-700">$${(p.precio || 0).toLocaleString()}</td>
+            <td class="p-3">${estado}</td>
+            <td class="p-3 font-semibold text-slate-500">$${costoUnitario.toFixed(1)}</td>
+            <td class="p-3 font-bold text-emerald-600">$${ganancia.toFixed(1)}</td>
+            <td class="p-3 font-black ${margen >= 50 ? 'text-emerald-600' : 'text-amber-600'}">${margen.toFixed(1)}%</td>
           </tr>
         `;
       });
 
       document.getElementById('stat-prod-vinculados').innerText = `${vinculados} / ${catalogo.length}`;
       document.getElementById('stat-margen-promedio').innerText = vinculados > 0 ? `${(sumaMargenes / vinculados).toFixed(1)}%` : '0%';
-      document.getElementById('stat-ganancia-promedio').innerText = vinculados > 0 ? `$${Math.round(sumaGanancias / vinculados).toLocaleString()}` : '$0';
+      document.getElementById('stat-ganancia-promedio').innerText = vinculados > 0 ? `$${(sumaGanancias / vinculados).toFixed(1)}` : '$0';
     }
 
-    // --- ARQUEO Y CIERRE ---
+    // --- ARQUEO Y CIERRE DE CAJA ---
     window.cargarArqueoDia = function() {
       const fecha = document.getElementById('filtro-fecha-arqueo').value;
-      const cont = document.getElementById('lista-ventas-arqueo');
+      if (!fecha) return;
 
       if (unsubArqueo) unsubArqueo();
 
-      cont.innerHTML = `<p class="text-xs text-slate-400 text-center py-6"><i class="fa-solid fa-spinner animate-spin mr-1"></i> Sincronizando...</p>`;
-
       const q = query(collection(db, "ventas"), where("fechaStr", "==", fecha));
-
-      unsubArqueo = onSnapshot(q, (querySnapshot) => {
+      unsubArqueo = onSnapshot(q, (snapshot) => {
         let total = 0;
-        let efectivo = 0;
-        let transf = 0;
+        let ef = 0;
+        let tr = 0;
         let fiado = 0;
         let cant = 0;
 
-        cont.innerHTML = '';
+        const contList = document.getElementById('lista-ventas-arqueo');
+        contList.innerHTML = '';
 
-        querySnapshot.forEach((docSnap) => {
+        snapshot.forEach(docSnap => {
+          const v = docSnap.data();
           cant++;
-          const data = docSnap.data();
-          total += data.total || 0;
+          total += v.total;
 
-          if (data.metodoPago === 'Efectivo') efectivo += data.total || 0;
-          else if (data.metodoPago === 'Transferencia') transf += data.total || 0;
-          else if (data.metodoPago === 'Paga Luego') fiado += data.total || 0;
+          if (v.metodoPago === 'Efectivo') ef += v.total;
+          else if (v.metodoPago === 'Transferencia') tr += v.total;
+          else if (v.metodoPago === 'Paga Luego') fiado += v.total;
 
-          let itemsTxt = (data.items || []).map(i => `${i.nombre} (x${i.cantidad})`).join(', ');
+          let prodDetalle = v.items.map(i => `${i.nombre} (x${i.cantidad})`).join(', ');
 
-          cont.innerHTML += `
-            <div class="py-2 text-xs flex justify-between items-center">
+          contList.innerHTML += `
+            <div class="py-3 flex justify-between items-center">
               <div>
-                <span class="font-bold text-slate-800 block">${itemsTxt}</span>
-                <span class="text-slate-400">${data.metodoPago}</span>
+                <span class="font-bold text-slate-800 text-sm">${prodDetalle}</span>
+                <span class="text-xs text-slate-400 block">${v.metodoPago}</span>
               </div>
-              <span class="font-bold text-slate-700">$${(data.total || 0).toLocaleString()}</span>
+              <span class="font-bold text-amber-600 text-sm">$${v.total.toLocaleString()}</span>
             </div>
           `;
         });
 
-        if (cant === 0) cont.innerHTML = `<p class="text-xs text-slate-400 text-center py-6">No hay ventas en la fecha seleccionada.</p>`;
-
-        efectivoSistemaDia = efectivo;
+        efectivoSistemaDia = ef;
 
         document.getElementById('arqueo-total-ventas').innerText = `$${total.toLocaleString()}`;
         document.getElementById('arqueo-cant-pedidos').innerText = `${cant} pedidos registrados`;
-        document.getElementById('arqueo-efectivo').innerText = `$${efectivo.toLocaleString()}`;
-        document.getElementById('arqueo-transferencia').innerText = `$${transf.toLocaleString()}`;
+        document.getElementById('arqueo-efectivo').innerText = `$${ef.toLocaleString()}`;
+        document.getElementById('arqueo-transferencia').innerText = `$${tr.toLocaleString()}`;
         document.getElementById('arqueo-fiado').innerText = `Paga luego: $${fiado.toLocaleString()}`;
 
         window.calcularDiferenciaArqueo();
@@ -909,64 +946,54 @@
     };
 
     window.calcularDiferenciaArqueo = function() {
-      const realInput = parseFloat(document.getElementById('arqueo-efectivo-real').value) || 0;
-      const diff = realInput - efectivoSistemaDia;
+      const efReal = parseFloat(document.getElementById('arqueo-efectivo-real').value) || 0;
+      const dif = efReal - efectivoSistemaDia;
+      const box = document.getElementById('arqueo-diferencia-monto');
 
-      const elDiff = document.getElementById('arqueo-diferencia-monto');
-      const boxDiff = document.getElementById('box-diferencia');
-
-      if (!elDiff || !boxDiff) return;
-
-      elDiff.innerText = `$${diff.toLocaleString()}`;
-
-      if (diff === 0) boxDiff.className = "p-4 rounded-xl border bg-emerald-50 border-emerald-200 flex justify-between items-center text-emerald-800";
-      else if (diff < 0) boxDiff.className = "p-4 rounded-xl border bg-red-50 border-red-200 flex justify-between items-center text-red-800";
-      else boxDiff.className = "p-4 rounded-xl border bg-blue-50 border-blue-200 flex justify-between items-center text-blue-800";
+      if (dif === 0) {
+        box.innerText = "$0";
+        box.className = "text-xl font-black text-slate-700";
+      } else if (dif > 0) {
+        box.innerText = `+$${dif.toLocaleString()} (Sobrante)`;
+        box.className = "text-xl font-black text-emerald-600";
+      } else {
+        box.innerText = `-$${Math.abs(dif).toLocaleString()} (Faltante)`;
+        box.className = "text-xl font-black text-red-600";
+      }
     };
 
     window.guardarCierreCaja = async function() {
       const fecha = document.getElementById('filtro-fecha-arqueo').value;
-      const realInput = parseFloat(document.getElementById('arqueo-efectivo-real').value);
-
-      if (isNaN(realInput)) return alert('Ingresá el monto contado en la caja.');
-
-      const diff = realInput - efectivoSistemaDia;
+      const efReal = parseFloat(document.getElementById('arqueo-efectivo-real').value) || 0;
+      const dif = efReal - efectivoSistemaDia;
 
       try {
-        await setDoc(doc(db, "cierres", fecha), {
+        await setDoc(doc(db, "cierres_caja", fecha), {
           fechaStr: fecha,
           efectivoSistema: efectivoSistemaDia,
-          efectivoReal: realInput,
-          diferencia: diff,
+          efectivoContado: efReal,
+          diferencia: dif,
           timestamp: serverTimestamp()
         });
-        alert('Cierre de caja guardado con éxito.');
-      } catch (e) {
-        alert('Error al guardar el cierre.');
+        alert('Cierre de caja guardado exitosamente.');
+      } catch (err) {
+        alert('Error al guardar el cierre de caja.');
       }
     };
 
     window.eliminarVentasDelDia = async function() {
       const fecha = document.getElementById('filtro-fecha-arqueo').value;
-      if (!confirm(`¿Seguro que querés borrar TODAS las ventas del día ${fecha}?`)) return;
+      if (!confirm(`¿Eliminar TODAS las ventas del día ${fecha}? Esta acción no se puede deshacer.`)) return;
 
-      try {
-        const q = query(collection(db, "ventas"), where("fechaStr", "==", fecha));
-        const querySnapshot = await getDocs(q);
+      const q = query(collection(db, "ventas"), where("fechaStr", "==", fecha));
+      const snapshot = await getDocs(q);
 
-        const deletes = [];
-        querySnapshot.forEach((docSnap) => deletes.push(deleteDoc(doc(db, "ventas", docSnap.id))));
+      const deletePromises = [];
+      snapshot.forEach(docSnap => deletePromises.push(deleteDoc(doc(db, "ventas", docSnap.id))));
 
-        await Promise.all(deletes);
-        alert('Ventas borradas correctamente.');
-      } catch (e) {
-        alert('Error al borrar las ventas.');
-      }
+      await Promise.all(deletePromises);
+      alert('Ventas del día eliminadas.');
     };
-
-    // Inicializar escuchadores globales
-    iniciarEscuchadores();
-    window.cambiarPestana('pos');
   </script>
 </body>
 </html>
