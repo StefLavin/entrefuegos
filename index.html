@@ -43,6 +43,7 @@
 
   <main class="max-w-6xl mx-auto p-4">
 
+    <!-- POS -->
     <div id="vista-pos" class="grid grid-cols-1 md:grid-cols-3 gap-6">
       <section class="md:col-span-2 space-y-6">
         <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
@@ -100,6 +101,7 @@
       </section>
     </div>
 
+    <!-- ADMIN / MENÚ -->
     <div id="vista-admin" class="hidden space-y-6">
       <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
         <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
@@ -141,6 +143,7 @@
       </div>
     </div>
 
+    <!-- INGREDIENTES -->
     <div id="vista-ingredientes" class="hidden space-y-6">
       <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
         <h2 class="text-lg font-bold text-slate-800 mb-2 flex items-center gap-2">
@@ -185,6 +188,7 @@
       </div>
     </div>
 
+    <!-- COSTOS & RECETAS -->
     <div id="vista-costos" class="hidden space-y-6">
       <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
         <h2 class="text-lg font-bold text-slate-800 mb-2 flex items-center gap-2">
@@ -226,6 +230,7 @@
       </div>
     </div>
 
+    <!-- MÁRGENES -->
     <div id="vista-margenes" class="hidden space-y-6">
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
@@ -273,6 +278,7 @@
       </div>
     </div>
 
+    <!-- ARQUEO Y CIERRE -->
     <div id="vista-arqueo" class="hidden space-y-6">
       <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
@@ -368,9 +374,9 @@
     const db = getFirestore(app);
 
     let catalogo = JSON.parse(localStorage.getItem('catalogo_entrefuegos')) || [
-      { id: 1, categoria: 'Empanadas', nombre: 'Carne', precio: 2000, docena: 20000 },
-      { id: 2, categoria: 'Empanadas', nombre: 'Pollo', precio: 2000, docena: 20000 },
-      { id: 3, categoria: 'Empanadas', nombre: 'Jamón y Queso', precio: 2000, docena: 20000 },
+      { id: 1, categoria: 'Empanadas', nombre: 'Carne', precio: 2000 },
+      { id: 2, categoria: 'Empanadas', nombre: 'Pollo', precio: 2000 },
+      { id: 3, categoria: 'Empanadas', nombre: 'Jamón y Queso', precio: 2000 },
       { id: 4, categoria: 'Pizza', nombre: 'Pizza Muzzarella', precio: 15000 },
       { id: 5, categoria: 'Vianda', nombre: 'Vianda Diaria', precio: 18000 }
     ];
@@ -381,9 +387,9 @@
     let medioPagoSeleccionado = 'Efectivo';
     let ventasCargadasArqueo = [];
 
-    // Inicializar Fecha Actual en input de Arqueo
     const hoy = new Date().toISOString().split('T')[0];
 
+    // Exportar funciones a window para poder ser llamadas desde el HTML
     window.cambiarPestana = function(pestana) {
       const vPos = document.getElementById('vista-pos');
       const vAdmin = document.getElementById('vista-admin');
@@ -406,23 +412,57 @@
 
       [tPos, tAdmin, tIng, tCostos, tMargenes, tArqueo].forEach(el => el.className = inactiveStyle);
 
-      if (pestana === 'pos') { vPos.classList.remove('hidden'); tPos.className = activeStyle; }
-      else if (pestana === 'admin') { vAdmin.classList.remove('hidden'); tAdmin.className = activeStyle; }
-      else if (pestana === 'ingredientes') { vIngredientes.classList.remove('hidden'); tIng.className = activeStyle; }
-      else if (pestana === 'costos') { vCostos.classList.remove('hidden'); tCostos.className = activeStyle; }
-      else if (pestana === 'margenes') { 
-        vMargenes.classList.remove('hidden'); 
-        tMargenes.className = activeStyle; 
-      }
+      if (pestana === 'pos') { vPos.classList.remove('hidden'); tPos.className = activeStyle; renderizarPOS(); }
+      else if (pestana === 'admin') { vAdmin.classList.remove('hidden'); tAdmin.className = activeStyle; renderizarAdminProductos(); }
+      else if (pestana === 'ingredientes') { vIngredientes.classList.remove('hidden'); tIng.className = activeStyle; renderizarIngredientesBase(); }
+      else if (pestana === 'costos') { vCostos.classList.remove('hidden'); tCostos.className = activeStyle; renderizarRecetas(); }
+      else if (pestana === 'margenes') { vMargenes.classList.remove('hidden'); tMargenes.className = activeStyle; renderizarMargenes(); }
       else if (pestana === 'arqueo') {
         vArqueo.classList.remove('hidden');
         tArqueo.className = activeStyle;
         document.getElementById('filtro-fecha-arqueo').value = hoy;
-        cargarArqueoDia();
+        window.cargarArqueoDia();
       }
     };
 
-    // --- LOGICA DE REGISTRO DE VENTAS ---
+    // POS Y VENTAS
+    function renderizarPOS() {
+      const gridEmp = document.getElementById('grid-empanadas');
+      const gridPiz = document.getElementById('grid-pizzas-viandas');
+      const gridBeb = document.getElementById('grid-bebidas');
+
+      gridEmp.innerHTML = '';
+      gridPiz.innerHTML = '';
+      gridBeb.innerHTML = '';
+
+      catalogo.forEach(prod => {
+        const btnHtml = `
+          <button onclick="agregarAlCarrito(${prod.id})" class="p-3 bg-slate-50 hover:bg-amber-50 border border-slate-200 rounded-lg font-semibold text-left transition flex justify-between items-center">
+            <div>
+              <div class="text-xs font-bold text-slate-800">${prod.nombre} ${prod.litros ? `(${prod.litros})` : ''}</div>
+              <div class="text-xs text-amber-600 font-black">$${prod.precio.toLocaleString()}</div>
+            </div>
+            <i class="fa-solid fa-plus text-amber-600 text-xs"></i>
+          </button>
+        `;
+        if (prod.categoria === 'Empanadas') gridEmp.innerHTML += btnHtml;
+        else if (prod.categoria === 'Pizza' || prod.categoria === 'Vianda') gridPiz.innerHTML += btnHtml;
+        else if (prod.categoria === 'Bebidas') gridBeb.innerHTML += btnHtml;
+      });
+    }
+
+    window.agregarAlCarrito = function(id) {
+      const prod = catalogo.find(p => p.id === id);
+      if (!prod) return;
+      const itemExistente = carrito.find(item => item.id === id);
+      if (itemExistente) {
+        itemExistente.cantidad++;
+      } else {
+        carrito.push({ ...prod, cantidad: 1 });
+      }
+      renderizarCarrito();
+    };
+
     window.seleccionarPago = function(metodo) {
       medioPagoSeleccionado = metodo;
       document.querySelectorAll('.btn-pago').forEach(btn => {
@@ -455,7 +495,7 @@
 
         await addDoc(collection(db, "ventas"), venta);
         alert('¡Venta registrada con éxito!');
-        vaciarCarrito();
+        window.vaciarCarrito();
       } catch (err) {
         console.error("Error al registrar venta: ", err);
         alert('Ocurrió un error al guardar la venta en Firebase.');
@@ -481,7 +521,7 @@
 
       cont.innerHTML = '';
       let total = 0;
-      carrito.forEach((item, index) => {
+      carrito.forEach((item) => {
         const sub = item.precio * item.cantidad;
         total += sub;
         cont.innerHTML += `
@@ -500,7 +540,231 @@
       document.getElementById('total-monto').innerText = `$${total.toLocaleString()}`;
     }
 
-    // --- FUNCIONES PARA PESTAÑA ARQUEO Y CIERRE ---
+    // GESTIÓN DE PRODUCTOS (MENÚ DE VENTAS)
+    window.cambiarTipoFormulario = function() {
+      const cat = document.getElementById('prod-categoria').value;
+      const campoLitros = document.getElementById('campo-litros');
+      if (cat === 'Bebidas') campoLitros.classList.remove('hidden');
+      else campoLitros.classList.add('hidden');
+    };
+
+    window.guardarNuevoProducto = function(e) {
+      e.preventDefault();
+      const categoria = document.getElementById('prod-categoria').value;
+      const nombre = document.getElementById('prod-nombre').value.trim();
+      const litros = document.getElementById('prod-litros').value.trim();
+      const precio = parseFloat(document.getElementById('prod-precio').value);
+
+      const nuevo = { id: Date.now(), categoria, nombre, litros, precio };
+      catalogo.push(nuevo);
+      localStorage.setItem('catalogo_entrefuegos', JSON.stringify(catalogo));
+
+      e.target.reset();
+      window.cambiarTipoFormulario();
+      renderizarAdminProductos();
+      alert('Producto agregado al menú');
+    };
+
+    window.eliminarProducto = function(id) {
+      catalogo = catalogo.filter(p => p.id !== id);
+      localStorage.setItem('catalogo_entrefuegos', JSON.stringify(catalogo));
+      renderizarAdminProductos();
+    };
+
+    function renderizarAdminProductos() {
+      const cont = document.getElementById('lista-admin-productos');
+      if (catalogo.length === 0) {
+        cont.innerHTML = `<p class="text-xs text-slate-400 py-4">No hay productos guardados.</p>`;
+        return;
+      }
+      cont.innerHTML = '';
+      catalogo.forEach(p => {
+        cont.innerHTML += `
+          <div class="py-3 flex justify-between items-center">
+            <div>
+              <span class="text-xs font-bold bg-amber-100 text-amber-800 px-2 py-0.5 rounded mr-2">${p.categoria}</span>
+              <span class="font-bold text-slate-700">${p.nombre} ${p.litros ? `(${p.litros})` : ''}</span>
+            </div>
+            <div class="flex items-center gap-4">
+              <span class="font-black text-emerald-600">$${p.precio.toLocaleString()}</span>
+              <button onclick="eliminarProducto(${p.id})" class="text-red-500 hover:text-red-700 text-xs font-bold"><i class="fa-solid fa-trash"></i></button>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    // INGREDIENTES Y MATERIAS PRIMAS
+    window.guardarIngrediente = function(e) {
+      e.preventDefault();
+      const nombre = document.getElementById('ing-nombre').value.trim();
+      const cantidad = parseFloat(document.getElementById('ing-cantidad-paquete').value);
+      const unidad = document.getElementById('ing-unidad').value;
+      const precio = parseFloat(document.getElementById('ing-precio-paquete').value);
+
+      const costoUnitario = precio / cantidad;
+      const nuevo = { id: Date.now(), nombre, cantidad, unidad, precio, costoUnitario };
+      materiasPrimas.push(nuevo);
+      localStorage.setItem('materias_primas_entrefuegos', JSON.stringify(materiasPrimas));
+
+      e.target.reset();
+      renderizarIngredientesBase();
+      alert('Insumo guardado correctamente');
+    };
+
+    window.eliminarIngrediente = function(id) {
+      materiasPrimas = materiasPrimas.filter(i => i.id !== id);
+      localStorage.setItem('materias_primas_entrefuegos', JSON.stringify(materiasPrimas));
+      renderizarIngredientesBase();
+    };
+
+    function renderizarIngredientesBase() {
+      const cont = document.getElementById('lista-ingredientes-base');
+      if (materiasPrimas.length === 0) {
+        cont.innerHTML = `<p class="text-xs text-slate-400 py-4">No hay materias primas registradas.</p>`;
+        return;
+      }
+      cont.innerHTML = '';
+      materiasPrimas.forEach(i => {
+        cont.innerHTML += `
+          <div class="py-3 flex justify-between items-center">
+            <div>
+              <span class="font-bold text-slate-800">${i.nombre}</span>
+              <span class="text-xs text-slate-400 block">${i.cantidad} ${i.unidad} por $${i.precio.toLocaleString()}</span>
+            </div>
+            <div class="flex items-center gap-4">
+              <span class="text-xs font-bold text-slate-600">$${i.costoUnitario.toFixed(2)} x ${i.unidad}</span>
+              <button onclick="eliminarIngrediente(${i.id})" class="text-red-500 hover:text-red-700 text-xs font-bold"><i class="fa-solid fa-trash"></i></button>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    // COSTOS Y RECETAS
+    window.agregarFilaIngredienteReceta = function() {
+      const cont = document.getElementById('contenedor-ingredientes-receta');
+      let opciones = `<option value="">Seleccionar Insumo...</option>`;
+      materiasPrimas.forEach(m => {
+        opciones += `<option value="${m.id}">${m.nombre} ($${m.costoUnitario.toFixed(2)}/${m.unidad})</option>`;
+      });
+
+      const div = document.createElement('div');
+      div.className = "flex gap-2 items-center fila-ingrediente-receta";
+      div.innerHTML = `
+        <select class="w-2/3 border p-2 rounded-lg text-sm bg-slate-50 sel-ingrediente" required>
+          ${opciones}
+        </select>
+        <input type="number" step="0.01" placeholder="Cant." class="w-1/3 border p-2 rounded-lg text-sm bg-slate-50 cant-ingrediente" required>
+        <button type="button" onclick="this.parentElement.remove()" class="text-red-500 hover:text-red-700 p-2"><i class="fa-solid fa-times"></i></button>
+      `;
+      cont.appendChild(div);
+    };
+
+    window.guardarCostosReceta = function(e) {
+      e.preventDefault();
+      const nombre = document.getElementById('costo-nombre-receta').value.trim();
+      const rendimiento = parseFloat(document.getElementById('costo-rendimiento').value);
+
+      const filas = document.querySelectorAll('.fila-ingrediente-receta');
+      if (filas.length === 0) return alert('Debes agregar al menos un insumo a la receta.');
+
+      let insumosReceta = [];
+      let costoTotalReceta = 0;
+
+      filas.forEach(f => {
+        const idIng = parseInt(f.querySelector('.sel-ingrediente').value);
+        const cant = parseFloat(f.querySelector('.cant-ingrediente').value);
+        const ing = materiasPrimas.find(m => m.id === idIng);
+
+        if (ing) {
+          const costoItem = ing.costoUnitario * cant;
+          costoTotalReceta += costoItem;
+          insumosReceta.push({ nombre: ing.nombre, cantidad: cant, unidad: ing.unidad, costo: costoItem });
+        }
+      });
+
+      const costoPorUnidad = costoTotalReceta / rendimiento;
+      const nuevaReceta = { id: Date.now(), nombre, rendimiento, insumos: insumosReceta, costoTotal: costoTotalReceta, costoPorUnidad };
+
+      recetasCostos.push(nuevaReceta);
+      localStorage.setItem('recetas_costos_entrefuegos', JSON.stringify(recetasCostos));
+
+      e.target.reset();
+      document.getElementById('contenedor-ingredientes-receta').innerHTML = '';
+      renderizarRecetas();
+      alert('Receta guardada');
+    };
+
+    function renderizarRecetas() {
+      const cont = document.getElementById('lista-recetas-costos');
+      if (recetasCostos.length === 0) {
+        cont.innerHTML = `<p class="text-xs text-slate-400 col-span-2 py-4">No hay recetas configuradas.</p>`;
+        return;
+      }
+      cont.innerHTML = '';
+      recetasCostos.forEach(r => {
+        cont.innerHTML += `
+          <div class="border p-4 rounded-xl bg-slate-50 space-y-2">
+            <div class="flex justify-between items-center border-b pb-2">
+              <span class="font-bold text-slate-800">${r.nombre}</span>
+              <span class="text-xs font-bold bg-emerald-100 text-emerald-700 px-2 py-1 rounded">$${r.costoPorUnidad.toFixed(2)} c/u</span>
+            </div>
+            <div class="text-xs text-slate-500">Rendimiento: ${r.rendimiento} unidades | Costo Total: $${r.costoTotal.toFixed(2)}</div>
+            <div class="text-xs space-y-1 pt-1">
+              ${r.insumos.map(i => `<div class="flex justify-between text-slate-600"><span>• ${i.nombre} (${i.cantidad} ${i.unidad})</span><span>$${i.costo.toFixed(2)}</span></div>`).join('')}
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    // MÁRGENES
+    function renderizarMargenes() {
+      const tbody = document.getElementById('tabla-margenes-body');
+      tbody.innerHTML = '';
+
+      let sumaMargenes = 0;
+      let countVinculados = 0;
+      let sumaGanancias = 0;
+
+      catalogo.forEach(p => {
+        const receta = recetasCostos.find(r => r.nombre.toLowerCase().trim() === p.nombre.toLowerCase().trim());
+        let costo = 0;
+        let origen = "Sin receta";
+
+        if (receta) {
+          costo = receta.costoPorUnidad;
+          origen = "Ficha Técnica";
+          countVinculados++;
+        }
+
+        const ganancia = p.precio - costo;
+        const margen = p.precio > 0 ? (ganancia / p.precio) * 100 : 0;
+
+        if (receta) {
+          sumaMargenes += margen;
+          sumaGanancias += ganancia;
+        }
+
+        tbody.innerHTML += `
+          <tr class="border-b">
+            <td class="p-3 font-bold text-slate-800">${p.nombre}</td>
+            <td class="p-3">$${p.precio.toLocaleString()}</td>
+            <td class="p-3"><span class="text-xs font-semibold px-2 py-0.5 rounded ${receta ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200 text-slate-600'}">${origen}</span></td>
+            <td class="p-3">$${costo.toFixed(2)}</td>
+            <td class="p-3 font-bold text-emerald-600">$${ganancia.toFixed(2)}</td>
+            <td class="p-3 font-bold ${margen < 30 ? 'text-red-500' : 'text-emerald-600'}">${margen.toFixed(1)}%</td>
+          </tr>
+        `;
+      });
+
+      document.getElementById('stat-margen-promedio').innerText = countVinculados > 0 ? `${(sumaMargenes / countVinculados).toFixed(1)}%` : '0%';
+      document.getElementById('stat-prod-vinculados').innerText = `${countVinculados} / ${catalogo.length}`;
+      document.getElementById('stat-ganancia-promedio').innerText = countVinculados > 0 ? `$${(sumaGanancias / countVinculados).toFixed(2)}` : '$0';
+    }
+
+    // ARQUEO
     window.cargarArqueoDia = async function() {
       const fechaSeleccionada = document.getElementById('filtro-fecha-arqueo').value;
       const contVentas = document.getElementById('lista-ventas-arqueo');
@@ -526,14 +790,12 @@
           else if (data.metodoPago === 'Paga Luego') totalFiado += data.total || 0;
         });
 
-        // Actualizar Widgets
         document.getElementById('arqueo-total-ventas').innerText = `$${totalGeneral.toLocaleString()}`;
         document.getElementById('arqueo-cant-pedidos').innerText = `${ventasCargadasArqueo.length} pedidos registrados`;
         document.getElementById('arqueo-efectivo').innerText = `$${totalEfectivo.toLocaleString()}`;
         document.getElementById('arqueo-transferencia').innerText = `$${totalTransferencia.toLocaleString()}`;
         document.getElementById('arqueo-fiado').innerText = `$${totalFiado.toLocaleString()}`;
 
-        // Renderizar Detalle de ventas
         if (ventasCargadasArqueo.length === 0) {
           contVentas.innerHTML = `<p class="text-xs text-slate-400 text-center py-6">No hay ventas registradas para este día.</p>`;
         } else {
@@ -556,7 +818,7 @@
           });
         }
 
-        calcularDiferenciaArqueo();
+        window.calcularDiferenciaArqueo();
 
       } catch (e) {
         console.error("Error al consultar arqueo: ", e);
@@ -588,8 +850,8 @@
       }
     };
 
-    // Carga inicial
-    renderizarCarrito();
+    // Inicialización inicial
+    renderizarPOS();
   </script>
 </body>
 </html>
