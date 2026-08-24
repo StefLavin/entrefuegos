@@ -6,6 +6,8 @@
   <title>EntreFuegos - Sistema POS & Gestión</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Chart.js para el gráfico de torta -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="bg-slate-100 font-sans text-slate-800 antialiased min-h-screen pb-12">
 
@@ -25,6 +27,9 @@
       <div class="max-w-7xl mx-auto flex px-2">
         <button id="tab-pos" onclick="cambiarPestana('pos')" class="py-2.5 px-4 font-bold text-sm border-b-4 border-white text-white flex items-center gap-2 whitespace-nowrap">
           <i class="fa-solid fa-cash-register"></i> Ventas POS
+        </button>
+        <button id="tab-estadisticas" onclick="cambiarPestana('estadisticas')" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
+          <i class="fa-solid fa-chart-pie"></i> Sabores más Vendidos
         </button>
         <button id="tab-admin" onclick="cambiarPestana('admin')" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
           <i class="fa-solid fa-utensils"></i> Menú de Ventas
@@ -47,6 +52,7 @@
 
   <main class="max-w-7xl mx-auto px-4 py-6">
 
+    <!-- VISTA POS -->
     <section id="vista-pos" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div class="lg:col-span-2 space-y-6">
 
@@ -55,9 +61,14 @@
             <h2 class="font-black text-amber-900 uppercase tracking-wide text-xs flex items-center gap-2">
               <i class="fa-solid fa-cloud-sun text-amber-600"></i> Carga Rápida de Empanadas Estándar por Sabor
             </h2>
-            <span class="text-xs bg-amber-200 text-amber-900 font-bold px-2 py-0.5 rounded-full">
-              Escala: $20.000 / docena | $10.000 / 6 u. | $1.800 / c.u
-            </span>
+            <div class="flex items-center gap-2">
+              <span id="label-escala-precios" class="text-xs bg-amber-200 text-amber-900 font-bold px-2.5 py-1 rounded-full">
+                Escala: $20.000 / docena | $10.000 / 6 u. | $1.800 / c.u
+              </span>
+              <button onclick="abrirModalEscala()" class="bg-amber-700 hover:bg-amber-800 text-white text-xs font-bold px-2.5 py-1 rounded-lg transition flex items-center gap-1 shadow-sm">
+                <i class="fa-solid fa-gear"></i> Editar Escala
+              </button>
+            </div>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
@@ -146,6 +157,75 @@
       </div>
     </section>
 
+    <!-- NUEVA VISTA: ESTADÍSTICAS Y GRÁFICO DE TORTA -->
+    <section id="vista-estadisticas" class="hidden max-w-5xl mx-auto space-y-6">
+      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+        <h2 class="font-bold text-slate-800 text-lg mb-2 flex items-center gap-2">
+          <i class="fa-solid fa-chart-pie text-amber-600"></i> Ranking y Contador de Empanadas Vendidas
+        </h2>
+        <p class="text-xs text-slate-500 mb-6">Muestra la cantidad total vendida por variedad a partir del registro histórico de ventas en Firebase.</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <div class="bg-amber-50 p-4 rounded-xl border border-amber-200 flex items-center gap-4">
+            <div class="p-3 bg-amber-500 text-white rounded-lg">
+              <i class="fa-solid fa-trophy text-2xl"></i>
+            </div>
+            <div>
+              <span class="text-xs font-bold text-amber-800 block">Sabor Más Vendido</span>
+              <span id="stat-top-sabor" class="text-xl font-black text-amber-900">-</span>
+            </div>
+          </div>
+          <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-200 flex items-center gap-4">
+            <div class="p-3 bg-emerald-600 text-white rounded-lg">
+              <i class="fa-solid fa-utensils text-2xl"></i>
+            </div>
+            <div>
+              <span class="text-xs font-bold text-emerald-800 block">Total Empanadas Vendidas</span>
+              <span id="stat-total-empanadas" class="text-xl font-black text-emerald-900">0 unidades</span>
+            </div>
+          </div>
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 flex items-center gap-4">
+            <div class="p-3 bg-slate-700 text-white rounded-lg">
+              <i class="fa-solid fa-list-ol text-2xl"></i>
+            </div>
+            <div>
+              <span class="text-xs font-bold text-slate-600 block">Variedades Activas</span>
+              <span id="stat-variedades-activas" class="text-xl font-black text-slate-800">0 sabores</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+          <!-- Gráfico de Torta -->
+          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-col items-center justify-center">
+            <h3 class="text-sm font-bold text-slate-700 mb-4">Distribución de Ventas por Variedad</h3>
+            <div class="w-full max-w-xs">
+              <canvas id="grafico-torta-empanadas"></canvas>
+            </div>
+          </div>
+
+          <!-- Tabla Contador -->
+          <div>
+            <h3 class="text-sm font-bold text-slate-700 mb-3">Detalle por Variedad</h3>
+            <div class="overflow-hidden border border-slate-200 rounded-xl">
+              <table class="w-full text-left text-sm">
+                <thead class="bg-slate-100 text-xs uppercase font-bold text-slate-600 border-b">
+                  <tr>
+                    <th class="p-3">Sabor / Variedad</th>
+                    <th class="p-3 text-right">Unidades Vendidas</th>
+                    <th class="p-3 text-right">Porcentaje</th>
+                  </tr>
+                </thead>
+                <tbody id="tabla-contador-sabores" class="divide-y divide-slate-100 bg-white">
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESTO DE VISTAS (Menú, Insumos, Recetas, Márgenes, Arqueo) -->
     <section id="vista-admin" class="hidden max-w-4xl mx-auto space-y-6">
       <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
         <h2 class="font-bold text-slate-800 text-lg mb-4 flex items-center gap-2">
@@ -187,6 +267,39 @@
       </div>
     </section>
 
+    <!-- MODAL EDITAR ESCALA DE PRECIOS EMPANADAS -->
+    <div id="modal-editar-escala" class="fixed inset-0 bg-slate-900/50 flex items-center justify-center p-4 z-50 hidden backdrop-blur-sm">
+      <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 space-y-4">
+        <div class="flex justify-between items-center border-b pb-3">
+          <h3 class="font-bold text-slate-800 text-lg flex items-center gap-2">
+            <i class="fa-solid fa-sliders text-amber-600"></i> Escala de Precios Empanadas
+          </h3>
+          <button onclick="cerrarModalEscala()" class="text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
+        </div>
+        <form onsubmit="guardarEscalaPrecios(event)" class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Precio por Docena (12 u.)</label>
+            <input type="number" id="escala-docena" class="w-full border p-2 rounded-lg text-sm bg-slate-50 font-bold" required>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Precio por Media Docena (6 u.)</label>
+            <input type="number" id="escala-media" class="w-full border p-2 rounded-lg text-sm bg-slate-50 font-bold" required>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Precio por Unidad Suelta</label>
+            <input type="number" id="escala-unidad" class="w-full border p-2 rounded-lg text-sm bg-slate-50 font-bold" required>
+          </div>
+          <div class="flex justify-end gap-2 pt-2">
+            <button type="button" onclick="cerrarModalEscala()" class="px-4 py-2 text-sm font-bold text-slate-500 hover:text-slate-700">Cancelar</button>
+            <button type="submit" class="bg-amber-600 hover:bg-amber-700 text-white font-bold px-5 py-2 rounded-lg text-sm transition">
+              <i class="fa-solid fa-check"></i> Actualizar Escala
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- MODAL EDITAR PRODUCTO -->
     <div id="modal-editar-producto" class="fixed inset-0 bg-slate-900/50 flex items-center justify-center p-4 z-50 hidden backdrop-blur-sm">
       <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full p-6 space-y-4">
         <div class="flex justify-between items-center border-b pb-3">
@@ -228,6 +341,7 @@
       </div>
     </div>
 
+    <!-- VISTA INSUMOS -->
     <section id="vista-ingredientes" class="hidden max-w-5xl mx-auto space-y-6">
       <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
         <h2 class="font-bold text-slate-800 text-lg mb-4 flex items-center gap-2">
@@ -278,6 +392,7 @@
       </div>
     </section>
 
+    <!-- VISTA COSTOS & RECETAS -->
     <section id="vista-costos" class="hidden max-w-5xl mx-auto space-y-6">
       <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
         <h2 class="font-bold text-slate-800 text-lg mb-4 flex items-center gap-2">
@@ -319,6 +434,7 @@
       </div>
     </section>
 
+    <!-- VISTA MÁRGENES (Con las tres variedades fijas) -->
     <section id="vista-margenes" class="hidden max-w-5xl mx-auto space-y-6">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
@@ -357,6 +473,7 @@
       </div>
     </section>
 
+    <!-- VISTA ARQUEO -->
     <section id="vista-arqueo" class="hidden max-w-4xl mx-auto space-y-6">
       <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-wrap justify-between items-center gap-4">
         <div>
@@ -436,21 +553,27 @@
     let catalogo = [];
     let materiasPrimas = [];
     let recetasCostos = [];
+    let todasLasVentas = [];
 
     let carrito = [];
     let medioPagoSeleccionado = 'Efectivo';
-    let unsubArqueo = null;
-    let efectivoSistemaDia = 0;
+    let chartTorta = null;
+
+    // Escala de Precios configurable por el usuario
+    let escalaPrecios = {
+      docena: 20000,
+      media: 10000,
+      unidad: 1800
+    };
 
     const hoy = new Date().toISOString().split('T')[0];
 
-    // Inicializar selector de fecha con el día de hoy
     document.addEventListener("DOMContentLoaded", () => {
       const fechaInput = document.getElementById('fecha-venta-pos');
       if (fechaInput) fechaInput.value = hoy;
     });
 
-    // --- ESCUCHADORES DE FIREBASE EN TIEMPO REAL ---
+    // --- ESCUCHADORES EN TIEMPO REAL ---
     function iniciarEscuchadores() {
       // 1. Productos
       onSnapshot(collection(db, "productos"), (snapshot) => {
@@ -464,7 +587,7 @@
         }
       });
 
-      // 2. Insumos con Control de Stock
+      // 2. Insumos
       onSnapshot(collection(db, "insumos"), (snapshot) => {
         materiasPrimas = [];
         snapshot.forEach(docSnap => materiasPrimas.push({ firestoreId: docSnap.id, ...docSnap.data() }));
@@ -479,15 +602,22 @@
         renderizarRecetas();
         renderizarMargenes();
       });
+
+      // 4. Ventas Históricas para Estadísticas
+      onSnapshot(collection(db, "ventas"), (snapshot) => {
+        todasLasVentas = [];
+        snapshot.forEach(docSnap => todasLasVentas.push({ id: docSnap.id, ...docSnap.data() }));
+        renderizarEstadisticasEmpanadas();
+      });
     }
 
     iniciarEscuchadores();
 
     async function cargarCatalogoInicial() {
       const iniciales = [
-        { categoria: 'Empanadas', nombre: 'Carne', precio: 2000 },
-        { categoria: 'Empanadas', nombre: 'Pollo', precio: 2000 },
-        { categoria: 'Empanadas', nombre: 'Jamón y Queso', precio: 2000 },
+        { categoria: 'Empanadas', nombre: 'Carne', precio: 1800 },
+        { categoria: 'Empanadas', nombre: 'Pollo', precio: 1800 },
+        { categoria: 'Empanadas', nombre: 'Jamón y Queso', precio: 1800 },
         { categoria: 'Pizza', nombre: 'Pizza Muzzarella', precio: 15000 },
         { categoria: 'Vianda', nombre: 'Vianda Diaria', precio: 18000 }
       ];
@@ -498,7 +628,7 @@
 
     // NAVEGACIÓN
     window.cambiarPestana = function(pestana) {
-      const vistas = ['pos', 'admin', 'ingredientes', 'costos', 'margenes', 'arqueo'];
+      const vistas = ['pos', 'estadisticas', 'admin', 'ingredientes', 'costos', 'margenes', 'arqueo'];
       vistas.forEach(v => {
         document.getElementById(`vista-${v}`).classList.add('hidden');
         document.getElementById(`tab-${v}`).className = "py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap";
@@ -508,6 +638,7 @@
       document.getElementById(`tab-${pestana}`).className = "py-2.5 px-4 font-bold text-sm border-b-4 border-white text-white flex items-center gap-2 whitespace-nowrap";
 
       if (pestana === 'pos') renderizarPOS();
+      else if (pestana === 'estadisticas') renderizarEstadisticasEmpanadas();
       else if (pestana === 'admin') renderizarAdminProductos();
       else if (pestana === 'ingredientes') renderizarIngredientesBase();
       else if (pestana === 'costos') renderizarRecetas();
@@ -518,6 +649,31 @@
       }
     };
 
+    // --- CONTROL DE ESCALA DE PRECIOS ---
+    window.abrirModalEscala = function() {
+      document.getElementById('escala-docena').value = escalaPrecios.docena;
+      document.getElementById('escala-media').value = escalaPrecios.media;
+      document.getElementById('escala-unidad').value = escalaPrecios.unidad;
+      document.getElementById('modal-editar-escala').classList.remove('hidden');
+    };
+
+    window.cerrarModalEscala = function() {
+      document.getElementById('modal-editar-escala').classList.add('hidden');
+    };
+
+    window.guardarEscalaPrecios = function(e) {
+      e.preventDefault();
+      escalaPrecios.docena = parseFloat(document.getElementById('escala-docena').value) || 0;
+      escalaPrecios.media = parseFloat(document.getElementById('escala-media').value) || 0;
+      escalaPrecios.unidad = parseFloat(document.getElementById('escala-unidad').value) || 0;
+
+      document.getElementById('label-escala-precios').innerText = 
+        `Escala: $${escalaPrecios.docena.toLocaleString()} / docena | $${escalaPrecios.media.toLocaleString()} / 6 u. | $${escalaPrecios.unidad.toLocaleString()} / c.u`;
+
+      calcularPromocionEmpanadas();
+      cerrarModalEscala();
+    };
+
     // --- POS Y VENTAS ---
     function renderizarPOS() {
       const gridEmp = document.getElementById('grid-empanadas');
@@ -525,7 +681,6 @@
       const gridBeb = document.getElementById('grid-bebidas');
 
       if (!gridEmp || !gridPiz || !gridBeb) return;
-
       gridEmp.innerHTML = ''; gridPiz.innerHTML = ''; gridBeb.innerHTML = '';
 
       catalogo.forEach(prod => {
@@ -544,18 +699,13 @@
       });
     }
 
-    // --- LÓGICA DE EMPANADAS POR SABOR CON ESCALA DE PRECIO ---
+    // CALCULAR COMBO CON LA ESCALA DINÁMICA
     window.calcularPromocionEmpanadas = function() {
       const jyq = parseInt(document.getElementById('sabor-jyq').value) || 0;
       const carne = parseInt(document.getElementById('sabor-carne').value) || 0;
       const pollo = parseInt(document.getElementById('sabor-pollo').value) || 0;
 
       const totalUnidades = jyq + carne + pollo;
-
-      const PRECIO_DOCENA = 20000;
-      const PRECIO_MEDIA = 10000;
-      const PRECIO_UNIDAD = 1800;
-
       let docenas = Math.floor(totalUnidades / 12);
       let remanente = totalUnidades % 12;
 
@@ -569,100 +719,100 @@
         unidadesSueltas = remanente;
       }
 
-      const totalMonto = (docenas * PRECIO_DOCENA) + (mediasDocenas * PRECIO_MEDIA) + (unidadesSueltas * PRECIO_UNIDAD);
+      const totalMonto = (docenas * escalaPrecios.docena) + (mediasDocenas * escalaPrecios.media) + (unidadesSueltas * escalaPrecios.unidad);
 
       document.getElementById('resumen-empanadas-promo').innerText = `${totalUnidades} empanadas ($${totalMonto.toLocaleString()})`;
-      document.getElementById('desglose-empanadas-promo').innerText = `${docenas} docena(s), ${mediasDocenas} media(s), ${unidadesSueltas} unidad(es) suelta(s)`;
+      document.getElementById('desglose-empanadas-promo').innerText = `${docenas} docena(s), ${mediasDocenas} media(s), ${unidadesSueltas} suelta(s)`;
     };
 
     window.agregarEmpanadasEspecialesAlCarrito = function() {
       const jyq = parseInt(document.getElementById('sabor-jyq').value) || 0;
       const carne = parseInt(document.getElementById('sabor-carne').value) || 0;
       const pollo = parseInt(document.getElementById('sabor-pollo').value) || 0;
+
       const totalUnidades = jyq + carne + pollo;
-
-      if (totalUnidades === 0) return alert('Por favor ingresá la cantidad de empanadas por sabor.');
-
-      const PRECIO_DOCENA = 20000;
-      const PRECIO_MEDIA = 10000;
-      const PRECIO_UNIDAD = 1800;
+      if (totalUnidades === 0) return;
 
       let docenas = Math.floor(totalUnidades / 12);
       let remanente = totalUnidades % 12;
-      let mediasDocenas = remanente >= 6 ? 1 : 0;
-      let unidadesSueltas = remanente >= 6 ? remanente - 6 : remanente;
+      let medias = 0;
+      let sueltas = 0;
+      if (remanente >= 6) { medias = 1; sueltas = remanente - 6; } 
+      else { sueltas = remanente; }
 
-      const totalMonto = (docenas * PRECIO_DOCENA) + (mediasDocenas * PRECIO_MEDIA) + (unidadesSueltas * PRECIO_UNIDAD);
+      const totalMonto = (docenas * escalaPrecios.docena) + (medias * escalaPrecios.media) + (sueltas * escalaPrecios.unidad);
 
-      let detallesSabores = [];
-      if (jyq > 0) detallesSabores.push(`${jyq} J&Q`);
-      if (carne > 0) detallesSabores.push(`${carne} Carne`);
-      if (pollo > 0) detallesSabores.push(`${pollo} Pollo`);
-
-      const nombreCombo = `Combo Empanadas (${detallesSabores.join(', ')})`;
+      const detalleSabores = [];
+      if (jyq > 0) detalleSabores.push(`${jyq} Jamón y Queso`);
+      if (carne > 0) detalleSabores.push(`${carne} Carne`);
+      if (pollo > 0) detalleSabores.push(`${pollo} Pollo`);
 
       carrito.push({
-        firestoreId: 'promo-emp-' + Date.now(),
-        nombre: nombreCombo,
+        id: 'promo-' + Date.now(),
+        nombre: `Promo Empanadas (${totalUnidades} u.)`,
+        detalle: detalleSabores.join(', '),
         precio: totalMonto,
         cantidad: 1,
-        desgloseSabores: { jyq, carne, pollo }
+        saboresIndividuales: { jyq, carne, pollo }
       });
 
-      // Resetear inputs
       document.getElementById('sabor-jyq').value = 0;
       document.getElementById('sabor-carne').value = 0;
       document.getElementById('sabor-pollo').value = 0;
-      window.calcularPromocionEmpanadas();
+      calcularPromocionEmpanadas();
       renderizarCarrito();
     };
 
-    window.agregarAlCarrito = function(firestoreId) {
-      const prod = catalogo.find(p => p.firestoreId === firestoreId);
+    window.agregarAlCarrito = function(prodId) {
+      const prod = catalogo.find(p => p.firestoreId === prodId);
       if (!prod) return;
-      const itemExistente = carrito.find(item => item.firestoreId === firestoreId);
-      if (itemExistente) itemExistente.cantidad++;
-      else carrito.push({ ...prod, cantidad: 1 });
+
+      const enCarrito = carrito.find(item => item.firestoreId === prodId);
+      if (enCarrito) {
+        enCarrito.cantidad++;
+      } else {
+        carrito.push({
+          firestoreId: prod.firestoreId,
+          nombre: prod.nombre,
+          precio: prod.precio,
+          cantidad: 1,
+          categoria: prod.categoria
+        });
+      }
       renderizarCarrito();
     };
 
-    window.seleccionarPago = function(metodo) {
-      medioPagoSeleccionado = metodo;
-      document.querySelectorAll('.btn-pago').forEach(btn => btn.className = "btn-pago border p-2 text-xs rounded-lg font-bold text-slate-600 border-slate-300");
-      const btnActivo = document.getElementById(`btn-${metodo}`);
-      if (btnActivo) btnActivo.className = "btn-pago border p-2 text-xs rounded-lg font-bold text-white bg-amber-600 border-amber-600";
-    };
+    function renderizarCarrito() {
+      const contenedor = document.getElementById('lista-pedido');
+      contenedor.innerHTML = '';
+      let total = 0;
 
-    window.registrarVenta = async function() {
-      if (carrito.length === 0) return alert('El carrito está vacío.');
+      carrito.forEach((item, idx) => {
+        const subtotal = item.precio * item.cantidad;
+        total += subtotal;
+        contenedor.innerHTML += `
+          <div class="flex justify-between items-center bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+            <div>
+              <div class="text-xs font-bold text-slate-800">${item.nombre}</div>
+              ${item.detalle ? `<div class="text-[10px] text-amber-700 font-semibold">${item.detalle}</div>` : ''}
+              <div class="text-xs text-amber-600 font-bold">$${item.precio.toLocaleString()} x ${item.cantidad}</div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-black text-slate-700">$${subtotal.toLocaleString()}</span>
+              <button onclick="eliminarDelCarrito(${idx})" class="text-red-500 hover:text-red-700 text-xs font-bold px-1.5 py-0.5 rounded">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+          </div>
+        `;
+      });
 
-      const fechaSeleccionada = document.getElementById('fecha-venta-pos').value || hoy;
-      const total = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+      document.getElementById('total-monto').innerText = `$${total.toLocaleString()}`;
+    }
 
-      const venta = {
-        fechaStr: fechaSeleccionada,
-        timestamp: serverTimestamp(),
-        items: carrito,
-        total: total,
-        metodoPago: medioPagoSeleccionado
-      };
-
-      try {
-        const btnGuardar = document.getElementById('btn-guardar');
-        btnGuardar.disabled = true;
-        btnGuardar.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Guardando...`;
-
-        await addDoc(collection(db, "ventas"), venta);
-        alert(`¡Venta registrada con éxito para la fecha ${fechaSeleccionada}!`);
-        window.vaciarCarrito();
-      } catch (err) {
-        console.error("Error al registrar venta: ", err);
-        alert('Ocurrió un error al guardar la venta.');
-      } finally {
-        const btnGuardar = document.getElementById('btn-guardar');
-        btnGuardar.disabled = false;
-        btnGuardar.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Registrar y Sincronizar`;
-      }
+    window.eliminarDelCarrito = function(idx) {
+      carrito.splice(idx, 1);
+      renderizarCarrito();
     };
 
     window.vaciarCarrito = function() {
@@ -670,438 +820,284 @@
       renderizarCarrito();
     };
 
-    function renderizarCarrito() {
-      const cont = document.getElementById('lista-pedido');
-      if (carrito.length === 0) {
-        cont.innerHTML = `<p class="text-sm text-slate-400 text-center py-8">No hay productos en el pedido.</p>`;
-        document.getElementById('total-monto').innerText = '$0';
-        return;
-      }
-
-      cont.innerHTML = '';
-      let total = 0;
-      carrito.forEach((item) => {
-        const sub = item.precio * item.cantidad;
-        total += sub;
-        cont.innerHTML += `
-          <div class="flex justify-between items-center text-sm border-b pb-2">
-            <div>
-              <span class="font-bold text-slate-800">${item.nombre}</span>
-              <span class="text-xs text-slate-500 block">$${item.precio.toLocaleString()} c/u</span>
-            </div>
-            <div class="flex items-center gap-2">
-              <span class="font-bold text-slate-700">x${item.cantidad}</span>
-              <span class="font-bold text-amber-600">$${sub.toLocaleString()}</span>
-            </div>
-          </div>
-        `;
+    window.seleccionarPago = function(metodo) {
+      medioPagoSeleccionado = metodo;
+      document.querySelectorAll('.btn-pago').forEach(b => {
+        b.className = "btn-pago border p-2 text-xs rounded-lg font-bold text-slate-600 border-slate-300";
       });
-      document.getElementById('total-monto').innerText = `$${total.toLocaleString()}`;
-    }
-
-    // --- MENÚ DE VENTAS (ALTA, EDICIÓN Y BAJA) ---
-    window.cambiarTipoFormulario = function() {
-      const cat = document.getElementById('prod-categoria').value;
-      const campoLitros = document.getElementById('campo-litros');
-      if (cat === 'Bebidas') campoLitros.classList.remove('hidden');
-      else campoLitros.classList.add('hidden');
+      const btnActivo = document.getElementById(`btn-${metodo}`);
+      if (btnActivo) btnActivo.className = "btn-pago border p-2 text-xs rounded-lg font-bold text-white bg-amber-600 border-amber-600";
     };
 
-    window.cambiarTipoFormularioEdicion = function() {
-      const cat = document.getElementById('edit-prod-categoria').value;
-      const campoLitros = document.getElementById('edit-campo-litros');
-      if (cat === 'Bebidas') campoLitros.classList.remove('hidden');
-      else campoLitros.classList.add('hidden');
-    };
+    window.registrarVenta = async function() {
+      if (carrito.length === 0) return alert('El carrito está vacío');
+      const fecha = document.getElementById('fecha-venta-pos').value || hoy;
 
-    window.guardarNuevoProducto = async function(e) {
-      e.preventDefault();
-      const categoria = document.getElementById('prod-categoria').value;
-      const nombre = document.getElementById('prod-nombre').value.trim();
-      const litros = document.getElementById('prod-litros').value.trim();
-      const precio = parseFloat(document.getElementById('prod-precio').value);
+      const total = carrito.reduce((acc, item) => acc + (item.precio * item.cantidad), 0);
+
+      const venta = {
+        fecha,
+        items: carrito,
+        total,
+        medioPago: medioPagoSeleccionado,
+        timestamp: serverTimestamp()
+      };
 
       try {
-        await addDoc(collection(db, "productos"), { categoria, nombre, litros, precio });
-        e.target.reset();
-        window.cambiarTipoFormulario();
-      } catch (err) {
-        alert('Error al guardar el producto.');
+        await addDoc(collection(db, "ventas"), venta);
+        vaciarCarrito();
+        alert('Venta registrada con éxito');
+      } catch (e) {
+        console.error("Error registrando venta:", e);
+        alert('Error al registrar venta');
       }
     };
 
-    window.prepararEdicionProducto = function(firestoreId) {
-      const prod = catalogo.find(p => p.firestoreId === firestoreId);
-      if (!prod) return;
+    // --- NUEVA VISTA DE ESTADÍSTICAS Y GRÁFICO DE TORTA ---
+    function renderizarEstadisticasEmpanadas() {
+      const conteoSabores = {
+        "Jamón y Queso": 0,
+        "Carne": 0,
+        "Pollo": 0
+      };
 
-      document.getElementById('edit-prod-id').value = prod.firestoreId;
-      document.getElementById('edit-prod-categoria').value = prod.categoria || 'Empanadas';
-      document.getElementById('edit-prod-nombre').value = prod.nombre || '';
-      document.getElementById('edit-prod-litros').value = prod.litros || '';
-      document.getElementById('edit-prod-precio').value = prod.precio || 0;
-
-      window.cambiarTipoFormularioEdicion();
-      document.getElementById('modal-editar-producto').classList.remove('hidden');
-    };
-
-    window.cerrarModalEditar = function() {
-      document.getElementById('modal-editar-producto').classList.add('hidden');
-    };
-
-    window.actualizarProducto = async function(e) {
-      e.preventDefault();
-      const id = document.getElementById('edit-prod-id').value;
-      const categoria = document.getElementById('edit-prod-categoria').value;
-      const nombre = document.getElementById('edit-prod-nombre').value.trim();
-      const litros = document.getElementById('edit-prod-litros').value.trim();
-      const precio = parseFloat(document.getElementById('edit-prod-precio').value);
-
-      try {
-        await updateDoc(doc(db, "productos", id), {
-          categoria,
-          nombre,
-          litros,
-          precio
-        });
-        window.cerrarModalEditar();
-      } catch (err) {
-        console.error("Error al actualizar: ", err);
-        alert('Error al actualizar el producto.');
-      }
-    };
-
-    window.eliminarProducto = async function(firestoreId) {
-      if (!confirm('¿Seguro que querés borrar este producto?')) return;
-      try {
-        await deleteDoc(doc(db, "productos", firestoreId));
-      } catch (err) {
-        alert('Error al borrar el producto.');
-      }
-    };
-
-    function renderizarAdminProductos() {
-      const cont = document.getElementById('lista-admin-productos');
-      if (!cont) return;
-      if (catalogo.length === 0) {
-        cont.innerHTML = `<p class="text-xs text-slate-400 py-4">No hay productos guardados.</p>`;
-        return;
-      }
-      cont.innerHTML = '';
-      catalogo.forEach(p => {
-        cont.innerHTML += `
-          <div class="py-3 flex justify-between items-center border-b border-slate-100">
-            <div>
-              <span class="text-xs font-bold bg-amber-100 text-amber-800 px-2 py-0.5 rounded mr-2">${p.categoria}</span>
-              <span class="font-bold text-slate-700">${p.nombre} ${p.litros ? `(${p.litros})` : ''}</span>
-            </div>
-            <div class="flex items-center gap-4">
-              <span class="font-black text-emerald-600">$${(p.precio || 0).toLocaleString()}</span>
-              <div class="flex items-center gap-2">
-                <button onclick="prepararEdicionProducto('${p.firestoreId}')" class="text-amber-600 hover:text-amber-800 text-xs font-bold flex items-center gap-1">
-                  <i class="fa-solid fa-pen-to-square"></i> Editar
-                </button>
-                <button onclick="eliminarProducto('${p.firestoreId}')" class="text-red-500 hover:text-red-700 text-xs font-bold flex items-center gap-1">
-                  <i class="fa-solid fa-trash"></i> Borrar
-                </button>
-              </div>
-            </div>
-          </div>
-        `;
-      });
-    }
-
-    // --- INSUMOS CON CONTROL Y AJUSTE DE STOCK ---
-    window.guardarIngrediente = async function(e) {
-      e.preventDefault();
-      const nombre = document.getElementById('ing-nombre').value.trim();
-      const cantidad = parseFloat(document.getElementById('ing-cantidad-paquete').value);
-      const unidad = document.getElementById('ing-unidad').value;
-      const precio = parseFloat(document.getElementById('ing-precio-paquete').value);
-      const stockActual = parseFloat(document.getElementById('ing-stock-actual').value) || 0;
-      const stockMinimo = parseFloat(document.getElementById('ing-stock-minimo').value) || 0;
-
-      let factorConversion = (unidad === 'kg' || unidad === 'lt') ? cantidad * 1000 : cantidad;
-      const costoUnitarioStandard = precio / factorConversion;
-
-      try {
-        await addDoc(collection(db, "insumos"), { 
-          nombre, cantidad, unidad, precio, costoUnitarioStandard, stockActual, stockMinimo 
-        });
-        e.target.reset();
-      } catch (err) {
-        alert('Error al guardar el insumo.');
-      }
-    };
-
-    function renderizarIngredientesBase() {
-      const cont = document.getElementById('lista-ingredientes-base');
-      if (!cont) return;
-      if (materiasPrimas.length === 0) {
-        cont.innerHTML = `<p class="text-xs text-slate-400 py-4">No hay insumos registrados.</p>`;
-        return;
-      }
-      cont.innerHTML = '';
-      materiasPrimas.forEach(i => {
-        const alerteStock = i.stockActual <= i.stockMinimo;
-        cont.innerHTML += `
-          <div class="py-3 flex justify-between items-center border-b border-slate-100">
-            <div>
-              <span class="font-bold text-slate-800">${i.nombre}</span>
-              <span class="text-xs text-slate-400 block">$${i.precio} por ${i.cantidad} ${i.unidad} ($${i.costoUnitarioStandard ? i.costoUnitarioStandard.toFixed(2) : 0}/unidad base)</span>
-            </div>
-            <div class="flex items-center gap-4">
-              <span class="text-xs font-bold ${alerteStock ? 'text-red-600 bg-red-50' : 'text-slate-600 bg-slate-100'} px-2.5 py-1 rounded-lg">
-                Stock: ${i.stockActual} ${i.unidad}
-              </span>
-              <button onclick="eliminarInsumo('${i.firestoreId}')" class="text-red-500 hover:text-red-700 text-xs font-bold"><i class="fa-solid fa-trash"></i></button>
-            </div>
-          </div>
-        `;
-      });
-    }
-
-    window.eliminarInsumo = async function(id) {
-      if (!confirm('¿Borrar insumo?')) return;
-      await deleteDoc(doc(db, "insumos", id));
-    };
-
-    // --- RECETAS Y FICHAS TÉCNICAS ---
-    window.agregarFilaIngredienteReceta = function() {
-      const cont = document.getElementById('contenedor-ingredientes-receta');
-      let opciones = `<option value="">Seleccionar Insumo...</option>`;
-      materiasPrimas.forEach(m => {
-        opciones += `<option value="${m.firestoreId}">${m.nombre} (${m.unidad})</option>`;
-      });
-
-      const row = document.createElement('div');
-      row.className = "flex gap-2 items-center";
-      row.innerHTML = `
-        <select class="receta-ing-id w-1/2 border p-2 rounded-lg text-sm bg-slate-50">${opciones}</select>
-        <input type="number" step="0.01" placeholder="Cant." class="receta-ing-cant w-1/3 border p-2 rounded-lg text-sm bg-slate-50">
-        <button type="button" onclick="this.parentElement.remove()" class="text-red-500 hover:text-red-700 text-sm font-bold px-2">&times;</button>
-      `;
-      cont.appendChild(row);
-    };
-
-    window.guardarCostosReceta = async function(e) {
-      e.preventDefault();
-      const nombreReceta = document.getElementById('costo-nombre-receta').value.trim();
-      const rendimiento = parseFloat(document.getElementById('costo-rendimiento').value);
-
-      const filas = document.getElementById('contenedor-ingredientes-receta').children;
-      const ingredientes = [];
-
-      for (let f of filas) {
-        const idInsumo = f.querySelector('.receta-ing-id').value;
-        const cant = parseFloat(f.querySelector('.receta-ing-cant').value);
-        if (idInsumo && cant) {
-          ingredientes.push({ idInsumo, cantidadUsada: cant });
-        }
-      }
-
-      try {
-        await addDoc(collection(db, "recetas"), { nombreReceta, rendimiento, ingredientes });
-        e.target.reset();
-        document.getElementById('contenedor-ingredientes-receta').innerHTML = '';
-      } catch (err) {
-        alert('Error al guardar la receta.');
-      }
-    };
-
-    function renderizarRecetas() {
-      const cont = document.getElementById('lista-recetas-costos');
-      if (!cont) return;
-      if (recetasCostos.length === 0) {
-        cont.innerHTML = `<p class="text-xs text-slate-400 py-4 col-span-2">No hay fichas técnicas guardadas.</p>`;
-        return;
-      }
-      cont.innerHTML = '';
-      recetasCostos.forEach(r => {
-        let costoTotal = 0;
-        let listaIng = '';
-
-        r.ingredientes.forEach(ing => {
-          const insumo = materiasPrimas.find(m => m.firestoreId === ing.idInsumo);
-          if (insumo) {
-            const costoParcial = (insumo.costoUnitarioStandard || 0) * ing.cantidadUsada;
-            costoTotal += costoParcial;
-            listaIng += `<li class="text-xs text-slate-600 flex justify-between"><span>${insumo.nombre} (${ing.cantidadUsada} ${insumo.unidad})</span><span>$${costoParcial.toFixed(1)}</span></li>`;
+      todasLasVentas.forEach(venta => {
+        if (!venta.items) return;
+        venta.items.forEach(item => {
+          // Caso 1: Promo de Empanadas
+          if (item.saboresIndividuales) {
+            conteoSabores["Jamón y Queso"] += (item.saboresIndividuales.jyq || 0) * (item.cantidad || 1);
+            conteoSabores["Carne"] += (item.saboresIndividuales.carne || 0) * (item.cantidad || 1);
+            conteoSabores["Pollo"] += (item.saboresIndividuales.pollo || 0) * (item.cantidad || 1);
+          } 
+          // Caso 2: Empanada directa por catálogo
+          else if (item.categoria === 'Empanadas' || item.nombre.toLowerCase().includes('empanada')) {
+            const nombre = item.nombre.replace(/empanada/ie, '').trim();
+            conteoSabores[nombre] = (conteoSabores[nombre] || 0) + (item.cantidad || 1);
           }
         });
-
-        const costoUnitario = r.rendimiento > 0 ? costoTotal / r.rendimiento : 0;
-
-        cont.innerHTML += `
-          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 relative">
-            <button onclick="eliminarReceta('${r.firestoreId}')" class="absolute top-3 right-3 text-red-500 hover:text-red-700 text-xs font-bold"><i class="fa-solid fa-trash"></i></button>
-            <h3 class="font-bold text-slate-800 text-base mb-1">${r.nombreReceta}</h3>
-            <span class="text-xs font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded">Rinde: ${r.rendimiento} u.</span>
-            <ul class="my-3 space-y-1 border-t border-b py-2">${listaIng}</ul>
-            <div class="flex justify-between items-center text-xs font-bold">
-              <span>Costo Total: $${costoTotal.toFixed(1)}</span>
-              <span class="text-emerald-600 font-black text-sm">C/U: $${costoUnitario.toFixed(1)}</span>
-            </div>
-          </div>
-        `;
       });
+
+      const totalVendidas = Object.values(conteoSabores).reduce((a, b) => a + b, 0);
+
+      // Calcular Top Sabor
+      let topSabor = "-";
+      let maxCant = -1;
+      Object.entries(conteoSabores).forEach(([sabor, cant]) => {
+        if (cant > maxCant && cant > 0) {
+          maxCant = cant;
+          topSabor = sabor;
+        }
+      });
+
+      document.getElementById('stat-top-sabor').innerText = topSabor;
+      document.getElementById('stat-total-empanadas').innerText = `${totalVendidas} unidades`;
+      document.getElementById('stat-variedades-activas').innerText = `${Object.keys(conteoSabores).length} variedades`;
+
+      // Renderizar Tabla
+      const tbody = document.getElementById('tabla-contador-sabores');
+      if (tbody) {
+        tbody.innerHTML = '';
+        Object.entries(conteoSabores).sort((a,b) => b[1] - a[1]).forEach(([sabor, cant]) => {
+          const pct = totalVendidas > 0 ? ((cant / totalVendidas) * 100).toFixed(1) : 0;
+          tbody.innerHTML += `
+            <tr>
+              <td class="p-3 font-bold text-slate-800">${sabor}</td>
+              <td class="p-3 text-right font-black text-amber-600">${cant} u.</td>
+              <td class="p-3 text-right font-semibold text-slate-500">${pct}%</td>
+            </tr>
+          `;
+        });
+      }
+
+      // Renderizar Gráfico de Torta
+      const canvas = document.getElementById('grafico-torta-empanadas');
+      if (canvas) {
+        const ctx = canvas.getContext('2d');
+        if (chartTorta) chartTorta.destroy();
+
+        chartTorta = new Chart(ctx, {
+          type: 'pie',
+          data: {
+            labels: Object.keys(conteoSabores),
+            datasets: [{
+              data: Object.values(conteoSabores),
+              backgroundColor: ['#f59e0b', '#ef4444', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899']
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { position: 'bottom' }
+            }
+          }
+        });
+      }
     }
 
-    window.eliminarReceta = async function(id) {
-      if (!confirm('¿Borrar receta?')) return;
-      await deleteDoc(doc(db, "recetas", id));
-    };
-
-    // --- MÁRGENES Y GANANCIAS ---
+    // --- MÁRGENES Y GANANCIAS CON OPCIONES FIJAS ---
     function renderizarMargenes() {
       const tbody = document.getElementById('tabla-margenes-body');
       if (!tbody) return;
-
       tbody.innerHTML = '';
-      let vinculados = 0;
-      let sumaMargenes = 0;
-      let sumaGanancias = 0;
 
-      catalogo.forEach(p => {
-        const receta = recetasCostos.find(r => r.nombreReceta.toLowerCase().trim() === p.nombre.toLowerCase().trim());
-        let costoUnitario = 0;
-        let estado = `<span class="text-xs bg-slate-100 text-slate-400 font-semibold px-2 py-0.5 rounded">Sin Ficha</span>`;
+      // Garantizar que estén las 3 opciones de Empanadas más otros productos del catálogo
+      const nombresRequeridos = ['Empanada de Carne', 'Empanada de Jamón y Queso', 'Empanada de Pollo'];
+      const listaProds = [...catalogo];
 
-        if (receta) {
-          vinculados++;
-          let costoTotal = 0;
-          receta.ingredientes.forEach(ing => {
-            const insumo = materiasPrimas.find(m => m.firestoreId === ing.idInsumo);
-            if (insumo) costoTotal += (insumo.costoUnitarioStandard || 0) * ing.cantidadUsada;
+      nombresRequeridos.forEach(req => {
+        if (!listaProds.some(p => p.nombre.toLowerCase().includes(req.toLowerCase()))) {
+          listaProds.unshift({
+            nombre: req,
+            precio: escalaPrecios.unidad,
+            categoria: 'Empanadas'
           });
-          costoUnitario = receta.rendimiento > 0 ? costoTotal / receta.rendimiento : 0;
-          estado = `<span class="text-xs bg-emerald-100 text-emerald-800 font-semibold px-2 py-0.5 rounded">Vinculado</span>`;
+        }
+      });
+
+      let totalMargen = 0;
+      let totalGanancia = 0;
+      let vinculados = 0;
+
+      listaProds.forEach(prod => {
+        const receta = recetasCostos.find(r => r.nombreReceta.toLowerCase() === prod.nombre.toLowerCase() || prod.nombre.toLowerCase().includes(r.nombreReceta.toLowerCase()));
+
+        let costoUnitario = 0;
+        let estadoFicha = '<span class="text-xs font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">Sin Ficha</span>';
+
+        if (receta && receta.rendimiento > 0) {
+          estadoFicha = '<span class="text-xs font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">Vinculado</span>';
+          vinculados++;
+
+          let costoTotalReceta = 0;
+          if (receta.ingredientes) {
+            receta.ingredientes.forEach(ing => {
+              const base = materiasPrimas.find(m => m.firestoreId === ing.insumoId || m.nombre === ing.nombre);
+              if (base && base.cantidadPaquete > 0) {
+                const costoPorUnidadBase = base.precioPaquete / base.cantidadPaquete;
+                costoTotalReceta += (costoPorUnidadBase * ing.cantidad);
+              }
+            });
+          }
+          costoUnitario = costoTotalReceta / receta.rendimiento;
         }
 
-        const ganancia = p.precio - costoUnitario;
-        const margen = p.precio > 0 ? ((ganancia / p.precio) * 100) : 0;
+        const precioVenta = prod.precio || escalaPrecios.unidad;
+        const ganancia = precioVenta - costoUnitario;
+        const margenPct = precioVenta > 0 ? ((ganancia / precioVenta) * 100).toFixed(1) : 0;
 
-        if (receta) {
-          sumaMargenes += margen;
-          sumaGanancias += ganancia;
+        if (costoUnitario > 0) {
+          totalMargen += parseFloat(margenPct);
+          totalGanancia += ganancia;
         }
 
         tbody.innerHTML += `
-          <tr class="hover:bg-slate-50 transition">
-            <td class="p-3 font-bold text-slate-800">${p.nombre}</td>
-            <td class="p-3 font-semibold text-slate-700">$${(p.precio || 0).toLocaleString()}</td>
-            <td class="p-3">${estado}</td>
-            <td class="p-3 font-semibold text-slate-500">$${costoUnitario.toFixed(1)}</td>
-            <td class="p-3 font-bold text-emerald-600">$${ganancia.toFixed(1)}</td>
-            <td class="p-3 font-black ${margen >= 50 ? 'text-emerald-600' : 'text-amber-600'}">${margen.toFixed(1)}%</td>
+          <tr>
+            <td class="p-3 font-bold text-slate-800">${prod.nombre}</td>
+            <td class="p-3 font-bold text-slate-700">$${precioVenta.toLocaleString()}</td>
+            <td class="p-3">${estadoFicha}</td>
+            <td class="p-3 font-semibold text-slate-600">$${costoUnitario.toFixed(2)}</td>
+            <td class="p-3 font-bold text-amber-600">$${ganancia.toFixed(2)}</td>
+            <td class="p-3 font-black text-emerald-600">${margenPct}%</td>
           </tr>
         `;
       });
 
-      document.getElementById('stat-prod-vinculados').innerText = `${vinculados} / ${catalogo.length}`;
-      document.getElementById('stat-margen-promedio').innerText = vinculados > 0 ? `${(sumaMargenes / vinculados).toFixed(1)}%` : '0%';
-      document.getElementById('stat-ganancia-promedio').innerText = vinculados > 0 ? `$${(sumaGanancias / vinculados).toFixed(1)}` : '$0';
+      document.getElementById('stat-prod-vinculados').innerText = `${vinculados} / ${listaProds.length}`;
+      document.getElementById('stat-margen-promedio').innerText = `${vinculados > 0 ? (totalMargen / vinculados).toFixed(1) : 0}%`;
+      document.getElementById('stat-ganancia-promedio').innerText = `$${vinculados > 0 ? (totalGanancia / vinculados).toFixed(2) : 0}`;
     }
 
-    // --- ARQUEO Y CIERRE DE CAJA ---
-    window.cargarArqueoDia = function() {
-      const fecha = document.getElementById('filtro-fecha-arqueo').value;
-      if (!fecha) return;
+    // --- ARQUEO DE CAJA ---
+    window.cargarArqueoDia = async function() {
+      const fecha = document.getElementById('filtro-fecha-arqueo').value || hoy;
+      const q = query(collection(db, "ventas"), where("fecha", "==", fecha));
+      const snap = await getDocs(q);
 
-      if (unsubArqueo) unsubArqueo();
+      let total = 0;
+      let efectivo = 0;
+      let transferencia = 0;
+      let fiado = 0;
+      let cant = 0;
 
-      const q = query(collection(db, "ventas"), where("fechaStr", "==", fecha));
-      unsubArqueo = onSnapshot(q, (snapshot) => {
-        let total = 0;
-        let ef = 0;
-        let tr = 0;
-        let fiado = 0;
-        let cant = 0;
+      const contenedor = document.getElementById('lista-ventas-arqueo');
+      if (contenedor) contenedor.innerHTML = '';
 
-        const contList = document.getElementById('lista-ventas-arqueo');
-        contList.innerHTML = '';
+      snap.forEach(docSnap => {
+        const v = docSnap.data();
+        cant++;
+        total += v.total || 0;
+        if (v.medioPago === 'Efectivo') efectivo += v.total;
+        else if (v.medioPago === 'Transferencia') transferencia += v.total;
+        else if (v.medioPago === 'Paga Luego') fiado += v.total;
 
-        snapshot.forEach(docSnap => {
-          const v = docSnap.data();
-          cant++;
-          total += v.total;
-
-          if (v.metodoPago === 'Efectivo') ef += v.total;
-          else if (v.metodoPago === 'Transferencia') tr += v.total;
-          else if (v.metodoPago === 'Paga Luego') fiado += v.total;
-
-          let prodDetalle = v.items.map(i => `${i.nombre} (x${i.cantidad})`).join(', ');
-
-          contList.innerHTML += `
-            <div class="py-3 flex justify-between items-center">
+        if (contenedor) {
+          contenedor.innerHTML += `
+            <div class="py-2 flex justify-between items-center text-xs">
               <div>
-                <span class="font-bold text-slate-800 text-sm">${prodDetalle}</span>
-                <span class="text-xs text-slate-400 block">${v.metodoPago}</span>
+                <span class="font-bold text-slate-800">${v.medioPago}</span> - ${v.items ? v.items.map(i=>i.nombre).join(', ') : ''}
               </div>
-              <span class="font-bold text-amber-600 text-sm">$${v.total.toLocaleString()}</span>
+              <span class="font-bold text-amber-600">$${(v.total||0).toLocaleString()}</span>
             </div>
           `;
-        });
-
-        efectivoSistemaDia = ef;
-
-        document.getElementById('arqueo-total-ventas').innerText = `$${total.toLocaleString()}`;
-        document.getElementById('arqueo-cant-pedidos').innerText = `${cant} pedidos registrados`;
-        document.getElementById('arqueo-efectivo').innerText = `$${ef.toLocaleString()}`;
-        document.getElementById('arqueo-transferencia').innerText = `$${tr.toLocaleString()}`;
-        document.getElementById('arqueo-fiado').innerText = `Paga luego: $${fiado.toLocaleString()}`;
-
-        window.calcularDiferenciaArqueo();
+        }
       });
+
+      document.getElementById('arqueo-total-ventas').innerText = `$${total.toLocaleString()}`;
+      document.getElementById('arqueo-cant-pedidos').innerText = `${cant} pedidos registrados`;
+      document.getElementById('arqueo-efectivo').innerText = `$${efectivo.toLocaleString()}`;
+      document.getElementById('arqueo-transferencia').innerText = `$${transferencia.toLocaleString()}`;
+      document.getElementById('arqueo-fiado').innerText = `Paga luego: $${fiado.toLocaleString()}`;
+
+      window.efectivosistemaDia = efectivo;
+      calcularDiferenciaArqueo();
     };
 
     window.calcularDiferenciaArqueo = function() {
-      const efReal = parseFloat(document.getElementById('arqueo-efectivo-real').value) || 0;
-      const dif = efReal - efectivoSistemaDia;
-      const box = document.getElementById('arqueo-diferencia-monto');
-
-      if (dif === 0) {
-        box.innerText = "$0";
-        box.className = "text-xl font-black text-slate-700";
-      } else if (dif > 0) {
-        box.innerText = `+$${dif.toLocaleString()} (Sobrante)`;
-        box.className = "text-xl font-black text-emerald-600";
-      } else {
-        box.innerText = `-$${Math.abs(dif).toLocaleString()} (Faltante)`;
-        box.className = "text-xl font-black text-red-600";
-      }
+      const contado = parseFloat(document.getElementById('arqueo-efectivo-real').value) || 0;
+      const dif = contado - (window.efectivosistemaDia || 0);
+      const elMonto = document.getElementById('arqueo-diferencia-monto');
+      elMonto.innerText = `$${dif.toLocaleString()}`;
+      if (dif < 0) elMonto.className = "text-xl font-black text-red-600";
+      else if (dif > 0) elMonto.className = "text-xl font-black text-emerald-600";
+      else elMonto.className = "text-xl font-black text-slate-800";
     };
 
-    window.guardarCierreCaja = async function() {
-      const fecha = document.getElementById('filtro-fecha-arqueo').value;
-      const efReal = parseFloat(document.getElementById('arqueo-efectivo-real').value) || 0;
-      const dif = efReal - efectivoSistemaDia;
+    // FUNCIÓN DE APOYO MANTENIDAS
+    function renderizarAdminProductos() {
+      const cont = document.getElementById('lista-admin-productos');
+      if (!cont) return;
+      cont.innerHTML = '';
+      catalogo.forEach(p => {
+        cont.innerHTML += `
+          <div class="py-3 flex justify-between items-center">
+            <div>
+              <span class="font-bold text-slate-800 text-sm">${p.nombre}</span>
+              <span class="text-xs text-slate-400 block">${p.categoria}</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="font-black text-amber-600 text-sm">$${p.precio}</span>
+              <button onclick="eliminarProducto('${p.firestoreId}')" class="text-red-500 hover:text-red-700 text-xs"><i class="fa-solid fa-trash"></i></button>
+            </div>
+          </div>
+        `;
+      });
+    }
 
-      try {
-        await setDoc(doc(db, "cierres_caja", fecha), {
-          fechaStr: fecha,
-          efectivoSistema: efectivoSistemaDia,
-          efectivoContado: efReal,
-          diferencia: dif,
-          timestamp: serverTimestamp()
-        });
-        alert('Cierre de caja guardado exitosamente.');
-      } catch (err) {
-        alert('Error al guardar el cierre de caja.');
-      }
+    window.guardarNuevoProducto = async function(e) {
+      e.preventDefault();
+      const cat = document.getElementById('prod-categoria').value;
+      const nom = document.getElementById('prod-nombre').value;
+      const pre = parseFloat(document.getElementById('prod-precio').value);
+      await addDoc(collection(db, "productos"), { categoria: cat, nombre: nom, precio: pre });
+      document.getElementById('prod-nombre').value = '';
+      document.getElementById('prod-precio').value = '';
     };
 
-    window.eliminarVentasDelDia = async function() {
-      const fecha = document.getElementById('filtro-fecha-arqueo').value;
-      if (!confirm(`¿Eliminar TODAS las ventas del día ${fecha}? Esta acción no se puede deshacer.`)) return;
-
-      const q = query(collection(db, "ventas"), where("fechaStr", "==", fecha));
-      const snapshot = await getDocs(q);
-
-      const deletePromises = [];
-      snapshot.forEach(docSnap => deletePromises.push(deleteDoc(doc(db, "ventas", docSnap.id))));
-
-      await Promise.all(deletePromises);
-      alert('Ventas del día eliminadas.');
+    window.eliminarProducto = async function(id) {
+      if (confirm('¿Eliminar producto del menú?')) {
+        await deleteDoc(doc(db, "productos", id));
+      }
     };
   </script>
 </body>
