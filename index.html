@@ -20,7 +20,7 @@
         <i class="fa-solid fa-fire"></i> EntreFuegos
       </h1>
       <span class="text-xs bg-amber-700 px-3 py-1 rounded-full font-semibold flex items-center gap-1">
-        <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span> Firebase Conectado
+        <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span> Firebase Conectado (Tiempo Real)
       </span>
     </div>
 
@@ -372,7 +372,7 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs, query, where, doc, deleteDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, getDocs, query, where, doc, deleteDoc, setDoc, serverTimestamp, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBLkWuMHj3hEXQ7b6Fr0I5Eu8B4I8KqlGk",
@@ -399,6 +399,7 @@
     let recetasCostos = JSON.parse(localStorage.getItem('recetas_costos_entrefuegos')) || [];
     let carrito = [];
     let medioPagoSeleccionado = 'Efectivo';
+    let unsubArqueo = null; // Escuchador activo en tiempo real
 
     const hoy = new Date().toISOString().split('T')[0];
 
@@ -781,18 +782,22 @@
       document.getElementById('stat-ganancia-promedio').innerText = vinculados > 0 ? `$${Math.round(sumaGanancias / vinculados).toLocaleString()}` : '$0';
     }
 
-    // ARQUEO
+    // ARQUEO CON REALTIME SNAPSHOT
     let efectivoSistemaDia = 0;
 
-    window.cargarArqueoDia = async function() {
+    window.cargarArqueoDia = function() {
       const fecha = document.getElementById('filtro-fecha-arqueo').value;
       const cont = document.getElementById('lista-ventas-arqueo');
-      cont.innerHTML = `<p class="text-xs text-slate-400 text-center py-6"><i class="fa-solid fa-spinner animate-spin mr-1"></i> Cargando...</p>`;
 
-      try {
-        const q = query(collection(db, "ventas"), where("fechaStr", "==", fecha));
-        const querySnapshot = await getDocs(q);
+      // Si ya hay una suscripción activa, la cerramos antes de abrir la nueva
+      if (unsubArqueo) unsubArqueo();
 
+      cont.innerHTML = `<p class="text-xs text-slate-400 text-center py-6"><i class="fa-solid fa-spinner animate-spin mr-1"></i> Sincronizando en tiempo real...</p>`;
+
+      const q = query(collection(db, "ventas"), where("fechaStr", "==", fecha));
+
+      // Escuchador en vivo
+      unsubArqueo = onSnapshot(q, (querySnapshot) => {
         let total = 0;
         let efectivo = 0;
         let transf = 0;
@@ -836,11 +841,10 @@
         document.getElementById('arqueo-fiado').innerText = `$${fiado.toLocaleString()}`;
 
         window.calcularDiferenciaArqueo();
-
-      } catch (err) {
-        console.error("Error al obtener arqueo: ", err);
-        cont.innerHTML = `<p class="text-xs text-red-500 text-center py-6">Error al cargar datos.</p>`;
-      }
+      }, (err) => {
+        console.error("Error al escuchar ventas en vivo: ", err);
+        cont.innerHTML = `<p class="text-xs text-red-500 text-center py-6">Error en la conexión en tiempo real.</p>`;
+      });
     };
 
     window.calcularDiferenciaArqueo = function() {
@@ -899,7 +903,6 @@
 
         await Promise.all(deletes);
         alert('Ventas borradas correctamente.');
-        window.cargarArqueoDia();
       } catch (e) {
         console.error("Error al borrar ventas: ", e);
         alert('Error al borrar las ventas.');
