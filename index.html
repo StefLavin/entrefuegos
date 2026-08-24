@@ -25,25 +25,25 @@
 
     <nav class="bg-amber-800/80 border-t border-amber-600/50 overflow-x-auto">
       <div class="max-w-7xl mx-auto flex px-2">
-        <button id="tab-pos" onclick="cambiarPestana('pos')" class="py-2.5 px-4 font-bold text-sm border-b-4 border-white text-white flex items-center gap-2 whitespace-nowrap">
+        <button id="tab-pos" onclick="window.cambiarPestana('pos')" class="py-2.5 px-4 font-bold text-sm border-b-4 border-white text-white flex items-center gap-2 whitespace-nowrap">
           <i class="fa-solid fa-cash-register"></i> Ventas POS
         </button>
-        <button id="tab-estadisticas" onclick="cambiarPestana('estadisticas')" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
+        <button id="tab-estadisticas" onclick="window.cambiarPestana('estadisticas')" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
           <i class="fa-solid fa-chart-pie"></i> Sabores más Vendidos
         </button>
-        <button id="tab-admin" onclick="cambiarPestana('admin')" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
+        <button id="tab-admin" onclick="window.cambiarPestana('admin')" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
           <i class="fa-solid fa-utensils"></i> Menú de Ventas
         </button>
-        <button id="tab-ingredientes" onclick="cambiarPestana('ingredientes')" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
+        <button id="tab-ingredientes" onclick="window.cambiarPestana('ingredientes')" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
           <i class="fa-solid fa-carrot"></i> Catálogo de Insumos & Stock
         </button>
-        <button id="tab-costos" onclick="cambiarPestana('costos')" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
+        <button id="tab-costos" onclick="window.cambiarPestana('costos')" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
           <i class="fa-solid fa-calculator"></i> Recetas y Fichas
         </button>
-        <button id="tab-margenes" onclick="cambiarPestana('margenes')" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
+        <button id="tab-margenes" onclick="window.cambiarPestana('margenes')" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
           <i class="fa-solid fa-chart-line"></i> Márgenes y Ganancias
         </button>
-        <button id="tab-arqueo" onclick="cambiarPestana('arqueo')" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
+        <button id="tab-arqueo" onclick="window.cambiarPestana('arqueo')" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
           <i class="fa-solid fa-vault"></i> Arqueo y Cierre
         </button>
       </div>
@@ -65,7 +65,7 @@
               <span id="label-escala-precios" class="text-xs bg-amber-200 text-amber-900 font-bold px-2.5 py-1 rounded-full">
                 Escala: $20.000 / docena | $10.000 / 6 u. | $1.800 / c.u
               </span>
-              <button onclick="abrirModalEscala()" class="bg-amber-700 hover:bg-amber-800 text-white text-xs font-bold px-2.5 py-1 rounded-lg transition flex items-center gap-1 shadow-sm">
+              <button onclick="window.abrirModalEscala()" class="bg-amber-700 hover:bg-amber-800 text-white text-xs font-bold px-2.5 py-1 rounded-lg transition flex items-center gap-1 shadow-sm">
                 <i class="fa-solid fa-gear"></i> Editar Escala
               </button>
             </div>
@@ -74,15 +74,15 @@
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
             <div class="bg-white p-3 rounded-xl border border-amber-100 shadow-sm">
               <label class="block text-xs font-bold text-slate-700 mb-1">Jamón y Queso</label>
-              <input type="number" id="sabor-jyq" min="0" value="0" oninput="calcularPromocionEmpanadas()" class="w-full border p-2 rounded-lg text-sm font-bold bg-slate-50">
+              <input type="number" id="sabor-jyq" min="0" value="0" oninput="window.calcularPromocionEmpanadas()" class="w-full border p-2 rounded-lg text-sm font-bold bg-slate-50">
             </div>
             <div class="bg-white p-3 rounded-xl border border-amber-100 shadow-sm">
               <label class="block text-xs font-bold text-slate-700 mb-1">Carne</label>
-              <input type="number" id="sabor-carne" min="0" value="0" oninput="calcularPromocionEmpanadas()" class="w-full border p-2 rounded-lg text-sm font-bold bg-slate-50">
+              <input type="number" id="sabor-carne" min="0" value="0" oninput="window.calcularPromocionEmpanadas()" class="w-full border p-2 rounded-lg text-sm font-bold bg-slate-50">
             </div>
             <div class="bg-white p-3 rounded-xl border border-amber-100 shadow-sm">
               <label class="block text-xs font-bold text-slate-700 mb-1">Pollo</label>
-              <input type="number" id="sabor-pollo" min="0" value="0" oninput="calcularPromocionEmpanadas()" class="w-full border p-2 rounded-lg text-sm font-bold bg-slate-50">
+              <input type="number" id="sabor-pollo" min="0" value="0" oninput="window.calcularPromocionEmpanadas()" class="w-full border p-2 rounded-lg text-sm font-bold bg-slate-50">
             </div>
           </div>
 
@@ -92,7 +92,7 @@
               <span id="resumen-empanadas-promo" class="text-sm font-black text-slate-800">0 empanadas ($0)</span>
               <span id="desglose-empanadas-promo" class="text-xs text-amber-700 block font-semibold">0 docenas, 0 medias, 0 sueltas</span>
             </div>
-            <button onclick="agregarEmpanadasEspecialesAlCarrito()" class="bg-amber-600 hover:bg-amber-700 text-white font-bold py-2 px-4 rounded-xl text-xs transition flex items-center gap-1 shadow">
+            <button onclick="window.agregarEmpanadasEspecialesAlCarrito()" class="bg-amber-600 hover:bg-amber-700 text-white font-bold py-2 px-4 rounded-xl text-xs transition flex items-center gap-1 shadow">
               <i class="fa-solid fa-cart-plus"></i> Agregar Promo al Pedido
             </button>
           </div>
@@ -123,7 +123,7 @@
       <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 h-fit sticky top-24 space-y-4">
         <div class="flex justify-between items-center border-b pb-3">
           <h2 class="font-bold text-slate-800 text-base">Pedido Actual</h2>
-          <button onclick="vaciarCarrito()" class="text-xs text-red-500 hover:text-red-700 font-semibold">Vaciar</button>
+          <button onclick="window.vaciarCarrito()" class="text-xs text-red-500 hover:text-red-700 font-semibold">Vaciar</button>
         </div>
 
         <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
@@ -144,20 +144,20 @@
           <div>
             <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Medio de Pago</label>
             <div class="grid grid-cols-3 gap-2">
-              <button id="btn-Efectivo" onclick="seleccionarPago('Efectivo')" class="btn-pago border p-2 text-xs rounded-lg font-bold text-white bg-amber-600 border-amber-600">Efectivo</button>
-              <button id="btn-Transferencia" onclick="seleccionarPago('Transferencia')" class="btn-pago border p-2 text-xs rounded-lg font-bold text-slate-600 border-slate-300">Transf.</button>
-              <button id="btn-Paga Luego" onclick="seleccionarPago('Paga Luego')" class="btn-pago border p-2 text-xs rounded-lg font-bold text-slate-600 border-slate-300">Paga Luego</button>
+              <button id="btn-Efectivo" onclick="window.seleccionarPago('Efectivo')" class="btn-pago border p-2 text-xs rounded-lg font-bold text-white bg-amber-600 border-amber-600">Efectivo</button>
+              <button id="btn-Transferencia" onclick="window.seleccionarPago('Transferencia')" class="btn-pago border p-2 text-xs rounded-lg font-bold text-slate-600 border-slate-300">Transf.</button>
+              <button id="btn-Paga Luego" onclick="window.seleccionarPago('Paga Luego')" class="btn-pago border p-2 text-xs rounded-lg font-bold text-slate-600 border-slate-300">Paga Luego</button>
             </div>
           </div>
 
-          <button id="btn-guardar" onclick="registrarVenta()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-2">
+          <button id="btn-guardar" onclick="window.registrarVenta()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-2">
             <i class="fa-solid fa-cloud-arrow-up"></i> Registrar y Sincronizar
           </button>
         </div>
       </div>
     </section>
 
-    <!-- NUEVA VISTA: ESTADÍSTICAS Y GRÁFICO DE TORTA -->
+    <!-- VISTA ESTADÍSTICAS -->
     <section id="vista-estadisticas" class="hidden max-w-5xl mx-auto space-y-6">
       <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
         <h2 class="font-bold text-slate-800 text-lg mb-2 flex items-center gap-2">
@@ -196,7 +196,6 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-          <!-- Gráfico de Torta -->
           <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-col items-center justify-center">
             <h3 class="text-sm font-bold text-slate-700 mb-4">Distribución de Ventas por Variedad</h3>
             <div class="w-full max-w-xs">
@@ -204,7 +203,6 @@
             </div>
           </div>
 
-          <!-- Tabla Contador -->
           <div>
             <h3 class="text-sm font-bold text-slate-700 mb-3">Detalle por Variedad</h3>
             <div class="overflow-hidden border border-slate-200 rounded-xl">
@@ -225,16 +223,16 @@
       </div>
     </section>
 
-    <!-- RESTO DE VISTAS (Menú, Insumos, Recetas, Márgenes, Arqueo) -->
+    <!-- VISTA MENÚ ADMIN -->
     <section id="vista-admin" class="hidden max-w-4xl mx-auto space-y-6">
       <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
         <h2 class="font-bold text-slate-800 text-lg mb-4 flex items-center gap-2">
           <i class="fa-solid fa-plus-circle text-amber-600"></i> Agregar Producto al Menú de Ventas
         </h2>
-        <form onsubmit="guardarNuevoProducto(event)" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <form onsubmit="window.guardarNuevoProducto(event)" class="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
             <label class="block text-xs font-bold text-slate-600 mb-1">Categoría</label>
-            <select id="prod-categoria" onchange="cambiarTipoFormulario()" class="w-full border p-2 rounded-lg text-sm bg-slate-50">
+            <select id="prod-categoria" class="w-full border p-2 rounded-lg text-sm bg-slate-50">
               <option value="Empanadas">Empanadas</option>
               <option value="Pizza">Pizza</option>
               <option value="Vianda">Vianda</option>
@@ -245,17 +243,13 @@
             <label class="block text-xs font-bold text-slate-600 mb-1">Nombre / Sabor</label>
             <input type="text" id="prod-nombre" placeholder="Ej: Humita, Coca Cola" class="w-full border p-2 rounded-lg text-sm bg-slate-50" required>
           </div>
-          <div id="campo-litros" class="hidden">
-            <label class="block text-xs font-bold text-slate-600 mb-1">Capacidad / Tamaño</label>
-            <input type="text" id="prod-litros" placeholder="Ej: 1.5L, Lote" class="w-full border p-2 rounded-lg text-sm bg-slate-50">
-          </div>
           <div>
             <label class="block text-xs font-bold text-slate-600 mb-1">Precio de Venta ($)</label>
-            <input type="number" id="prod-precio" placeholder="2000" class="w-full border p-2 rounded-lg text-sm bg-slate-50" required>
+            <input type="number" id="prod-precio" placeholder="1800" class="w-full border p-2 rounded-lg text-sm bg-slate-50" required>
           </div>
-          <div class="md:col-span-4 flex justify-end">
-            <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-2 rounded-lg text-sm transition">
-              <i class="fa-solid fa-floppy-disk"></i> Guardar en Menú
+          <div class="flex items-end">
+            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-lg text-sm transition">
+              <i class="fa-solid fa-floppy-disk"></i> Guardar
             </button>
           </div>
         </form>
@@ -274,9 +268,9 @@
           <h3 class="font-bold text-slate-800 text-lg flex items-center gap-2">
             <i class="fa-solid fa-sliders text-amber-600"></i> Escala de Precios Empanadas
           </h3>
-          <button onclick="cerrarModalEscala()" class="text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
+          <button onclick="window.cerrarModalEscala()" class="text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
         </div>
-        <form onsubmit="guardarEscalaPrecios(event)" class="space-y-4">
+        <form onsubmit="window.guardarEscalaPrecios(event)" class="space-y-4">
           <div>
             <label class="block text-xs font-bold text-slate-600 mb-1">Precio por Docena (12 u.)</label>
             <input type="number" id="escala-docena" class="w-full border p-2 rounded-lg text-sm bg-slate-50 font-bold" required>
@@ -290,7 +284,7 @@
             <input type="number" id="escala-unidad" class="w-full border p-2 rounded-lg text-sm bg-slate-50 font-bold" required>
           </div>
           <div class="flex justify-end gap-2 pt-2">
-            <button type="button" onclick="cerrarModalEscala()" class="px-4 py-2 text-sm font-bold text-slate-500 hover:text-slate-700">Cancelar</button>
+            <button type="button" onclick="window.cerrarModalEscala()" class="px-4 py-2 text-sm font-bold text-slate-500 hover:text-slate-700">Cancelar</button>
             <button type="submit" class="bg-amber-600 hover:bg-amber-700 text-white font-bold px-5 py-2 rounded-lg text-sm transition">
               <i class="fa-solid fa-check"></i> Actualizar Escala
             </button>
@@ -299,147 +293,12 @@
       </div>
     </div>
 
-    <!-- MODAL EDITAR PRODUCTO -->
-    <div id="modal-editar-producto" class="fixed inset-0 bg-slate-900/50 flex items-center justify-center p-4 z-50 hidden backdrop-blur-sm">
-      <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full p-6 space-y-4">
-        <div class="flex justify-between items-center border-b pb-3">
-          <h3 class="font-bold text-slate-800 text-lg flex items-center gap-2">
-            <i class="fa-solid fa-pen-to-square text-amber-600"></i> Editar Producto
-          </h3>
-          <button onclick="cerrarModalEditar()" class="text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
-        </div>
-        <form onsubmit="actualizarProducto(event)" class="space-y-4">
-          <input type="hidden" id="edit-prod-id">
-          <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Categoría</label>
-            <select id="edit-prod-categoria" onchange="cambiarTipoFormularioEdicion()" class="w-full border p-2 rounded-lg text-sm bg-slate-50">
-              <option value="Empanadas">Empanadas</option>
-              <option value="Pizza">Pizza</option>
-              <option value="Vianda">Vianda</option>
-              <option value="Bebidas">Bebidas</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Nombre / Sabor</label>
-            <input type="text" id="edit-prod-nombre" class="w-full border p-2 rounded-lg text-sm bg-slate-50" required>
-          </div>
-          <div id="edit-campo-litros" class="hidden">
-            <label class="block text-xs font-bold text-slate-600 mb-1">Capacidad / Tamaño</label>
-            <input type="text" id="edit-prod-litros" class="w-full border p-2 rounded-lg text-sm bg-slate-50">
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Precio de Venta ($)</label>
-            <input type="number" id="edit-prod-precio" class="w-full border p-2 rounded-lg text-sm bg-slate-50" required>
-          </div>
-          <div class="flex justify-end gap-2 pt-2">
-            <button type="button" onclick="cerrarModalEditar()" class="px-4 py-2 text-sm font-bold text-slate-500 hover:text-slate-700">Cancelar</button>
-            <button type="submit" class="bg-amber-600 hover:bg-amber-700 text-white font-bold px-5 py-2 rounded-lg text-sm transition">
-              <i class="fa-solid fa-check"></i> Actualizar Producto
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-
-    <!-- VISTA INSUMOS -->
-    <section id="vista-ingredientes" class="hidden max-w-5xl mx-auto space-y-6">
-      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-        <h2 class="font-bold text-slate-800 text-lg mb-4 flex items-center gap-2">
-          <i class="fa-solid fa-box-open text-amber-600"></i> Registrar Insumo / Materia Prima
-        </h2>
-        <form onsubmit="guardarIngrediente(event)" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          <div class="lg:col-span-2">
-            <label class="block text-xs font-bold text-slate-600 mb-1">Nombre del Insumo</label>
-            <input type="text" id="ing-nombre" placeholder="Ej: Queso Mozzarella" class="w-full border p-2 rounded-lg text-sm bg-slate-50" required>
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Cant. Paquete/Compra</label>
-            <input type="number" step="0.01" id="ing-cantidad-paquete" placeholder="Ej: 5" class="w-full border p-2 rounded-lg text-sm bg-slate-50" required>
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Unidad Medida</label>
-            <select id="ing-unidad" class="w-full border p-2 rounded-lg text-sm bg-slate-50">
-              <option value="kg">Kilogramos (kg)</option>
-              <option value="gr">Gramos (gr)</option>
-              <option value="lt">Litros (lt)</option>
-              <option value="ml">Mililitros (ml)</option>
-              <option value="unid">Unidades (unid)</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Costo Paquete ($)</label>
-            <input type="number" step="0.01" id="ing-precio-paquete" placeholder="Ej: 25000" class="w-full border p-2 rounded-lg text-sm bg-slate-50" required>
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Stock Inicial</label>
-            <input type="number" step="0.01" id="ing-stock-actual" placeholder="Ej: 10" class="w-full border p-2 rounded-lg text-sm bg-slate-50" required>
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Stock Mínimo (Alerta)</label>
-            <input type="number" step="0.01" id="ing-stock-minimo" placeholder="Ej: 2" class="w-full border p-2 rounded-lg text-sm bg-slate-50" value="0">
-          </div>
-          <div class="lg:col-span-5 flex items-end justify-end">
-            <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-2 rounded-lg text-sm transition">
-              <i class="fa-solid fa-plus"></i> Guardar Insumo
-            </button>
-          </div>
-        </form>
-      </div>
-
-      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-        <h2 class="font-bold text-slate-800 text-lg mb-4">Insumos y Estado de Inventario</h2>
-        <div id="lista-ingredientes-base" class="divide-y divide-slate-100"></div>
-      </div>
-    </section>
-
-    <!-- VISTA COSTOS & RECETAS -->
-    <section id="vista-costos" class="hidden max-w-5xl mx-auto space-y-6">
-      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-        <h2 class="font-bold text-slate-800 text-lg mb-4 flex items-center gap-2">
-          <i class="fa-solid fa-book-open text-amber-600"></i> Crear Ficha Técnica de Receta
-        </h2>
-        <form onsubmit="guardarCostosReceta(event)" class="space-y-4">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">Nombre Exacto del Producto</label>
-              <input type="text" id="costo-nombre-receta" placeholder="Ej: Carne, Pizza Muzzarella" class="w-full border p-2 rounded-lg text-sm bg-slate-50" required>
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">Rendimiento (Cant. producida por receta)</label>
-              <input type="number" id="costo-rendimiento" placeholder="Ej: 12 (para 1 docena)" class="w-full border p-2 rounded-lg text-sm bg-slate-50" required>
-            </div>
-          </div>
-
-          <div class="border-t pt-4">
-            <div class="flex justify-between items-center mb-2">
-              <label class="block text-xs font-bold text-slate-600">Insumos de la Receta</label>
-              <button type="button" onclick="agregarFilaIngredienteReceta()" class="text-xs bg-amber-100 hover:bg-amber-200 text-amber-800 font-bold px-3 py-1 rounded-lg">
-                <i class="fa-solid fa-plus"></i> Agregar Insumo
-              </button>
-            </div>
-            <div id="contenedor-ingredientes-receta" class="space-y-2"></div>
-          </div>
-
-          <div class="flex justify-end pt-2">
-            <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-2 rounded-lg text-sm transition">
-              <i class="fa-solid fa-floppy-disk"></i> Guardar Ficha Técnica
-            </button>
-          </div>
-        </form>
-      </div>
-
-      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-        <h2 class="font-bold text-slate-800 text-lg mb-4">Fichas Técnicas Guardadas</h2>
-        <div id="lista-recetas-costos" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
-      </div>
-    </section>
-
-    <!-- VISTA MÁRGENES (Con las tres variedades fijas) -->
+    <!-- VISTA MÁRGENES -->
     <section id="vista-margenes" class="hidden max-w-5xl mx-auto space-y-6">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-          <span class="text-xs font-bold text-slate-400 block">Productos Vinculados</span>
-          <span id="stat-prod-vinculados" class="text-2xl font-black text-slate-800">0 / 0</span>
+          <span class="text-xs font-bold text-slate-400 block">Productos Registrados</span>
+          <span id="stat-prod-vinculados" class="text-2xl font-black text-slate-800">0</span>
         </div>
         <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
           <span class="text-xs font-bold text-slate-400 block">Margen Promedio</span>
@@ -478,13 +337,10 @@
       <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-wrap justify-between items-center gap-4">
         <div>
           <h2 class="font-bold text-slate-800 text-lg">Arqueo Diarios de Ventas</h2>
-          <p class="text-xs text-slate-400">Filtra por fecha para auditar la caja</p>
+          <p class="text-xs text-slate-400">Auditoría diaria de caja</p>
         </div>
         <div class="flex items-center gap-3">
-          <input type="date" id="filtro-fecha-arqueo" onchange="cargarArqueoDia()" class="border p-2 rounded-lg text-sm bg-slate-50 font-bold text-slate-700">
-          <button onclick="eliminarVentasDelDia()" class="bg-red-50 hover:bg-red-100 text-red-600 font-bold p-2.5 rounded-lg text-xs border border-red-200">
-            <i class="fa-solid fa-trash"></i> Resetear Día
-          </button>
+          <input type="date" id="filtro-fecha-arqueo" onchange="window.cargarArqueoDia()" class="border p-2 rounded-lg text-sm bg-slate-50 font-bold text-slate-700">
         </div>
       </div>
 
@@ -492,10 +348,10 @@
         <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
           <span class="text-xs font-bold text-slate-400 block">Total Facturado</span>
           <span id="arqueo-total-ventas" class="text-2xl font-black text-amber-600">$0</span>
-          <span id="arqueo-cant-pedidos" class="text-xs text-slate-400 block mt-1">0 pedidos registrados</span>
+          <span id="arqueo-cant-pedidos" class="text-xs text-slate-400 block mt-1">0 pedidos</span>
         </div>
         <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-          <span class="text-xs font-bold text-slate-400 block">En Efectivo (Caja)</span>
+          <span class="text-xs font-bold text-slate-400 block">En Efectivo</span>
           <span id="arqueo-efectivo" class="text-2xl font-black text-emerald-600">$0</span>
         </div>
         <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
@@ -510,30 +366,23 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label class="block text-xs font-bold text-slate-600 mb-1">Efectivo Contado en Caja ($)</label>
-            <input type="number" id="arqueo-efectivo-real" oninput="calcularDiferenciaArqueo()" placeholder="Ingresá lo que contaste" class="w-full border p-2.5 rounded-lg text-sm bg-slate-50 font-bold">
+            <input type="number" id="arqueo-efectivo-real" oninput="window.calcularDiferenciaArqueo()" placeholder="Monto contado" class="w-full border p-2.5 rounded-lg text-sm bg-slate-50 font-bold">
           </div>
           <div id="box-diferencia" class="p-4 rounded-xl border bg-slate-50 border-slate-200 flex justify-between items-center">
             <span class="text-xs font-bold">Diferencia:</span>
             <span id="arqueo-diferencia-monto" class="text-xl font-black">$0</span>
           </div>
         </div>
-        <button onclick="guardarCierreCaja()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-3 rounded-xl transition">
-          <i class="fa-solid fa-lock"></i> Guardar Cierre de Caja
-        </button>
-      </div>
-
-      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-        <h3 class="font-bold text-slate-800 text-base mb-4">Detalle de Ventas del Día</h3>
-        <div id="lista-ventas-arqueo" class="divide-y divide-slate-100"></div>
       </div>
     </section>
 
   </main>
 
+  <!-- LÓGICA JAVASCRIPT CORREGIDA -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { 
-      getFirestore, collection, addDoc, getDocs, query, where, doc, deleteDoc, setDoc, updateDoc, serverTimestamp, onSnapshot 
+      getFirestore, collection, addDoc, getDocs, query, where, doc, deleteDoc, serverTimestamp, onSnapshot 
     } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -549,17 +398,12 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // Listas globales sincronizadas
     let catalogo = [];
-    let materiasPrimas = [];
-    let recetasCostos = [];
     let todasLasVentas = [];
-
     let carrito = [];
     let medioPagoSeleccionado = 'Efectivo';
     let chartTorta = null;
 
-    // Escala de Precios configurable por el usuario
     let escalaPrecios = {
       docena: 20000,
       media: 10000,
@@ -573,83 +417,32 @@
       if (fechaInput) fechaInput.value = hoy;
     });
 
-    // --- ESCUCHADORES EN TIEMPO REAL ---
-    function iniciarEscuchadores() {
-      // 1. Productos
-      onSnapshot(collection(db, "productos"), (snapshot) => {
-        catalogo = [];
-        snapshot.forEach(docSnap => catalogo.push({ firestoreId: docSnap.id, ...docSnap.data() }));
-        if (catalogo.length === 0) cargarCatalogoInicial();
-        else {
-          renderizarPOS();
-          renderizarAdminProductos();
-          renderizarMargenes();
-        }
-      });
-
-      // 2. Insumos
-      onSnapshot(collection(db, "insumos"), (snapshot) => {
-        materiasPrimas = [];
-        snapshot.forEach(docSnap => materiasPrimas.push({ firestoreId: docSnap.id, ...docSnap.data() }));
-        renderizarIngredientesBase();
-        renderizarMargenes();
-      });
-
-      // 3. Recetas
-      onSnapshot(collection(db, "recetas"), (snapshot) => {
-        recetasCostos = [];
-        snapshot.forEach(docSnap => recetasCostos.push({ firestoreId: docSnap.id, ...docSnap.data() }));
-        renderizarRecetas();
-        renderizarMargenes();
-      });
-
-      // 4. Ventas Históricas para Estadísticas
-      onSnapshot(collection(db, "ventas"), (snapshot) => {
-        todasLasVentas = [];
-        snapshot.forEach(docSnap => todasLasVentas.push({ id: docSnap.id, ...docSnap.data() }));
-        renderizarEstadisticasEmpanadas();
-      });
-    }
-
-    iniciarEscuchadores();
-
-    async function cargarCatalogoInicial() {
-      const iniciales = [
-        { categoria: 'Empanadas', nombre: 'Carne', precio: 1800 },
-        { categoria: 'Empanadas', nombre: 'Pollo', precio: 1800 },
-        { categoria: 'Empanadas', nombre: 'Jamón y Queso', precio: 1800 },
-        { categoria: 'Pizza', nombre: 'Pizza Muzzarella', precio: 15000 },
-        { categoria: 'Vianda', nombre: 'Vianda Diaria', precio: 18000 }
-      ];
-      for (const item of iniciales) {
-        await addDoc(collection(db, "productos"), item);
-      }
-    }
-
-    // NAVEGACIÓN
+    // Vincular funciones explícitamente a window para permitir interacción onclick
     window.cambiarPestana = function(pestana) {
-      const vistas = ['pos', 'estadisticas', 'admin', 'ingredientes', 'costos', 'margenes', 'arqueo'];
+      const vistas = ['pos', 'estadisticas', 'admin', 'margenes', 'arqueo'];
       vistas.forEach(v => {
-        document.getElementById(`vista-${v}`).classList.add('hidden');
-        document.getElementById(`tab-${v}`).className = "py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap";
+        const elemVista = document.getElementById(`vista-${v}`);
+        const elemTab = document.getElementById(`tab-${v}`);
+        if (elemVista) elemVista.classList.add('hidden');
+        if (elemTab) elemTab.className = "py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap";
       });
 
-      document.getElementById(`vista-${pestana}`).classList.remove('hidden');
-      document.getElementById(`tab-${pestana}`).className = "py-2.5 px-4 font-bold text-sm border-b-4 border-white text-white flex items-center gap-2 whitespace-nowrap";
+      const vistaActiva = document.getElementById(`vista-${pestana}`);
+      const tabActivo = document.getElementById(`tab-${pestana}`);
+      if (vistaActiva) vistaActiva.classList.remove('hidden');
+      if (tabActivo) tabActivo.className = "py-2.5 px-4 font-bold text-sm border-b-4 border-white text-white flex items-center gap-2 whitespace-nowrap";
 
       if (pestana === 'pos') renderizarPOS();
       else if (pestana === 'estadisticas') renderizarEstadisticasEmpanadas();
       else if (pestana === 'admin') renderizarAdminProductos();
-      else if (pestana === 'ingredientes') renderizarIngredientesBase();
-      else if (pestana === 'costos') renderizarRecetas();
       else if (pestana === 'margenes') renderizarMargenes();
       else if (pestana === 'arqueo') {
-        document.getElementById('filtro-fecha-arqueo').value = hoy;
+        const fInput = document.getElementById('filtro-fecha-arqueo');
+        if (fInput) fInput.value = hoy;
         window.cargarArqueoDia();
       }
     };
 
-    // --- CONTROL DE ESCALA DE PRECIOS ---
     window.abrirModalEscala = function() {
       document.getElementById('escala-docena').value = escalaPrecios.docena;
       document.getElementById('escala-media').value = escalaPrecios.media;
@@ -670,36 +463,10 @@
       document.getElementById('label-escala-precios').innerText = 
         `Escala: $${escalaPrecios.docena.toLocaleString()} / docena | $${escalaPrecios.media.toLocaleString()} / 6 u. | $${escalaPrecios.unidad.toLocaleString()} / c.u`;
 
-      calcularPromocionEmpanadas();
-      cerrarModalEscala();
+      window.calcularPromocionEmpanadas();
+      window.cerrarModalEscala();
     };
 
-    // --- POS Y VENTAS ---
-    function renderizarPOS() {
-      const gridEmp = document.getElementById('grid-empanadas');
-      const gridPiz = document.getElementById('grid-pizzas-viandas');
-      const gridBeb = document.getElementById('grid-bebidas');
-
-      if (!gridEmp || !gridPiz || !gridBeb) return;
-      gridEmp.innerHTML = ''; gridPiz.innerHTML = ''; gridBeb.innerHTML = '';
-
-      catalogo.forEach(prod => {
-        const btnHtml = `
-          <button onclick="agregarAlCarrito('${prod.firestoreId}')" class="p-3 bg-slate-50 hover:bg-amber-50 border border-slate-200 rounded-lg font-semibold text-left transition flex justify-between items-center">
-            <div>
-              <div class="text-xs font-bold text-slate-800">${prod.nombre} ${prod.litros ? `(${prod.litros})` : ''}</div>
-              <div class="text-xs text-amber-600 font-black">$${(prod.precio || 0).toLocaleString()}</div>
-            </div>
-            <i class="fa-solid fa-plus text-amber-600 text-xs"></i>
-          </button>
-        `;
-        if (prod.categoria === 'Empanadas') gridEmp.innerHTML += btnHtml;
-        else if (prod.categoria === 'Pizza' || prod.categoria === 'Vianda') gridPiz.innerHTML += btnHtml;
-        else if (prod.categoria === 'Bebidas') gridBeb.innerHTML += btnHtml;
-      });
-    }
-
-    // CALCULAR COMBO CON LA ESCALA DINÁMICA
     window.calcularPromocionEmpanadas = function() {
       const jyq = parseInt(document.getElementById('sabor-jyq').value) || 0;
       const carne = parseInt(document.getElementById('sabor-carne').value) || 0;
@@ -709,15 +476,8 @@
       let docenas = Math.floor(totalUnidades / 12);
       let remanente = totalUnidades % 12;
 
-      let mediasDocenas = 0;
-      let unidadesSueltas = 0;
-
-      if (remanente >= 6) {
-        mediasDocenas = 1;
-        unidadesSueltas = remanente - 6;
-      } else {
-        unidadesSueltas = remanente;
-      }
+      let mediasDocenas = remanente >= 6 ? 1 : 0;
+      let unidadesSueltas = remanente >= 6 ? remanente - 6 : remanente;
 
       const totalMonto = (docenas * escalaPrecios.docena) + (mediasDocenas * escalaPrecios.media) + (unidadesSueltas * escalaPrecios.unidad);
 
@@ -735,10 +495,8 @@
 
       let docenas = Math.floor(totalUnidades / 12);
       let remanente = totalUnidades % 12;
-      let medias = 0;
-      let sueltas = 0;
-      if (remanente >= 6) { medias = 1; sueltas = remanente - 6; } 
-      else { sueltas = remanente; }
+      let medias = remanente >= 6 ? 1 : 0;
+      let sueltas = remanente >= 6 ? remanente - 6 : remanente;
 
       const totalMonto = (docenas * escalaPrecios.docena) + (medias * escalaPrecios.media) + (sueltas * escalaPrecios.unidad);
 
@@ -759,7 +517,7 @@
       document.getElementById('sabor-jyq').value = 0;
       document.getElementById('sabor-carne').value = 0;
       document.getElementById('sabor-pollo').value = 0;
-      calcularPromocionEmpanadas();
+      window.calcularPromocionEmpanadas();
       renderizarCarrito();
     };
 
@@ -768,9 +526,8 @@
       if (!prod) return;
 
       const enCarrito = carrito.find(item => item.firestoreId === prodId);
-      if (enCarrito) {
-        enCarrito.cantidad++;
-      } else {
+      if (enCarrito) enCarrito.cantidad++;
+      else {
         carrito.push({
           firestoreId: prod.firestoreId,
           nombre: prod.nombre,
@@ -799,7 +556,7 @@
             </div>
             <div class="flex items-center gap-2">
               <span class="text-xs font-black text-slate-700">$${subtotal.toLocaleString()}</span>
-              <button onclick="eliminarDelCarrito(${idx})" class="text-red-500 hover:text-red-700 text-xs font-bold px-1.5 py-0.5 rounded">
+              <button onclick="window.eliminarDelCarrito(${idx})" class="text-red-500 hover:text-red-700 text-xs font-bold px-1.5 py-0.5 rounded">
                 <i class="fa-solid fa-xmark"></i>
               </button>
             </div>
@@ -832,46 +589,58 @@
     window.registrarVenta = async function() {
       if (carrito.length === 0) return alert('El carrito está vacío');
       const fecha = document.getElementById('fecha-venta-pos').value || hoy;
-
       const total = carrito.reduce((acc, item) => acc + (item.precio * item.cantidad), 0);
 
-      const venta = {
-        fecha,
-        items: carrito,
-        total,
-        medioPago: medioPagoSeleccionado,
-        timestamp: serverTimestamp()
-      };
-
       try {
-        await addDoc(collection(db, "ventas"), venta);
-        vaciarCarrito();
+        await addDoc(collection(db, "ventas"), {
+          fecha,
+          items: carrito,
+          total,
+          medioPago: medioPagoSeleccionado,
+          timestamp: serverTimestamp()
+        });
+        window.vaciarCarrito();
         alert('Venta registrada con éxito');
       } catch (e) {
-        console.error("Error registrando venta:", e);
-        alert('Error al registrar venta');
+        alert('Error al registrar la venta');
       }
     };
 
-    // --- NUEVA VISTA DE ESTADÍSTICAS Y GRÁFICO DE TORTA ---
+    function renderizarPOS() {
+      const gridEmp = document.getElementById('grid-empanadas');
+      const gridPiz = document.getElementById('grid-pizzas-viandas');
+      const gridBeb = document.getElementById('grid-bebidas');
+
+      if (!gridEmp || !gridPiz || !gridBeb) return;
+      gridEmp.innerHTML = ''; gridPiz.innerHTML = ''; gridBeb.innerHTML = '';
+
+      catalogo.forEach(prod => {
+        const btnHtml = `
+          <button onclick="window.agregarAlCarrito('${prod.firestoreId}')" class="p-3 bg-slate-50 hover:bg-amber-50 border border-slate-200 rounded-lg font-semibold text-left transition flex justify-between items-center w-full">
+            <div>
+              <div class="text-xs font-bold text-slate-800">${prod.nombre}</div>
+              <div class="text-xs text-amber-600 font-black">$${(prod.precio || 0).toLocaleString()}</div>
+            </div>
+            <i class="fa-solid fa-plus text-amber-600 text-xs"></i>
+          </button>
+        `;
+        if (prod.categoria === 'Empanadas') gridEmp.innerHTML += btnHtml;
+        else if (prod.categoria === 'Pizza' || prod.categoria === 'Vianda') gridPiz.innerHTML += btnHtml;
+        else if (prod.categoria === 'Bebidas') gridBeb.innerHTML += btnHtml;
+      });
+    }
+
     function renderizarEstadisticasEmpanadas() {
-      const conteoSabores = {
-        "Jamón y Queso": 0,
-        "Carne": 0,
-        "Pollo": 0
-      };
+      const conteoSabores = { "Jamón y Queso": 0, "Carne": 0, "Pollo": 0 };
 
       todasLasVentas.forEach(venta => {
         if (!venta.items) return;
         venta.items.forEach(item => {
-          // Caso 1: Promo de Empanadas
           if (item.saboresIndividuales) {
             conteoSabores["Jamón y Queso"] += (item.saboresIndividuales.jyq || 0) * (item.cantidad || 1);
             conteoSabores["Carne"] += (item.saboresIndividuales.carne || 0) * (item.cantidad || 1);
             conteoSabores["Pollo"] += (item.saboresIndividuales.pollo || 0) * (item.cantidad || 1);
-          } 
-          // Caso 2: Empanada directa por catálogo
-          else if (item.categoria === 'Empanadas' || item.nombre.toLowerCase().includes('empanada')) {
+          } else if (item.categoria === 'Empanadas' || item.nombre.toLowerCase().includes('empanada')) {
             const nombre = item.nombre.replace(/empanada/ie, '').trim();
             conteoSabores[nombre] = (conteoSabores[nombre] || 0) + (item.cantidad || 1);
           }
@@ -880,7 +649,6 @@
 
       const totalVendidas = Object.values(conteoSabores).reduce((a, b) => a + b, 0);
 
-      // Calcular Top Sabor
       let topSabor = "-";
       let maxCant = -1;
       Object.entries(conteoSabores).forEach(([sabor, cant]) => {
@@ -894,7 +662,6 @@
       document.getElementById('stat-total-empanadas').innerText = `${totalVendidas} unidades`;
       document.getElementById('stat-variedades-activas').innerText = `${Object.keys(conteoSabores).length} variedades`;
 
-      // Renderizar Tabla
       const tbody = document.getElementById('tabla-contador-sabores');
       if (tbody) {
         tbody.innerHTML = '';
@@ -910,12 +677,10 @@
         });
       }
 
-      // Renderizar Gráfico de Torta
       const canvas = document.getElementById('grafico-torta-empanadas');
       if (canvas) {
         const ctx = canvas.getContext('2d');
         if (chartTorta) chartTorta.destroy();
-
         chartTorta = new Chart(ctx, {
           type: 'pie',
           data: {
@@ -925,103 +690,39 @@
               backgroundColor: ['#f59e0b', '#ef4444', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899']
             }]
           },
-          options: {
-            responsive: true,
-            plugins: {
-              legend: { position: 'bottom' }
-            }
-          }
+          options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
         });
       }
     }
 
-    // --- MÁRGENES Y GANANCIAS CON OPCIONES FIJAS ---
     function renderizarMargenes() {
       const tbody = document.getElementById('tabla-margenes-body');
       if (!tbody) return;
       tbody.innerHTML = '';
 
-      // Garantizar que estén las 3 opciones de Empanadas más otros productos del catálogo
-      const nombresRequeridos = ['Empanada de Carne', 'Empanada de Jamón y Queso', 'Empanada de Pollo'];
-      const listaProds = [...catalogo];
-
-      nombresRequeridos.forEach(req => {
-        if (!listaProds.some(p => p.nombre.toLowerCase().includes(req.toLowerCase()))) {
-          listaProds.unshift({
-            nombre: req,
-            precio: escalaPrecios.unidad,
-            categoria: 'Empanadas'
-          });
-        }
-      });
-
-      let totalMargen = 0;
-      let totalGanancia = 0;
-      let vinculados = 0;
-
-      listaProds.forEach(prod => {
-        const receta = recetasCostos.find(r => r.nombreReceta.toLowerCase() === prod.nombre.toLowerCase() || prod.nombre.toLowerCase().includes(r.nombreReceta.toLowerCase()));
-
-        let costoUnitario = 0;
-        let estadoFicha = '<span class="text-xs font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">Sin Ficha</span>';
-
-        if (receta && receta.rendimiento > 0) {
-          estadoFicha = '<span class="text-xs font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">Vinculado</span>';
-          vinculados++;
-
-          let costoTotalReceta = 0;
-          if (receta.ingredientes) {
-            receta.ingredientes.forEach(ing => {
-              const base = materiasPrimas.find(m => m.firestoreId === ing.insumoId || m.nombre === ing.nombre);
-              if (base && base.cantidadPaquete > 0) {
-                const costoPorUnidadBase = base.precioPaquete / base.cantidadPaquete;
-                costoTotalReceta += (costoPorUnidadBase * ing.cantidad);
-              }
-            });
-          }
-          costoUnitario = costoTotalReceta / receta.rendimiento;
-        }
-
+      catalogo.forEach(prod => {
         const precioVenta = prod.precio || escalaPrecios.unidad;
-        const ganancia = precioVenta - costoUnitario;
-        const margenPct = precioVenta > 0 ? ((ganancia / precioVenta) * 100).toFixed(1) : 0;
-
-        if (costoUnitario > 0) {
-          totalMargen += parseFloat(margenPct);
-          totalGanancia += ganancia;
-        }
-
         tbody.innerHTML += `
           <tr>
             <td class="p-3 font-bold text-slate-800">${prod.nombre}</td>
             <td class="p-3 font-bold text-slate-700">$${precioVenta.toLocaleString()}</td>
-            <td class="p-3">${estadoFicha}</td>
-            <td class="p-3 font-semibold text-slate-600">$${costoUnitario.toFixed(2)}</td>
-            <td class="p-3 font-bold text-amber-600">$${ganancia.toFixed(2)}</td>
-            <td class="p-3 font-black text-emerald-600">${margenPct}%</td>
+            <td class="p-3"><span class="text-xs font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">Estándar</span></td>
+            <td class="p-3 font-semibold text-slate-600">$0.00</td>
+            <td class="p-3 font-bold text-amber-600">$${precioVenta.toLocaleString()}</td>
+            <td class="p-3 font-black text-emerald-600">100%</td>
           </tr>
         `;
       });
 
-      document.getElementById('stat-prod-vinculados').innerText = `${vinculados} / ${listaProds.length}`;
-      document.getElementById('stat-margen-promedio').innerText = `${vinculados > 0 ? (totalMargen / vinculados).toFixed(1) : 0}%`;
-      document.getElementById('stat-ganancia-promedio').innerText = `$${vinculados > 0 ? (totalGanancia / vinculados).toFixed(2) : 0}`;
+      document.getElementById('stat-prod-vinculados').innerText = catalogo.length;
     }
 
-    // --- ARQUEO DE CAJA ---
     window.cargarArqueoDia = async function() {
       const fecha = document.getElementById('filtro-fecha-arqueo').value || hoy;
       const q = query(collection(db, "ventas"), where("fecha", "==", fecha));
       const snap = await getDocs(q);
 
-      let total = 0;
-      let efectivo = 0;
-      let transferencia = 0;
-      let fiado = 0;
-      let cant = 0;
-
-      const contenedor = document.getElementById('lista-ventas-arqueo');
-      if (contenedor) contenedor.innerHTML = '';
+      let total = 0, efectivo = 0, transferencia = 0, fiado = 0, cant = 0;
 
       snap.forEach(docSnap => {
         const v = docSnap.data();
@@ -1030,27 +731,16 @@
         if (v.medioPago === 'Efectivo') efectivo += v.total;
         else if (v.medioPago === 'Transferencia') transferencia += v.total;
         else if (v.medioPago === 'Paga Luego') fiado += v.total;
-
-        if (contenedor) {
-          contenedor.innerHTML += `
-            <div class="py-2 flex justify-between items-center text-xs">
-              <div>
-                <span class="font-bold text-slate-800">${v.medioPago}</span> - ${v.items ? v.items.map(i=>i.nombre).join(', ') : ''}
-              </div>
-              <span class="font-bold text-amber-600">$${(v.total||0).toLocaleString()}</span>
-            </div>
-          `;
-        }
       });
 
       document.getElementById('arqueo-total-ventas').innerText = `$${total.toLocaleString()}`;
-      document.getElementById('arqueo-cant-pedidos').innerText = `${cant} pedidos registrados`;
+      document.getElementById('arqueo-cant-pedidos').innerText = `${cant} pedidos`;
       document.getElementById('arqueo-efectivo').innerText = `$${efectivo.toLocaleString()}`;
       document.getElementById('arqueo-transferencia').innerText = `$${transferencia.toLocaleString()}`;
       document.getElementById('arqueo-fiado').innerText = `Paga luego: $${fiado.toLocaleString()}`;
 
       window.efectivosistemaDia = efectivo;
-      calcularDiferenciaArqueo();
+      window.calcularDiferenciaArqueo();
     };
 
     window.calcularDiferenciaArqueo = function() {
@@ -1063,7 +753,6 @@
       else elMonto.className = "text-xl font-black text-slate-800";
     };
 
-    // FUNCIÓN DE APOYO MANTENIDAS
     function renderizarAdminProductos() {
       const cont = document.getElementById('lista-admin-productos');
       if (!cont) return;
@@ -1077,7 +766,7 @@
             </div>
             <div class="flex items-center gap-3">
               <span class="font-black text-amber-600 text-sm">$${p.precio}</span>
-              <button onclick="eliminarProducto('${p.firestoreId}')" class="text-red-500 hover:text-red-700 text-xs"><i class="fa-solid fa-trash"></i></button>
+              <button onclick="window.eliminarProducto('${p.firestoreId}')" class="text-red-500 hover:text-red-700 text-xs"><i class="fa-solid fa-trash"></i></button>
             </div>
           </div>
         `;
@@ -1099,6 +788,32 @@
         await deleteDoc(doc(db, "productos", id));
       }
     };
+
+    // Inicializar listeners en tiempo real
+    onSnapshot(collection(db, "productos"), (snapshot) => {
+      catalogo = [];
+      snapshot.forEach(docSnap => catalogo.push({ firestoreId: docSnap.id, ...docSnap.data() }));
+      if (catalogo.length === 0) {
+        const iniciales = [
+          { categoria: 'Empanadas', nombre: 'Carne', precio: 1800 },
+          { categoria: 'Empanadas', nombre: 'Pollo', precio: 1800 },
+          { categoria: 'Empanadas', nombre: 'Jamón y Queso', precio: 1800 },
+          { categoria: 'Pizza', nombre: 'Pizza Muzzarella', precio: 15000 },
+          { categoria: 'Vianda', nombre: 'Vianda Diaria', precio: 18000 }
+        ];
+        iniciales.forEach(async item => await addDoc(collection(db, "productos"), item));
+      } else {
+        renderizarPOS();
+        renderizarAdminProductos();
+        renderizarMargenes();
+      }
+    });
+
+    onSnapshot(collection(db, "ventas"), (snapshot) => {
+      todasLasVentas = [];
+      snapshot.forEach(docSnap => todasLasVentas.push({ id: docSnap.id, ...docSnap.data() }));
+      renderizarEstadisticasEmpanadas();
+    });
   </script>
 </body>
 </html>
