@@ -9,7 +9,6 @@
 </head>
 <body class="bg-slate-100 font-sans text-slate-800 pb-10">
 
-  <!-- Encabezado con Navegación -->
   <header class="bg-amber-600 text-white shadow-md sticky top-0 z-20">
     <div class="max-w-6xl mx-auto p-4 flex justify-between items-center">
       <h1 class="text-xl font-bold flex items-center gap-2">
@@ -20,7 +19,6 @@
       </span>
     </div>
 
-    <!-- Pestañas de Menú -->
     <div class="flex bg-amber-700 max-w-6xl mx-auto px-4 gap-2 overflow-x-auto">
       <button onclick="cambiarPestana('pos')" id="tab-pos" class="py-2.5 px-4 font-bold text-sm border-b-4 border-white text-white flex items-center gap-2 whitespace-nowrap">
         <i class="fa-solid fa-cash-register"></i> Ventas POS
@@ -37,12 +35,14 @@
       <button onclick="cambiarPestana('margenes')" id="tab-margenes" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
         <i class="fa-solid fa-chart-line"></i> Márgenes y Ganancias
       </button>
+      <button onclick="cambiarPestana('arqueo')" id="tab-arqueo" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
+        <i class="fa-solid fa-vault"></i> Arqueo y Cierre
+      </button>
     </div>
   </header>
 
   <main class="max-w-6xl mx-auto p-4">
 
-    <!-- PESTAÑA 1: VENTAS (POS) -->
     <div id="vista-pos" class="grid grid-cols-1 md:grid-cols-3 gap-6">
       <section class="md:col-span-2 space-y-6">
         <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
@@ -87,7 +87,7 @@
           <div>
             <label class="block text-xs font-bold text-slate-600 uppercase mb-2">Medio de Pago</label>
             <div class="grid grid-cols-3 gap-2">
-              <button onclick="seleccionarPago('Efectivo')" id="btn-Efectivo" class="btn-pago border p-2 text-xs rounded-lg font-bold text-slate-600 border-slate-300">Efectivo</button>
+              <button onclick="seleccionarPago('Efectivo')" id="btn-Efectivo" class="btn-pago border p-2 text-xs rounded-lg font-bold text-white bg-amber-600 border-amber-600">Efectivo</button>
               <button onclick="seleccionarPago('Transferencia')" id="btn-Transferencia" class="btn-pago border p-2 text-xs rounded-lg font-bold text-slate-600 border-slate-300">Transf.</button>
               <button onclick="seleccionarPago('Paga Luego')" id="btn-Paga Luego" class="btn-pago border p-2 text-xs rounded-lg font-bold text-slate-600 border-slate-300">Fiado</button>
             </div>
@@ -100,7 +100,6 @@
       </section>
     </div>
 
-    <!-- PESTAÑA 2: GESTOR DE MENÚ DE VENTAS -->
     <div id="vista-admin" class="hidden space-y-6">
       <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
         <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
@@ -142,7 +141,6 @@
       </div>
     </div>
 
-    <!-- PESTAÑA 3: CATÁLOGO DE MATERIAS PRIMAS E INSUMOS -->
     <div id="vista-ingredientes" class="hidden space-y-6">
       <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
         <h2 class="text-lg font-bold text-slate-800 mb-2 flex items-center gap-2">
@@ -187,19 +185,18 @@
       </div>
     </div>
 
-    <!-- PESTAÑA 4: RECETAS Y FICHAS TÉCNICAS -->
     <div id="vista-costos" class="hidden space-y-6">
       <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
         <h2 class="text-lg font-bold text-slate-800 mb-2 flex items-center gap-2">
           <i class="fa-solid fa-book-open text-amber-600"></i> Armador de Recetas y Fichas Técnicas
         </h2>
-        <p class="text-xs text-slate-500 mb-6">Seleccioná los insumos de tu catálogo en el menú desplegable, indicá la cantidad utilizada y las unidades que rinde la mezcla. El costo total y por unidad se calculará al instante.</p>
+        <p class="text-xs text-slate-500 mb-6">Seleccioná los insumos de tu catálogo en el menú desplegable, indicá la cantidad utilizada y las unidades que rinde la mezcla.</p>
 
         <form onsubmit="guardarCostosReceta(event)" class="space-y-4">
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label class="block text-xs font-bold text-slate-600 mb-1">Nombre de la Receta / Preparación</label>
-              <input type="text" id="costo-nombre-receta" placeholder="Ej: Tapas de Empanadas (100u), Relleno Carne (10 docenas)" required class="w-full border p-2 rounded-lg text-sm bg-slate-50">
+              <input type="text" id="costo-nombre-receta" placeholder="Ej: Tapas de Empanadas, Relleno Carne" required class="w-full border p-2 rounded-lg text-sm bg-slate-50">
             </div>
             <div>
               <label class="block text-xs font-bold text-slate-600 mb-1">Rendimiento (Unidades/Porciones producidas)</label>
@@ -229,7 +226,6 @@
       </div>
     </div>
 
-    <!-- PESTAÑA 5: CÁLCULO DE MÁRGENES Y GANANCIAS -->
     <div id="vista-margenes" class="hidden space-y-6">
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
@@ -256,15 +252,9 @@
       </div>
 
       <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-        <div class="flex justify-between items-center mb-4">
-          <div>
-            <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
-              <i class="fa-solid fa-scale-balanced text-amber-600"></i> Análisis de Márgenes de Ganancia
-            </h2>
-            <p class="text-xs text-slate-500">Vinculá cada producto con una Receta/Ficha Técnica o asignale un costo manual para medir su rentabilidad.</p>
-          </div>
-        </div>
-
+        <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-scale-balanced text-amber-600"></i> Análisis de Márgenes de Ganancia
+        </h2>
         <div class="overflow-x-auto">
           <table class="w-full text-left border-collapse">
             <thead>
@@ -277,686 +267,11 @@
                 <th class="p-3">Margen (%)</th>
               </tr>
             </thead>
-            <tbody id="tabla-margenes-body" class="divide-y divide-slate-100 text-sm">
-              <!-- Carga Dinámica -->
-            </tbody>
+            <tbody id="tabla-margenes-body" class="divide-y divide-slate-100 text-sm"></tbody>
           </table>
         </div>
       </div>
     </div>
 
-  </main>
-
-  <!-- MODAL FICHA TÉCNICA -->
-  <div id="modal-ficha" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden border border-slate-200 animate-fade-in">
-      <div class="bg-amber-600 p-4 text-white flex justify-between items-center">
-        <h3 class="font-bold text-lg flex items-center gap-2">
-          <i class="fa-solid fa-clipboard-list"></i> Ficha Técnica de Producción
-        </h3>
-        <button onclick="cerrarFichaTecnica()" class="text-amber-100 hover:text-white text-xl font-bold">&times;</button>
-      </div>
-      
-      <div id="contenido-ficha-modal" class="p-6 space-y-6 max-h-[80vh] overflow-y-auto"></div>
-
-      <div class="bg-slate-50 p-4 border-t flex justify-between items-center">
-        <button onclick="window.print()" class="bg-slate-700 hover:bg-slate-800 text-white px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-2">
-          <i class="fa-solid fa-print"></i> Imprimir / PDF
-        </button>
-        <button onclick="cerrarFichaTecnica()" class="bg-amber-600 hover:bg-amber-700 text-white px-5 py-2 rounded-lg text-xs font-bold">
-          Cerrar
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- LÓGICA Y FIREBASE -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyBLkWuMHj3hEXQ7b6Fr0I5Eu8B4I8KqlGk",
-      authDomain: "entrefuegos-c5b78.firebaseapp.com",
-      projectId: "entrefuegos-c5b78",
-      storageBucket: "entrefuegos-c5b78.firebasestorage.app",
-      messagingSenderId: "170507928754",
-      appId: "1:170507928754:web:e14fd77c535494afe975ab",
-      measurementId: "G-JRP0T5W9SJ"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    let catalogo = JSON.parse(localStorage.getItem('catalogo_entrefuegos')) || [
-      { id: 1, categoria: 'Empanadas', nombre: 'Carne', precio: 2000, docena: 20000, recetaId: null, costoManual: 0 },
-      { id: 2, categoria: 'Empanadas', nombre: 'Pollo', precio: 2000, docena: 20000, recetaId: null, costoManual: 0 },
-      { id: 3, categoria: 'Empanadas', nombre: 'Jamón y Queso', precio: 2000, docena: 20000, recetaId: null, costoManual: 0 },
-      { id: 4, categoria: 'Pizza', nombre: 'Pizza Muzzarella', precio: 15000, recetaId: null, costoManual: 0 },
-      { id: 5, categoria: 'Vianda', nombre: 'Vianda Diaria', precio: 18000, recetaId: null, costoManual: 0 }
-    ];
-
-    let materiasPrimas = JSON.parse(localStorage.getItem('materias_primas_entrefuegos')) || [
-      { id: 101, nombre: 'Harina 0000', cantidadPaquete: 1, unidad: 'kg', precioPaquete: 1200, costoUnitarioStandard: 1.2 },
-      { id: 102, nombre: 'Carne Picada Especial', cantidadPaquete: 1, unidad: 'kg', precioPaquete: 7500, costoUnitarioStandard: 7.5 },
-      { id: 103, nombre: 'Cebolla', cantidadPaquete: 1, unidad: 'kg', precioPaquete: 1000, costoUnitarioStandard: 1.0 },
-      { id: 104, nombre: 'Queso Muzzarella', cantidadPaquete: 1, unidad: 'kg', precioPaquete: 8000, costoUnitarioStandard: 8.0 }
-    ];
-
-    let recetasCostos = JSON.parse(localStorage.getItem('recetas_costos_entrefuegos')) || [];
-    let carrito = [];
-    let medioPagoSeleccionado = 'Efectivo';
-
-    window.cambiarPestana = function(pestana) {
-      const vPos = document.getElementById('vista-pos');
-      const vAdmin = document.getElementById('vista-admin');
-      const vIngredientes = document.getElementById('vista-ingredientes');
-      const vCostos = document.getElementById('vista-costos');
-      const vMargenes = document.getElementById('vista-margenes');
-
-      const tPos = document.getElementById('tab-pos');
-      const tAdmin = document.getElementById('tab-admin');
-      const tIng = document.getElementById('tab-ingredientes');
-      const tCostos = document.getElementById('tab-costos');
-      const tMargenes = document.getElementById('tab-margenes');
-
-      [vPos, vAdmin, vIngredientes, vCostos, vMargenes].forEach(el => el.classList.add('hidden'));
-
-      const inactiveStyle = "py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap";
-      const activeStyle = "py-2.5 px-4 font-bold text-sm border-b-4 border-white text-white flex items-center gap-2 whitespace-nowrap";
-
-      [tPos, tAdmin, tIng, tCostos, tMargenes].forEach(el => el.className = inactiveStyle);
-
-      if (pestana === 'pos') { vPos.classList.remove('hidden'); tPos.className = activeStyle; }
-      else if (pestana === 'admin') { vAdmin.classList.remove('hidden'); tAdmin.className = activeStyle; }
-      else if (pestana === 'ingredientes') { vIngredientes.classList.remove('hidden'); tIng.className = activeStyle; }
-      else if (pestana === 'costos') { vCostos.classList.remove('hidden'); tCostos.className = activeStyle; }
-      else if (pestana === 'margenes') { 
-        vMargenes.classList.remove('hidden'); 
-        tMargenes.className = activeStyle; 
-        renderizarMargenes();
-      }
-    };
-
-    window.guardarIngrediente = function(e) {
-      e.preventDefault();
-      const nombre = document.getElementById('ing-nombre').value;
-      const cantPaquete = parseFloat(document.getElementById('ing-cantidad-paquete').value);
-      const unidad = document.getElementById('ing-unidad').value;
-      const precioPaquete = parseFloat(document.getElementById('ing-precio-paquete').value);
-
-      let factorConversion = 1;
-      if (unidad === 'kg' || unidad === 'lt') factorConversion = cantPaquete * 1000;
-      else factorConversion = cantPaquete;
-
-      const costoUnitarioStandard = precioPaquete / factorConversion;
-
-      const nuevoInsumo = {
-        id: Date.now(),
-        nombre,
-        cantidadPaquete: cantPaquete,
-        unidad,
-        precioPaquete,
-        costoUnitarioStandard
-      };
-
-      materiasPrimas.push(nuevoInsumo);
-      localStorage.setItem('materias_primas_entrefuegos', JSON.stringify(materiasPrimas));
-
-      e.target.reset();
-      renderizarMateriasPrimas();
-      renderizarSelectoresInsumos();
-      alert('¡Insumo agregado al catálogo con éxito!');
-    };
-
-    window.eliminarMateriaPrima = function(id) {
-      if (confirm('¿Eliminar este insumo del catálogo?')) {
-        materiasPrimas = materiasPrimas.filter(m => m.id !== id);
-        localStorage.setItem('materias_primas_entrefuegos', JSON.stringify(materiasPrimas));
-        renderizarMateriasPrimas();
-        renderizarSelectoresInsumos();
-      }
-    };
-
-    function renderizarMateriasPrimas() {
-      const container = document.getElementById('lista-ingredientes-base');
-      container.innerHTML = '';
-
-      if (materiasPrimas.length === 0) {
-        container.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">No hay insumos en el catálogo. Cargá el primero arriba.</p>`;
-        return;
-      }
-
-      materiasPrimas.forEach(m => {
-        let textoMedidaBase = m.unidad === 'kg' ? 'gramo' : (m.unidad === 'lt' ? 'ml' : 'unid');
-        container.innerHTML += `
-          <div class="py-3 flex justify-between items-center">
-            <div>
-              <span class="font-bold text-slate-800 text-sm block">${m.nombre}</span>
-              <span class="text-xs text-slate-500">Compra: ${m.cantidadPaquete} ${m.unidad} x $${m.precioPaquete.toLocaleString()}</span>
-            </div>
-            <div class="flex items-center gap-4">
-              <span class="text-xs bg-amber-50 text-amber-800 px-2.5 py-1 rounded-lg border border-amber-200 font-bold">
-                $${m.costoUnitarioStandard.toFixed(2)} / ${textoMedidaBase}
-              </span>
-              <button onclick="eliminarMateriaPrima(${m.id})" class="text-red-500 hover:text-red-700 text-xs font-bold">
-                <i class="fa-solid fa-trash"></i>
-              </button>
-            </div>
-          </div>
-        `;
-      });
-    }
-
-    window.agregarFilaIngredienteReceta = function() {
-      const contenedor = document.getElementById('contenedor-ingredientes-receta');
-      const div = document.createElement('div');
-      div.className = "grid grid-cols-12 gap-2 items-center fila-insumo-receta";
-
-      let optionsHTML = materiasPrimas.map(m => {
-        let unidDisplay = (m.unidad === 'kg') ? 'gr' : (m.unidad === 'lt' ? 'ml' : m.unidad);
-        return `<option value="${m.id}">${m.nombre} (Costo base: $${m.costoUnitarioStandard.toFixed(2)}/${unidDisplay})</option>`;
-      }).join('');
-
-      div.innerHTML = `
-        <select class="col-span-6 border p-2 rounded-lg text-sm bg-slate-50 insumo-select" required>
-          <option value="">-- Seleccionar Insumo --</option>
-          ${optionsHTML}
-        </select>
-        <input type="number" step="0.01" placeholder="Cant. usada (gr/ml/u)" class="col-span-5 border p-2 rounded-lg text-sm bg-slate-50 insumo-cantidad" required>
-        <button type="button" onclick="this.parentElement.remove()" class="col-span-1 text-red-500 hover:text-red-700 text-center"><i class="fa-solid fa-trash"></i></button>
-      `;
-      contenedor.appendChild(div);
-    };
-
-    function renderizarSelectoresInsumos() {
-      const contenedor = document.getElementById('contenedor-ingredientes-receta');
-      if (contenedor) {
-        contenedor.innerHTML = '';
-        agregarFilaIngredienteReceta();
-      }
-    }
-
-    window.guardarCostosReceta = function(e) {
-      e.preventDefault();
-      const nombre = document.getElementById('costo-nombre-receta').value;
-      const rendimiento = parseFloat(document.getElementById('costo-rendimiento').value);
-
-      const filas = document.querySelectorAll('.fila-insumo-receta');
-      let costoTotal = 0;
-      let detalleIngredientes = [];
-
-      filas.forEach(f => {
-        const insumoId = parseFloat(f.querySelector('.insumo-select').value);
-        const cantidadUsada = parseFloat(f.querySelector('.insumo-cantidad').value) || 0;
-
-        const materia = materiasPrimas.find(m => m.id === insumoId);
-        if (materia) {
-          const subtotalIngrediente = cantidadUsada * materia.costoUnitarioStandard;
-          costoTotal += subtotalIngrediente;
-
-          let unidadCorta = (materia.unidad === 'kg') ? 'gr' : (materia.unidad === 'lt' ? 'ml' : 'unid');
-          detalleIngredientes.push({
-            nombre: materia.nombre,
-            cantidadUsada,
-            unidad: unidadCorta,
-            costoSubtotal: subtotalIngrediente
-          });
-        }
-      });
-
-      const costoUnitario = rendimiento > 0 ? (costoTotal / rendimiento) : 0;
-
-      const nuevaReceta = {
-        id: Date.now(),
-        nombre,
-        rendimiento,
-        costoTotal,
-        costoUnitario,
-        ingredientes: detalleIngredientes
-      };
-
-      recetasCostos.push(nuevaReceta);
-      localStorage.setItem('recetas_costos_entrefuegos', JSON.stringify(recetasCostos));
-
-      document.getElementById('costo-nombre-receta').value = '';
-      document.getElementById('costo-rendimiento').value = '';
-      renderizarSelectoresInsumos();
-      renderizarRecetas();
-      alert('¡Receta y Ficha Técnica guardadas!');
-    };
-
-    window.eliminarReceta = function(id) {
-      if (confirm('¿Eliminar esta receta del sistema?')) {
-        recetasCostos = recetasCostos.filter(r => r.id !== id);
-        localStorage.setItem('recetas_costos_entrefuegos', JSON.stringify(recetasCostos));
-        renderizarRecetas();
-      }
-    };
-
-    function renderizarRecetas() {
-      const container = document.getElementById('lista-recetas-costos');
-      if (!container) return;
-      container.innerHTML = '';
-
-      if (recetasCostos.length === 0) {
-        container.innerHTML = `<p class="text-xs text-slate-400 col-span-2 text-center py-4">No hay recetas guardadas aún.</p>`;
-        return;
-      }
-
-      recetasCostos.forEach(r => {
-        container.innerHTML += `
-          <div class="border rounded-xl p-4 bg-slate-50 border-slate-200 flex flex-col justify-between space-y-3 relative shadow-sm">
-            <button onclick="eliminarReceta(${r.id})" class="absolute top-3 right-3 text-slate-400 hover:text-red-500 text-xs"><i class="fa-solid fa-trash"></i></button>
-            <div>
-              <h3 class="font-bold text-slate-800 text-base pr-6">${r.nombre}</h3>
-              <div class="grid grid-cols-2 gap-2 mt-2 bg-white p-2.5 rounded-lg border border-slate-100 text-xs">
-                <div><span class="text-slate-500 block">Rendimiento:</span> <strong>${r.rendimiento} unidades</strong></div>
-                <div><span class="text-slate-500 block">Costo Unitario:</span> <strong class="text-amber-600 text-sm">$${Math.round(r.costoUnitario).toLocaleString()} c/u</strong></div>
-              </div>
-            </div>
-            <div class="pt-2 border-t flex justify-between items-center">
-              <span class="text-xs text-slate-500 font-semibold">Costo Tanda: $${Math.round(r.costoTotal).toLocaleString()}</span>
-              <button onclick="abrirFichaTecnica(${r.id})" class="bg-amber-600 hover:bg-amber-700 text-white text-xs px-3 py-1.5 rounded-lg font-bold flex items-center gap-1.5 shadow-sm">
-                <i class="fa-solid fa-file-lines"></i> Ficha Técnica
-              </button>
-            </div>
-          </div>
-        `;
-      });
-    }
-
-    window.abrirFichaTecnica = function(id) {
-      const receta = recetasCostos.find(r => r.id === id);
-      if (!receta) return;
-
-      const modal = document.getElementById('modal-ficha');
-      const contenido = document.getElementById('contenido-ficha-modal');
-
-      let tablaIngredientes = receta.ingredientes.map(i => `
-        <tr class="border-b border-slate-100 text-sm">
-          <td class="py-2 font-medium text-slate-800">${i.nombre}</td>
-          <td class="py-2 text-center text-slate-600">${i.cantidadUsada} ${i.unidad}</td>
-          <td class="py-2 text-right font-bold text-slate-700">$${Math.round(i.costoSubtotal).toLocaleString()}</td>
-        </tr>
-      `).join('');
-
-      contenido.innerHTML = `
-        <div class="border-b pb-4">
-          <span class="text-xs font-bold text-amber-700 uppercase tracking-wider">Ficha Técnica de Receta</span>
-          <h2 class="text-2xl font-black text-slate-800">${receta.nombre}</h2>
-          <p class="text-xs text-slate-500 mt-1">Generado automáticamente por el gestor de costos EntreFuegos</p>
-        </div>
-
-        <div class="grid grid-cols-3 gap-3 bg-amber-50 p-4 rounded-xl border border-amber-200 text-center">
-          <div>
-            <span class="block text-xs text-amber-800 font-medium">Rendimiento Tanda</span>
-            <span class="text-lg font-bold text-amber-950">${receta.rendimiento} u.</span>
-          </div>
-          <div>
-            <span class="block text-xs text-amber-800 font-medium">Costo Total Tanda</span>
-            <span class="text-lg font-bold text-amber-950">$${Math.round(receta.costoTotal).toLocaleString()}</span>
-          </div>
-          <div>
-            <span class="block text-xs text-amber-800 font-medium">Costo x Unidad</span>
-            <span class="text-lg font-bold text-emerald-700">$${Math.round(receta.costoUnitario).toLocaleString()}</span>
-          </div>
-        </div>
-
-        <div>
-          <h4 class="font-bold text-slate-800 text-sm mb-3 flex items-center gap-2">
-            <i class="fa-solid fa-list-check text-amber-600"></i> Desglose de Insumos / Ingredientes
-          </h4>
-          <table class="w-full text-left border-collapse">
-            <thead>
-              <tr class="border-b text-xs font-bold text-slate-400 uppercase">
-                <th class="py-2">Insumo</th>
-                <th class="py-2 text-center">Cantidad Usada</th>
-                <th class="py-2 text-right">Costo Insumo</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${tablaIngredientes}
-            </tbody>
-          </table>
-        </div>
-      `;
-
-      modal.classList.remove('hidden');
-    };
-
-    window.cerrarFichaTecnica = function() {
-      document.getElementById('modal-ficha').classList.add('hidden');
-    };
-
-    /* --- LÓGICA DE MÁRGENES Y VINCULACIÓN --- */
-
-    window.vincularRecetaProducto = function(prodId, recetaId) {
-      const prod = catalogo.find(p => p.id === prodId);
-      if (prod) {
-        prod.recetaId = recetaId ? parseFloat(recetaId) : null;
-        guardarCatalogo();
-        renderizarMargenes();
-      }
-    };
-
-    window.actualizarCostoManual = function(prodId, costo) {
-      const prod = catalogo.find(p => p.id === prodId);
-      if (prod) {
-        prod.costoManual = parseFloat(costo) || 0;
-        guardarCatalogo();
-        renderizarMargenes();
-      }
-    };
-
-    function renderizarMargenes() {
-      const tbody = document.getElementById('tabla-margenes-body');
-      if (!tbody) return;
-      tbody.innerHTML = '';
-
-      let sumaMargenes = 0;
-      let productosConCosto = 0;
-      let sumaGanancias = 0;
-
-      catalogo.forEach(p => {
-        let costoUnitario = 0;
-        let esReceta = false;
-
-        if (p.recetaId) {
-          const receta = recetasCostos.find(r => r.id === p.recetaId);
-          if (receta) {
-            costoUnitario = receta.costoUnitario;
-            esReceta = true;
-          }
-        } else if (p.costoManual) {
-          costoUnitario = p.costoManual;
-        }
-
-        const ganancia = p.precio - costoUnitario;
-        const porcentajeMargen = p.precio > 0 ? (ganancia / p.precio) * 100 : 0;
-
-        if (costoUnitario > 0) {
-          sumaMargenes += porcentajeMargen;
-          sumaGanancias += ganancia;
-          productosConCosto++;
-        }
-
-        let badgeColor = "bg-slate-100 text-slate-600";
-        if (costoUnitario > 0) {
-          if (porcentajeMargen >= 50) badgeColor = "bg-emerald-100 text-emerald-800 font-bold";
-          else if (porcentajeMargen >= 30) badgeColor = "bg-amber-100 text-amber-800 font-bold";
-          else badgeColor = "bg-red-100 text-red-800 font-bold";
-        }
-
-        let selectRecetas = `<option value="">-- Sin Vincular --</option>`;
-        recetasCostos.forEach(r => {
-          selectRecetas += `<option value="${r.id}" ${p.recetaId === r.id ? 'selected' : ''}>Receta: ${r.nombre}</option>`;
-        });
-
-        tbody.innerHTML += `
-          <tr class="hover:bg-slate-50">
-            <td class="p-3 font-bold text-slate-800">
-              ${p.nombre}
-              <span class="block text-xs font-normal text-slate-400">${p.categoria}</span>
-            </td>
-            <td class="p-3 font-semibold text-slate-700">$${p.precio.toLocaleString()}</td>
-            <td class="p-3">
-              <select onchange="vincularRecetaProducto(${p.id}, this.value)" class="border p-1.5 rounded-lg text-xs bg-white text-slate-700 max-w-[180px]">
-                ${selectRecetas}
-              </select>
-            </td>
-            <td class="p-3">
-              ${p.recetaId ? `
-                <span class="text-xs font-bold text-slate-600">$${Math.round(costoUnitario).toLocaleString()}</span>
-              ` : `
-                <div class="flex items-center gap-1">
-                  <span class="text-xs text-slate-400">$</span>
-                  <input type="number" placeholder="Manual" value="${p.costoManual || ''}" onchange="actualizarCostoManual(${p.id}, this.value)" class="w-20 border p-1 rounded text-xs">
-                </div>
-              `}
-            </td>
-            <td class="p-3 font-bold ${ganancia >= 0 ? 'text-emerald-600' : 'text-red-500'}">
-              $${Math.round(ganancia).toLocaleString()}
-            </td>
-            <td class="p-3">
-              <span class="px-2.5 py-1 rounded-full text-xs ${badgeColor}">
-                ${costoUnitario > 0 ? porcentajeMargen.toFixed(1) + '%' : 'N/D'}
-              </span>
-            </td>
-          </tr>
-        `;
-      });
-
-      const margenPromedio = productosConCosto > 0 ? (sumaMargenes / productosConCosto).toFixed(1) : 0;
-      const gananciaPromedio = productosConCosto > 0 ? Math.round(sumaGanancias / productosConCosto) : 0;
-
-      document.getElementById('stat-margen-promedio').innerText = `${margenPromedio}%`;
-      document.getElementById('stat-prod-vinculados').innerText = `${productosConCosto} / ${catalogo.length}`;
-      document.getElementById('stat-ganancia-promedio').innerText = `$${gananciaPromedio.toLocaleString()}`;
-    }
-
-    /* --- LÓGICA DE MENÚ ADMINISTRATIVO Y GENERALES --- */
-
-    window.cambiarTipoFormulario = function() {
-      const cat = document.getElementById('prod-categoria').value;
-      const campoLitros = document.getElementById('campo-litros');
-      if (cat === 'Bebidas') campoLitros.classList.remove('hidden');
-      else campoLitros.classList.add('hidden');
-    };
-
-    function guardarCatalogo() {
-      localStorage.setItem('catalogo_entrefuegos', JSON.stringify(catalogo));
-      renderizarTodo();
-    }
-
-    window.guardarNuevoProducto = function(e) {
-      e.preventDefault();
-      const categoria = document.getElementById('prod-categoria').value;
-      const nombre = document.getElementById('prod-nombre').value;
-      const precio = parseFloat(document.getElementById('prod-precio').value);
-      const litros = document.getElementById('prod-litros').value;
-
-      let nombreFinal = nombre;
-      if (categoria === 'Bebidas' && litros) nombreFinal = `${nombre} (${litros})`;
-
-      const nuevo = { id: Date.now(), categoria, nombre: nombreFinal, precio, recetaId: null, costoManual: 0 };
-      if (categoria === 'Empanadas') nuevo.docena = precio * 10;
-
-      catalogo.push(nuevo);
-      guardarCatalogo();
-      alert('¡Producto agregado al menú!');
-      e.target.reset();
-      cambiarPestana('pos');
-    };
-
-    window.eliminarProducto = function(id) {
-      if (confirm('¿Eliminar este producto?')) {
-        catalogo = catalogo.filter(p => p.id !== id);
-        guardarCatalogo();
-      }
-    };
-
-    function renderizarTodo() {
-      renderizarPOS();
-      renderizarAdmin();
-      renderizarMateriasPrimas();
-      renderizarSelectoresInsumos();
-      renderizarRecetas();
-    }
-
-    function renderizarPOS() {
-      const empanadasContainer = document.getElementById('grid-empanadas');
-      const pizzasViandasContainer = document.getElementById('grid-pizzas-viandas');
-      const bebidasContainer = document.getElementById('grid-bebidas');
-
-      if (!empanadasContainer) return;
-
-      empanadasContainer.innerHTML = '';
-      pizzasViandasContainer.innerHTML = '';
-      bebidasContainer.innerHTML = '';
-
-      catalogo.forEach(prod => {
-        if (prod.categoria === 'Empanadas') {
-          empanadasContainer.innerHTML += `
-            <div class="border rounded-lg p-3 text-center bg-slate-50 border-slate-200">
-              <span class="font-bold block text-slate-800">${prod.nombre}</span>
-              <span class="text-xs text-slate-500">$${prod.precio.toLocaleString()} u. | $${prod.docena.toLocaleString()} doc.</span>
-              <div class="mt-3 flex justify-center gap-2">
-                <button onclick="agregarItem('${prod.nombre} (Unid)', ${prod.precio})" class="bg-amber-600 hover:bg-amber-700 text-white text-xs px-2.5 py-1.5 rounded-lg font-bold">+1 Unid</button>
-                <button onclick="agregarItem('${prod.nombre} (Docena)', ${prod.docena})" class="bg-amber-800 hover:bg-amber-900 text-white text-xs px-2.5 py-1.5 rounded-lg font-bold">+1 Docena</button>
-              </div>
-            </div>
-          `;
-        } else if (prod.categoria === 'Pizza' || prod.categoria === 'Vianda') {
-          pizzasViandasContainer.innerHTML += `
-            <div class="border rounded-lg p-3 flex justify-between items-center bg-slate-50 border-slate-200">
-              <div>
-                <span class="font-bold block text-slate-800">${prod.nombre}</span>
-                <span class="text-xs text-slate-500">$${prod.precio.toLocaleString()}</span>
-              </div>
-              <button onclick="agregarItem('${prod.nombre}', ${prod.precio})" class="bg-amber-600 hover:bg-amber-700 text-white text-xs px-3 py-2 rounded-lg font-bold">+ Agregar</button>
-            </div>
-          `;
-        } else if (prod.categoria === 'Bebidas') {
-          bebidasContainer.innerHTML += `
-            <div class="border rounded-lg p-3 text-center bg-slate-50 border-slate-200">
-              <span class="font-bold block text-slate-800 text-sm">${prod.nombre}</span>
-              <span class="text-xs text-slate-500">$${prod.precio.toLocaleString()}</span>
-              <button onclick="agregarItem('${prod.nombre}', ${prod.precio})" class="mt-2 w-full bg-amber-600 hover:bg-amber-700 text-white text-xs py-1.5 rounded-lg font-bold">+ Agregar</button>
-            </div>
-          `;
-        }
-      });
-    }
-
-    function renderizarAdmin() {
-      const container = document.getElementById('lista-admin-productos');
-      if (!container) return;
-      container.innerHTML = '';
-
-      catalogo.forEach(prod => {
-        container.innerHTML += `
-          <div class="py-3 flex justify-between items-center">
-            <div>
-              <span class="font-bold text-slate-800">${prod.nombre}</span>
-              <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded ml-2">${prod.categoria}</span>
-            </div>
-            <div class="flex items-center gap-4">
-              <span class="font-bold text-amber-600">$${prod.precio.toLocaleString()}</span>
-              <button onclick="eliminarProducto(${prod.id})" class="text-red-500 hover:text-red-700 text-xs font-bold">
-                <i class="fa-solid fa-trash"></i>
-              </button>
-            </div>
-          </div>
-        `;
-      });
-    }
-
-    /* --- OPERACIONES DEL CARRITO POS --- */
-
-    window.agregarItem = function(nombre, precio) {
-      const itemExistente = carrito.find(i => i.nombre === nombre);
-      if (itemExistente) {
-        itemExistente.cantidad++;
-      } else {
-        carrito.push({ nombre, precio, cantidad: 1 });
-      }
-      actualizarCarrito();
-    };
-
-    window.cambiarCantidad = function(index, delta) {
-      carrito[index].cantidad += delta;
-      if (carrito[index].cantidad <= 0) carrito.splice(index, 1);
-      actualizarCarrito();
-    };
-
-    window.vaciarCarrito = function() {
-      carrito = [];
-      actualizarCarrito();
-    };
-
-    window.seleccionarPago = function(medio) {
-      medioPagoSeleccionado = medio;
-      document.querySelectorAll('.btn-pago').forEach(btn => {
-        btn.classList.remove('bg-amber-600', 'text-white', 'border-amber-600');
-        btn.classList.add('border-slate-300', 'text-slate-600');
-      });
-      const btnSel = document.getElementById(`btn-${medio}`);
-      if (btnSel) {
-        btnSel.classList.remove('border-slate-300', 'text-slate-600');
-        btnSel.classList.add('bg-amber-600', 'text-white', 'border-amber-600');
-      }
-    };
-
-    function actualizarCarrito() {
-      const container = document.getElementById('lista-pedido');
-      const totalEl = document.getElementById('total-monto');
-      if (!container) return;
-
-      if (carrito.length === 0) {
-        container.innerHTML = `<p class="text-sm text-slate-400 text-center py-8">No hay productos en el pedido.</p>`;
-        totalEl.innerText = '$0';
-        return;
-      }
-
-      container.innerHTML = '';
-      let total = 0;
-
-      carrito.forEach((item, index) => {
-        const subtotal = item.precio * item.cantidad;
-        total += subtotal;
-        container.innerHTML += `
-          <div class="flex justify-between items-center bg-slate-50 p-2.5 rounded-lg border border-slate-200">
-            <div>
-              <span class="text-xs font-bold text-slate-800 block">${item.nombre}</span>
-              <span class="text-xs text-slate-500">$${item.precio.toLocaleString()} c/u</span>
-            </div>
-            <div class="flex items-center gap-2">
-              <button onclick="cambiarCantidad(${index}, -1)" class="w-6 h-6 rounded bg-slate-200 text-slate-700 font-bold text-xs hover:bg-slate-300">-</button>
-              <span class="text-xs font-bold">${item.cantidad}</span>
-              <button onclick="cambiarCantidad(${index}, 1)" class="w-6 h-6 rounded bg-slate-200 text-slate-700 font-bold text-xs hover:bg-slate-300">+</button>
-              <span class="text-xs font-bold text-slate-800 ml-2">$${subtotal.toLocaleString()}</span>
-            </div>
-          </div>
-        `;
-      });
-
-      totalEl.innerText = `$${total.toLocaleString()}`;
-    }
-
-    window.registrarVenta = async function() {
-      if (carrito.length === 0) {
-        alert('Agregá productos al pedido antes de registrar.');
-        return;
-      }
-
-      const totalCalculado = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
-      const btn = document.getElementById('btn-guardar');
-      btn.disabled = true;
-      btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Guardando...`;
-
-      try {
-        await addDoc(collection(db, "ventas"), {
-          fecha: serverTimestamp(),
-          items: carrito,
-          total: totalCalculado,
-          medioPago: medioPagoSeleccionado
-        });
-
-        alert('¡Venta registrada y guardada exitosamente!');
-        vaciarCarrito();
-      } catch (e) {
-        console.error("Error al registrar venta: ", e);
-        alert('Hubo un error al conectar con Firebase.');
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Registrar y Sincronizar`;
-      }
-    };
-
-    // Inicialización de la app
-    renderizarTodo();
-    seleccionarPago('Efectivo');
-  </script>
-</body>
-</html>
+    <div id="vista-arqueo" class="hidden space-y-6">
+      <div class="bg-white p-6 rounded-xl shadow-sm border border
