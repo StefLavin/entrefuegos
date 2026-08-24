@@ -6,7 +6,6 @@
   <title>EntreFuegos - Sistema POS & Gestión</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- Chart.js para el gráfico de torta -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="bg-slate-100 font-sans text-slate-800 antialiased min-h-screen pb-12">
@@ -17,9 +16,9 @@
         <i class="fa-solid fa-fire text-amber-300 text-2xl"></i>
         <h1 class="text-2xl font-black tracking-tight">EntreFuegos</h1>
       </div>
-      <div class="flex items-center gap-2 bg-amber-800/60 px-3 py-1 rounded-full text-xs font-semibold text-amber-200">
+      <div id="estado-conexion" class="flex items-center gap-2 bg-amber-800/60 px-3 py-1 rounded-full text-xs font-semibold text-amber-200">
         <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-        Firebase Conectado (Tiempo Real)
+        Sistema Listo
       </div>
     </div>
 
@@ -52,7 +51,6 @@
 
   <main class="max-w-7xl mx-auto px-4 py-6">
 
-    <!-- VISTA POS -->
     <section id="vista-pos" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div class="lg:col-span-2 space-y-6">
 
@@ -151,43 +149,36 @@
           </div>
 
           <button id="btn-guardar" onclick="window.registrarVenta()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-2">
-            <i class="fa-solid fa-cloud-arrow-up"></i> Registrar y Sincronizar
+            <i class="fa-solid fa-cloud-arrow-up"></i> Registrar Venta
           </button>
         </div>
       </div>
     </section>
 
-    <!-- VISTA ESTADÍSTICAS -->
     <section id="vista-estadisticas" class="hidden max-w-5xl mx-auto space-y-6">
       <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
         <h2 class="font-bold text-slate-800 text-lg mb-2 flex items-center gap-2">
           <i class="fa-solid fa-chart-pie text-amber-600"></i> Ranking y Contador de Empanadas Vendidas
         </h2>
-        <p class="text-xs text-slate-500 mb-6">Muestra la cantidad total vendida por variedad a partir del registro histórico de ventas en Firebase.</p>
+        <p class="text-xs text-slate-500 mb-6">Muestra la cantidad total vendida por variedad.</p>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <div class="bg-amber-50 p-4 rounded-xl border border-amber-200 flex items-center gap-4">
-            <div class="p-3 bg-amber-500 text-white rounded-lg">
-              <i class="fa-solid fa-trophy text-2xl"></i>
-            </div>
+            <div class="p-3 bg-amber-500 text-white rounded-lg"><i class="fa-solid fa-trophy text-2xl"></i></div>
             <div>
               <span class="text-xs font-bold text-amber-800 block">Sabor Más Vendido</span>
               <span id="stat-top-sabor" class="text-xl font-black text-amber-900">-</span>
             </div>
           </div>
           <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-200 flex items-center gap-4">
-            <div class="p-3 bg-emerald-600 text-white rounded-lg">
-              <i class="fa-solid fa-utensils text-2xl"></i>
-            </div>
+            <div class="p-3 bg-emerald-600 text-white rounded-lg"><i class="fa-solid fa-utensils text-2xl"></i></div>
             <div>
-              <span class="text-xs font-bold text-emerald-800 block">Total Empanadas Vendidas</span>
+              <span class="text-xs font-bold text-emerald-800 block">Total Empanadas</span>
               <span id="stat-total-empanadas" class="text-xl font-black text-emerald-900">0 unidades</span>
             </div>
           </div>
           <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 flex items-center gap-4">
-            <div class="p-3 bg-slate-700 text-white rounded-lg">
-              <i class="fa-solid fa-list-ol text-2xl"></i>
-            </div>
+            <div class="p-3 bg-slate-700 text-white rounded-lg"><i class="fa-solid fa-list-ol text-2xl"></i></div>
             <div>
               <span class="text-xs font-bold text-slate-600 block">Variedades Activas</span>
               <span id="stat-variedades-activas" class="text-xl font-black text-slate-800">0 sabores</span>
@@ -214,8 +205,7 @@
                     <th class="p-3 text-right">Porcentaje</th>
                   </tr>
                 </thead>
-                <tbody id="tabla-contador-sabores" class="divide-y divide-slate-100 bg-white">
-                </tbody>
+                <tbody id="tabla-contador-sabores" class="divide-y divide-slate-100 bg-white"></tbody>
               </table>
             </div>
           </div>
@@ -223,11 +213,10 @@
       </div>
     </section>
 
-    <!-- VISTA MENÚ ADMIN -->
     <section id="vista-admin" class="hidden max-w-4xl mx-auto space-y-6">
       <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
         <h2 class="font-bold text-slate-800 text-lg mb-4 flex items-center gap-2">
-          <i class="fa-solid fa-plus-circle text-amber-600"></i> Agregar Producto al Menú de Ventas
+          <i class="fa-solid fa-plus-circle text-amber-600"></i> Agregar Producto al Menú
         </h2>
         <form onsubmit="window.guardarNuevoProducto(event)" class="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
@@ -241,10 +230,10 @@
           </div>
           <div>
             <label class="block text-xs font-bold text-slate-600 mb-1">Nombre / Sabor</label>
-            <input type="text" id="prod-nombre" placeholder="Ej: Humita, Coca Cola" class="w-full border p-2 rounded-lg text-sm bg-slate-50" required>
+            <input type="text" id="prod-nombre" placeholder="Ej: Humita" class="w-full border p-2 rounded-lg text-sm bg-slate-50" required>
           </div>
           <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Precio de Venta ($)</label>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Precio ($)</label>
             <input type="number" id="prod-precio" placeholder="1800" class="w-full border p-2 rounded-lg text-sm bg-slate-50" required>
           </div>
           <div class="flex items-end">
@@ -256,12 +245,11 @@
       </div>
 
       <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-        <h2 class="font-bold text-slate-800 text-lg mb-4">Productos Actuales en Catálogo de Venta</h2>
+        <h2 class="font-bold text-slate-800 text-lg mb-4">Catálogo de Productos</h2>
         <div id="lista-admin-productos" class="divide-y divide-slate-100"></div>
       </div>
     </section>
 
-    <!-- MODAL EDITAR ESCALA DE PRECIOS EMPANADAS -->
     <div id="modal-editar-escala" class="fixed inset-0 bg-slate-900/50 flex items-center justify-center p-4 z-50 hidden backdrop-blur-sm">
       <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 space-y-4">
         <div class="flex justify-between items-center border-b pb-3">
@@ -286,41 +274,22 @@
           <div class="flex justify-end gap-2 pt-2">
             <button type="button" onclick="window.cerrarModalEscala()" class="px-4 py-2 text-sm font-bold text-slate-500 hover:text-slate-700">Cancelar</button>
             <button type="submit" class="bg-amber-600 hover:bg-amber-700 text-white font-bold px-5 py-2 rounded-lg text-sm transition">
-              <i class="fa-solid fa-check"></i> Actualizar Escala
+              <i class="fa-solid fa-check"></i> Actualizar
             </button>
           </div>
         </form>
       </div>
     </div>
 
-    <!-- VISTA MÁRGENES -->
     <section id="vista-margenes" class="hidden max-w-5xl mx-auto space-y-6">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-          <span class="text-xs font-bold text-slate-400 block">Productos Registrados</span>
-          <span id="stat-prod-vinculados" class="text-2xl font-black text-slate-800">0</span>
-        </div>
-        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-          <span class="text-xs font-bold text-slate-400 block">Margen Promedio</span>
-          <span id="stat-margen-promedio" class="text-2xl font-black text-emerald-600">0%</span>
-        </div>
-        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-          <span class="text-xs font-bold text-slate-400 block">Ganancia Promedio / Unid</span>
-          <span id="stat-ganancia-promedio" class="text-2xl font-black text-amber-600">$0</span>
-        </div>
-      </div>
-
       <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-        <div class="p-5 border-b">
-          <h2 class="font-bold text-slate-800 text-lg">Análisis de Márgenes por Producto</h2>
-        </div>
+        <div class="p-5 border-b"><h2 class="font-bold text-slate-800 text-lg">Márgenes y Ganancias</h2></div>
         <div class="overflow-x-auto">
           <table class="w-full text-left text-sm text-slate-600">
             <thead class="bg-slate-50 text-xs uppercase font-bold text-slate-400 border-b">
               <tr>
                 <th class="p-3">Producto</th>
                 <th class="p-3">P. Venta</th>
-                <th class="p-3">Estado Ficha</th>
                 <th class="p-3">Costo Est.</th>
                 <th class="p-3">Ganancia</th>
                 <th class="p-3">Margen %</th>
@@ -332,92 +301,58 @@
       </div>
     </section>
 
-    <!-- VISTA ARQUEO -->
     <section id="vista-arqueo" class="hidden max-w-4xl mx-auto space-y-6">
-      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-wrap justify-between items-center gap-4">
+      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex justify-between items-center">
         <div>
-          <h2 class="font-bold text-slate-800 text-lg">Arqueo Diarios de Ventas</h2>
-          <p class="text-xs text-slate-400">Auditoría diaria de caja</p>
+          <h2 class="font-bold text-slate-800 text-lg">Arqueo Diario</h2>
         </div>
-        <div class="flex items-center gap-3">
-          <input type="date" id="filtro-fecha-arqueo" onchange="window.cargarArqueoDia()" class="border p-2 rounded-lg text-sm bg-slate-50 font-bold text-slate-700">
-        </div>
+        <input type="date" id="filtro-fecha-arqueo" onchange="window.cargarArqueoDia()" class="border p-2 rounded-lg text-sm bg-slate-50 font-bold text-slate-700">
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
           <span class="text-xs font-bold text-slate-400 block">Total Facturado</span>
           <span id="arqueo-total-ventas" class="text-2xl font-black text-amber-600">$0</span>
-          <span id="arqueo-cant-pedidos" class="text-xs text-slate-400 block mt-1">0 pedidos</span>
         </div>
         <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-          <span class="text-xs font-bold text-slate-400 block">En Efectivo</span>
+          <span class="text-xs font-bold text-slate-400 block">Efectivo</span>
           <span id="arqueo-efectivo" class="text-2xl font-black text-emerald-600">$0</span>
         </div>
         <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-          <span class="text-xs font-bold text-slate-400 block">Transferencias / MercadoPago</span>
+          <span class="text-xs font-bold text-slate-400 block">Transferencias / MP</span>
           <span id="arqueo-transferencia" class="text-2xl font-black text-blue-600">$0</span>
-          <span id="arqueo-fiado" class="text-xs text-amber-600 font-bold block mt-1">Paga luego: $0</span>
-        </div>
-      </div>
-
-      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
-        <h3 class="font-bold text-slate-800 text-base">Cierre y Conteo de Caja Registradora</h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Efectivo Contado en Caja ($)</label>
-            <input type="number" id="arqueo-efectivo-real" oninput="window.calcularDiferenciaArqueo()" placeholder="Monto contado" class="w-full border p-2.5 rounded-lg text-sm bg-slate-50 font-bold">
-          </div>
-          <div id="box-diferencia" class="p-4 rounded-xl border bg-slate-50 border-slate-200 flex justify-between items-center">
-            <span class="text-xs font-bold">Diferencia:</span>
-            <span id="arqueo-diferencia-monto" class="text-xl font-black">$0</span>
-          </div>
         </div>
       </div>
     </section>
 
   </main>
 
-  <!-- LÓGICA JAVASCRIPT CORREGIDA -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { 
-      getFirestore, collection, addDoc, getDocs, query, where, doc, deleteDoc, serverTimestamp, onSnapshot 
-    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  <script>
+    // ESTADO LOCAL DE LA APLICACIÓN DE RESPALDO (SIEMPRE DISPONIBLE)
+    window.catalogoGlobal = [
+      { id: '1', nombre: 'Carne', precio: 1800, categoria: 'Empanadas' },
+      { id: '2', nombre: 'Pollo', precio: 1800, categoria: 'Empanadas' },
+      { id: '3', nombre: 'Jamón y Queso', precio: 1800, categoria: 'Empanadas' },
+      { id: '4', nombre: 'Pizza Muzzarella', precio: 15000, categoria: 'Pizza' },
+      { id: '5', nombre: 'Vianda Diaria', precio: 18000, categoria: 'Vianda' },
+      { id: '6', nombre: 'Coca Cola 1.5L', precio: 3500, categoria: 'Bebidas' }
+    ];
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyBLkWuMHj3hEXQ7b6Fr0I5Eu8B4I8KqlGk",
-      authDomain: "entrefuegos-c5b78.firebaseapp.com",
-      projectId: "entrefuegos-c5b78",
-      storageBucket: "entrefuegos-c5b78.firebasestorage.app",
-      messagingSenderId: "170507928754",
-      appId: "1:170507928754:web:e14fd77c535494afe975ab",
-      measurementId: "G-JRP0T5W9SJ"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    let catalogo = [];
-    let todasLasVentas = [];
-    let carrito = [];
-    let medioPagoSeleccionado = 'Efectivo';
-    let chartTorta = null;
-
-    let escalaPrecios = {
-      docena: 20000,
-      media: 10000,
-      unidad: 1800
-    };
+    window.carritoGlobal = [];
+    window.ventasGlobales = [];
+    window.medioPagoSeleccionado = 'Efectivo';
+    window.escalaPrecios = { docena: 20000, media: 10000, unidad: 1800 };
 
     const hoy = new Date().toISOString().split('T')[0];
 
     document.addEventListener("DOMContentLoaded", () => {
       const fechaInput = document.getElementById('fecha-venta-pos');
       if (fechaInput) fechaInput.value = hoy;
+      window.renderizarPOS();
+      window.renderizarAdminProductos();
+      window.renderizarMargenes();
     });
 
-    // Vincular funciones explícitamente a window para permitir interacción onclick
     window.cambiarPestana = function(pestana) {
       const vistas = ['pos', 'estadisticas', 'admin', 'margenes', 'arqueo'];
       vistas.forEach(v => {
@@ -432,10 +367,10 @@
       if (vistaActiva) vistaActiva.classList.remove('hidden');
       if (tabActivo) tabActivo.className = "py-2.5 px-4 font-bold text-sm border-b-4 border-white text-white flex items-center gap-2 whitespace-nowrap";
 
-      if (pestana === 'pos') renderizarPOS();
-      else if (pestana === 'estadisticas') renderizarEstadisticasEmpanadas();
-      else if (pestana === 'admin') renderizarAdminProductos();
-      else if (pestana === 'margenes') renderizarMargenes();
+      if (pestana === 'pos') window.renderizarPOS();
+      else if (pestana === 'estadisticas') window.renderizarEstadisticasEmpanadas();
+      else if (pestana === 'admin') window.renderizarAdminProductos();
+      else if (pestana === 'margenes') window.renderizarMargenes();
       else if (pestana === 'arqueo') {
         const fInput = document.getElementById('filtro-fecha-arqueo');
         if (fInput) fInput.value = hoy;
@@ -444,9 +379,9 @@
     };
 
     window.abrirModalEscala = function() {
-      document.getElementById('escala-docena').value = escalaPrecios.docena;
-      document.getElementById('escala-media').value = escalaPrecios.media;
-      document.getElementById('escala-unidad').value = escalaPrecios.unidad;
+      document.getElementById('escala-docena').value = window.escalaPrecios.docena;
+      document.getElementById('escala-media').value = window.escalaPrecios.media;
+      document.getElementById('escala-unidad').value = window.escalaPrecios.unidad;
       document.getElementById('modal-editar-escala').classList.remove('hidden');
     };
 
@@ -456,12 +391,12 @@
 
     window.guardarEscalaPrecios = function(e) {
       e.preventDefault();
-      escalaPrecios.docena = parseFloat(document.getElementById('escala-docena').value) || 0;
-      escalaPrecios.media = parseFloat(document.getElementById('escala-media').value) || 0;
-      escalaPrecios.unidad = parseFloat(document.getElementById('escala-unidad').value) || 0;
+      window.escalaPrecios.docena = parseFloat(document.getElementById('escala-docena').value) || 0;
+      window.escalaPrecios.media = parseFloat(document.getElementById('escala-media').value) || 0;
+      window.escalaPrecios.unidad = parseFloat(document.getElementById('escala-unidad').value) || 0;
 
       document.getElementById('label-escala-precios').innerText = 
-        `Escala: $${escalaPrecios.docena.toLocaleString()} / docena | $${escalaPrecios.media.toLocaleString()} / 6 u. | $${escalaPrecios.unidad.toLocaleString()} / c.u`;
+        `Escala: $${window.escalaPrecios.docena.toLocaleString()} / docena | $${window.escalaPrecios.media.toLocaleString()} / 6 u. | $${window.escalaPrecios.unidad.toLocaleString()} / c.u`;
 
       window.calcularPromocionEmpanadas();
       window.cerrarModalEscala();
@@ -479,7 +414,7 @@
       let mediasDocenas = remanente >= 6 ? 1 : 0;
       let unidadesSueltas = remanente >= 6 ? remanente - 6 : remanente;
 
-      const totalMonto = (docenas * escalaPrecios.docena) + (mediasDocenas * escalaPrecios.media) + (unidadesSueltas * escalaPrecios.unidad);
+      const totalMonto = (docenas * window.escalaPrecios.docena) + (mediasDocenas * window.escalaPrecios.media) + (unidadesSueltas * window.escalaPrecios.unidad);
 
       document.getElementById('resumen-empanadas-promo').innerText = `${totalUnidades} empanadas ($${totalMonto.toLocaleString()})`;
       document.getElementById('desglose-empanadas-promo').innerText = `${docenas} docena(s), ${mediasDocenas} media(s), ${unidadesSueltas} suelta(s)`;
@@ -498,14 +433,14 @@
       let medias = remanente >= 6 ? 1 : 0;
       let sueltas = remanente >= 6 ? remanente - 6 : remanente;
 
-      const totalMonto = (docenas * escalaPrecios.docena) + (medias * escalaPrecios.media) + (sueltas * escalaPrecios.unidad);
+      const totalMonto = (docenas * window.escalaPrecios.docena) + (medias * window.escalaPrecios.media) + (sueltas * window.escalaPrecios.unidad);
 
       const detalleSabores = [];
       if (jyq > 0) detalleSabores.push(`${jyq} Jamón y Queso`);
       if (carne > 0) detalleSabores.push(`${carne} Carne`);
       if (pollo > 0) detalleSabores.push(`${pollo} Pollo`);
 
-      carrito.push({
+      window.carritoGlobal.push({
         id: 'promo-' + Date.now(),
         nombre: `Promo Empanadas (${totalUnidades} u.)`,
         detalle: detalleSabores.join(', '),
@@ -518,33 +453,33 @@
       document.getElementById('sabor-carne').value = 0;
       document.getElementById('sabor-pollo').value = 0;
       window.calcularPromocionEmpanadas();
-      renderizarCarrito();
+      window.renderizarCarrito();
     };
 
     window.agregarAlCarrito = function(prodId) {
-      const prod = catalogo.find(p => p.firestoreId === prodId);
+      const prod = window.catalogoGlobal.find(p => p.id === prodId);
       if (!prod) return;
 
-      const enCarrito = carrito.find(item => item.firestoreId === prodId);
+      const enCarrito = window.carritoGlobal.find(item => item.id === prodId);
       if (enCarrito) enCarrito.cantidad++;
       else {
-        carrito.push({
-          firestoreId: prod.firestoreId,
+        window.carritoGlobal.push({
+          id: prod.id,
           nombre: prod.nombre,
           precio: prod.precio,
           cantidad: 1,
           categoria: prod.categoria
         });
       }
-      renderizarCarrito();
+      window.renderizarCarrito();
     };
 
-    function renderizarCarrito() {
+    window.renderizarCarrito = function() {
       const contenedor = document.getElementById('lista-pedido');
       contenedor.innerHTML = '';
       let total = 0;
 
-      carrito.forEach((item, idx) => {
+      window.carritoGlobal.forEach((item, idx) => {
         const subtotal = item.precio * item.cantidad;
         total += subtotal;
         contenedor.innerHTML += `
@@ -565,20 +500,20 @@
       });
 
       document.getElementById('total-monto').innerText = `$${total.toLocaleString()}`;
-    }
+    };
 
     window.eliminarDelCarrito = function(idx) {
-      carrito.splice(idx, 1);
-      renderizarCarrito();
+      window.carritoGlobal.splice(idx, 1);
+      window.renderizarCarrito();
     };
 
     window.vaciarCarrito = function() {
-      carrito = [];
-      renderizarCarrito();
+      window.carritoGlobal = [];
+      window.renderizarCarrito();
     };
 
     window.seleccionarPago = function(metodo) {
-      medioPagoSeleccionado = metodo;
+      window.medioPagoSeleccionado = metodo;
       document.querySelectorAll('.btn-pago').forEach(b => {
         b.className = "btn-pago border p-2 text-xs rounded-lg font-bold text-slate-600 border-slate-300";
       });
@@ -586,27 +521,7 @@
       if (btnActivo) btnActivo.className = "btn-pago border p-2 text-xs rounded-lg font-bold text-white bg-amber-600 border-amber-600";
     };
 
-    window.registrarVenta = async function() {
-      if (carrito.length === 0) return alert('El carrito está vacío');
-      const fecha = document.getElementById('fecha-venta-pos').value || hoy;
-      const total = carrito.reduce((acc, item) => acc + (item.precio * item.cantidad), 0);
-
-      try {
-        await addDoc(collection(db, "ventas"), {
-          fecha,
-          items: carrito,
-          total,
-          medioPago: medioPagoSeleccionado,
-          timestamp: serverTimestamp()
-        });
-        window.vaciarCarrito();
-        alert('Venta registrada con éxito');
-      } catch (e) {
-        alert('Error al registrar la venta');
-      }
-    };
-
-    function renderizarPOS() {
+    window.renderizarPOS = function() {
       const gridEmp = document.getElementById('grid-empanadas');
       const gridPiz = document.getElementById('grid-pizzas-viandas');
       const gridBeb = document.getElementById('grid-bebidas');
@@ -614,9 +529,9 @@
       if (!gridEmp || !gridPiz || !gridBeb) return;
       gridEmp.innerHTML = ''; gridPiz.innerHTML = ''; gridBeb.innerHTML = '';
 
-      catalogo.forEach(prod => {
+      window.catalogoGlobal.forEach(prod => {
         const btnHtml = `
-          <button onclick="window.agregarAlCarrito('${prod.firestoreId}')" class="p-3 bg-slate-50 hover:bg-amber-50 border border-slate-200 rounded-lg font-semibold text-left transition flex justify-between items-center w-full">
+          <button onclick="window.agregarAlCarrito('${prod.id}')" class="p-3 bg-slate-50 hover:bg-amber-50 border border-slate-200 rounded-lg font-semibold text-left transition flex justify-between items-center w-full">
             <div>
               <div class="text-xs font-bold text-slate-800">${prod.nombre}</div>
               <div class="text-xs text-amber-600 font-black">$${(prod.precio || 0).toLocaleString()}</div>
@@ -628,12 +543,76 @@
         else if (prod.categoria === 'Pizza' || prod.categoria === 'Vianda') gridPiz.innerHTML += btnHtml;
         else if (prod.categoria === 'Bebidas') gridBeb.innerHTML += btnHtml;
       });
-    }
+    };
 
-    function renderizarEstadisticasEmpanadas() {
+    window.renderizarAdminProductos = function() {
+      const cont = document.getElementById('lista-admin-productos');
+      if (!cont) return;
+      cont.innerHTML = '';
+      window.catalogoGlobal.forEach(p => {
+        cont.innerHTML += `
+          <div class="py-3 flex justify-between items-center">
+            <div>
+              <span class="font-bold text-slate-800 text-sm">${p.nombre}</span>
+              <span class="text-xs text-slate-400 block">${p.categoria}</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="font-black text-amber-600 text-sm">$${p.precio}</span>
+              <button onclick="window.eliminarProducto('${p.id}')" class="text-red-500 hover:text-red-700 text-xs"><i class="fa-solid fa-trash"></i></button>
+            </div>
+          </div>
+        `;
+      });
+    };
+
+    window.guardarNuevoProducto = function(e) {
+      e.preventDefault();
+      const cat = document.getElementById('prod-categoria').value;
+      const nom = document.getElementById('prod-nombre').value;
+      const pre = parseFloat(document.getElementById('prod-precio').value);
+
+      const nuevo = { id: 'prod-' + Date.now(), categoria: cat, nombre: nom, precio: pre };
+      window.catalogoGlobal.push(nuevo);
+      if (window.guardarProductoFirestore) window.guardarProductoFirestore(nuevo);
+
+      document.getElementById('prod-nombre').value = '';
+      document.getElementById('prod-precio').value = '';
+      window.renderizarPOS();
+      window.renderizarAdminProductos();
+    };
+
+    window.eliminarProducto = function(id) {
+      if (confirm('¿Eliminar producto del menú?')) {
+        window.catalogoGlobal = window.catalogoGlobal.filter(p => p.id !== id);
+        if (window.eliminarProductoFirestore) window.eliminarProductoFirestore(id);
+        window.renderizarPOS();
+        window.renderizarAdminProductos();
+      }
+    };
+
+    window.registrarVenta = function() {
+      if (window.carritoGlobal.length === 0) return alert('El carrito está vacío');
+      const fecha = document.getElementById('fecha-venta-pos').value || hoy;
+      const total = window.carritoGlobal.reduce((acc, item) => acc + (item.precio * item.cantidad), 0);
+
+      const venta = {
+        id: 'venta-' + Date.now(),
+        fecha,
+        items: [...window.carritoGlobal],
+        total,
+        medioPago: window.medioPagoSeleccionado
+      };
+
+      window.ventasGlobales.push(venta);
+      if (window.registrarVentaFirestore) window.registrarVentaFirestore(venta);
+
+      window.vaciarCarrito();
+      alert('Venta registrada con éxito');
+    };
+
+    window.renderizarEstadisticasEmpanadas = function() {
       const conteoSabores = { "Jamón y Queso": 0, "Carne": 0, "Pollo": 0 };
-
-      todasLasVentas.forEach(venta => {
+      window.ventasGlobales.forEach(venta => {
         if (!venta.items) return;
         venta.items.forEach(item => {
           if (item.saboresIndividuales) {
@@ -648,14 +627,9 @@
       });
 
       const totalVendidas = Object.values(conteoSabores).reduce((a, b) => a + b, 0);
-
-      let topSabor = "-";
-      let maxCant = -1;
+      let topSabor = "-"; let maxCant = -1;
       Object.entries(conteoSabores).forEach(([sabor, cant]) => {
-        if (cant > maxCant && cant > 0) {
-          maxCant = cant;
-          topSabor = sabor;
-        }
+        if (cant > maxCant && cant > 0) { maxCant = cant; topSabor = sabor; }
       });
 
       document.getElementById('stat-top-sabor').innerText = topSabor;
@@ -667,153 +641,88 @@
         tbody.innerHTML = '';
         Object.entries(conteoSabores).sort((a,b) => b[1] - a[1]).forEach(([sabor, cant]) => {
           const pct = totalVendidas > 0 ? ((cant / totalVendidas) * 100).toFixed(1) : 0;
-          tbody.innerHTML += `
-            <tr>
-              <td class="p-3 font-bold text-slate-800">${sabor}</td>
-              <td class="p-3 text-right font-black text-amber-600">${cant} u.</td>
-              <td class="p-3 text-right font-semibold text-slate-500">${pct}%</td>
-            </tr>
-          `;
+          tbody.innerHTML += `<tr><td class="p-3 font-bold text-slate-800">${sabor}</td><td class="p-3 text-right font-black text-amber-600">${cant} u.</td><td class="p-3 text-right font-semibold text-slate-500">${pct}%</td></tr>`;
         });
       }
+    };
 
-      const canvas = document.getElementById('grafico-torta-empanadas');
-      if (canvas) {
-        const ctx = canvas.getContext('2d');
-        if (chartTorta) chartTorta.destroy();
-        chartTorta = new Chart(ctx, {
-          type: 'pie',
-          data: {
-            labels: Object.keys(conteoSabores),
-            datasets: [{
-              data: Object.values(conteoSabores),
-              backgroundColor: ['#f59e0b', '#ef4444', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899']
-            }]
-          },
-          options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
-        });
-      }
-    }
-
-    function renderizarMargenes() {
+    window.renderizarMargenes = function() {
       const tbody = document.getElementById('tabla-margenes-body');
       if (!tbody) return;
       tbody.innerHTML = '';
-
-      catalogo.forEach(prod => {
-        const precioVenta = prod.precio || escalaPrecios.unidad;
-        tbody.innerHTML += `
-          <tr>
-            <td class="p-3 font-bold text-slate-800">${prod.nombre}</td>
-            <td class="p-3 font-bold text-slate-700">$${precioVenta.toLocaleString()}</td>
-            <td class="p-3"><span class="text-xs font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">Estándar</span></td>
-            <td class="p-3 font-semibold text-slate-600">$0.00</td>
-            <td class="p-3 font-bold text-amber-600">$${precioVenta.toLocaleString()}</td>
-            <td class="p-3 font-black text-emerald-600">100%</td>
-          </tr>
-        `;
+      window.catalogoGlobal.forEach(prod => {
+        const precioVenta = prod.precio || window.escalaPrecios.unidad;
+        tbody.innerHTML += `<tr><td class="p-3 font-bold text-slate-800">${prod.nombre}</td><td class="p-3 font-bold text-slate-700">$${precioVenta.toLocaleString()}</td><td class="p-3 font-semibold text-slate-600">$0.00</td><td class="p-3 font-bold text-amber-600">$${precioVenta.toLocaleString()}</td><td class="p-3 font-black text-emerald-600">100%</td></tr>`;
       });
+    };
 
-      document.getElementById('stat-prod-vinculados').innerText = catalogo.length;
-    }
-
-    window.cargarArqueoDia = async function() {
+    window.cargarArqueoDia = function() {
       const fecha = document.getElementById('filtro-fecha-arqueo').value || hoy;
-      const q = query(collection(db, "ventas"), where("fecha", "==", fecha));
-      const snap = await getDocs(q);
-
-      let total = 0, efectivo = 0, transferencia = 0, fiado = 0, cant = 0;
-
-      snap.forEach(docSnap => {
-        const v = docSnap.data();
-        cant++;
+      let total = 0, efectivo = 0, transferencia = 0;
+      window.ventasGlobales.filter(v => v.fecha === fecha).forEach(v => {
         total += v.total || 0;
         if (v.medioPago === 'Efectivo') efectivo += v.total;
         else if (v.medioPago === 'Transferencia') transferencia += v.total;
-        else if (v.medioPago === 'Paga Luego') fiado += v.total;
       });
 
       document.getElementById('arqueo-total-ventas').innerText = `$${total.toLocaleString()}`;
-      document.getElementById('arqueo-cant-pedidos').innerText = `${cant} pedidos`;
       document.getElementById('arqueo-efectivo').innerText = `$${efectivo.toLocaleString()}`;
       document.getElementById('arqueo-transferencia').innerText = `$${transferencia.toLocaleString()}`;
-      document.getElementById('arqueo-fiado').innerText = `Paga luego: $${fiado.toLocaleString()}`;
-
-      window.efectivosistemaDia = efectivo;
-      window.calcularDiferenciaArqueo();
     };
+  </script>
 
-    window.calcularDiferenciaArqueo = function() {
-      const contado = parseFloat(document.getElementById('arqueo-efectivo-real').value) || 0;
-      const dif = contado - (window.efectivosistemaDia || 0);
-      const elMonto = document.getElementById('arqueo-diferencia-monto');
-      elMonto.innerText = `$${dif.toLocaleString()}`;
-      if (dif < 0) elMonto.className = "text-xl font-black text-red-600";
-      else if (dif > 0) elMonto.className = "text-xl font-black text-emerald-600";
-      else elMonto.className = "text-xl font-black text-slate-800";
-    };
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, doc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    function renderizarAdminProductos() {
-      const cont = document.getElementById('lista-admin-productos');
-      if (!cont) return;
-      cont.innerHTML = '';
-      catalogo.forEach(p => {
-        cont.innerHTML += `
-          <div class="py-3 flex justify-between items-center">
-            <div>
-              <span class="font-bold text-slate-800 text-sm">${p.nombre}</span>
-              <span class="text-xs text-slate-400 block">${p.categoria}</span>
-            </div>
-            <div class="flex items-center gap-3">
-              <span class="font-black text-amber-600 text-sm">$${p.precio}</span>
-              <button onclick="window.eliminarProducto('${p.firestoreId}')" class="text-red-500 hover:text-red-700 text-xs"><i class="fa-solid fa-trash"></i></button>
-            </div>
-          </div>
-        `;
-      });
-    }
+    try {
+      const firebaseConfig = {
+        apiKey: "AIzaSyBLkWuMHj3hEXQ7b6Fr0I5Eu8B4I8KqlGk",
+        authDomain: "entrefuegos-c5b78.firebaseapp.com",
+        projectId: "entrefuegos-c5b78",
+        storageBucket: "entrefuegos-c5b78.firebasestorage.app",
+        messagingSenderId: "170507928754",
+        appId: "1:170507928754:web:e14fd77c535494afe975ab"
+      };
 
-    window.guardarNuevoProducto = async function(e) {
-      e.preventDefault();
-      const cat = document.getElementById('prod-categoria').value;
-      const nom = document.getElementById('prod-nombre').value;
-      const pre = parseFloat(document.getElementById('prod-precio').value);
-      await addDoc(collection(db, "productos"), { categoria: cat, nombre: nom, precio: pre });
-      document.getElementById('prod-nombre').value = '';
-      document.getElementById('prod-precio').value = '';
-    };
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
 
-    window.eliminarProducto = async function(id) {
-      if (confirm('¿Eliminar producto del menú?')) {
+      window.guardarProductoFirestore = async (prod) => {
+        await addDoc(collection(db, "productos"), prod);
+      };
+
+      window.eliminarProductoFirestore = async (id) => {
         await deleteDoc(doc(db, "productos", id));
-      }
-    };
+      };
 
-    // Inicializar listeners en tiempo real
-    onSnapshot(collection(db, "productos"), (snapshot) => {
-      catalogo = [];
-      snapshot.forEach(docSnap => catalogo.push({ firestoreId: docSnap.id, ...docSnap.data() }));
-      if (catalogo.length === 0) {
-        const iniciales = [
-          { categoria: 'Empanadas', nombre: 'Carne', precio: 1800 },
-          { categoria: 'Empanadas', nombre: 'Pollo', precio: 1800 },
-          { categoria: 'Empanadas', nombre: 'Jamón y Queso', precio: 1800 },
-          { categoria: 'Pizza', nombre: 'Pizza Muzzarella', precio: 15000 },
-          { categoria: 'Vianda', nombre: 'Vianda Diaria', precio: 18000 }
-        ];
-        iniciales.forEach(async item => await addDoc(collection(db, "productos"), item));
-      } else {
-        renderizarPOS();
-        renderizarAdminProductos();
-        renderizarMargenes();
-      }
-    });
+      window.registrarVentaFirestore = async (venta) => {
+        await addDoc(collection(db, "ventas"), venta);
+      };
 
-    onSnapshot(collection(db, "ventas"), (snapshot) => {
-      todasLasVentas = [];
-      snapshot.forEach(docSnap => todasLasVentas.push({ id: docSnap.id, ...docSnap.data() }));
-      renderizarEstadisticasEmpanadas();
-    });
+      onSnapshot(collection(db, "productos"), (snapshot) => {
+        if (!snapshot.empty) {
+          window.catalogoGlobal = [];
+          snapshot.forEach(docSnap => window.catalogoGlobal.push({ id: docSnap.id, ...docSnap.data() }));
+          window.renderizarPOS();
+          window.renderizarAdminProductos();
+          window.renderizarMargenes();
+        }
+      });
+
+      onSnapshot(collection(db, "ventas"), (snapshot) => {
+        if (!snapshot.empty) {
+          window.ventasGlobales = [];
+          snapshot.forEach(docSnap => window.ventasGlobales.push({ id: docSnap.id, ...docSnap.data() }));
+          window.renderizarEstadisticasEmpanadas();
+        }
+      });
+
+    } catch (err) {
+      console.warn("Firebase no se pudo conectar. Operando en modo offline.", err);
+      const estado = document.getElementById('estado-conexion');
+      if(estado) estado.innerHTML = '<span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span> Modo Local Activo';
+    }
   </script>
 </body>
 </html>
