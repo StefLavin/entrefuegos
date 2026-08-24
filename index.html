@@ -3,116 +3,118 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Forzar actualización en navegadores móviles -->
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <meta http-equiv="Pragma" content="no-cache">
-  <meta http-equiv="Expires" content="0">
-  
-  <title>EntreFuegos - POS, Ingredientes & Costos</title>
+  <title>EntreFuegos - Sistema POS & Gestión</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-slate-100 font-sans text-slate-800 pb-10">
+<body class="bg-slate-100 font-sans text-slate-800 antialiased min-h-screen pb-12">
 
-  <header class="bg-amber-600 text-white shadow-md sticky top-0 z-20">
-    <div class="max-w-6xl mx-auto p-4 flex justify-between items-center">
-      <h1 class="text-xl font-bold flex items-center gap-2">
-        <i class="fa-solid fa-fire"></i> EntreFuegos
-      </h1>
-      <span class="text-xs bg-amber-700 px-3 py-1 rounded-full font-semibold flex items-center gap-1">
-        <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span> Firebase Conectado (Tiempo Real)
-      </span>
+  <!-- Header principal -->
+  <header class="bg-amber-700 text-white shadow-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-4">
+      <div class="flex items-center space-x-2">
+        <i class="fa-solid fa-fire text-amber-300 text-2xl"></i>
+        <h1 class="text-2xl font-black tracking-tight">EntreFuegos</h1>
+      </div>
+      <div class="flex items-center gap-2 bg-amber-800/60 px-3 py-1 rounded-full text-xs font-semibold text-amber-200">
+        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+        Firebase Conectado (Tiempo Real)
+      </div>
     </div>
 
-    <div class="flex bg-amber-700 max-w-6xl mx-auto px-4 gap-2 overflow-x-auto">
-      <button onclick="cambiarPestana('pos')" id="tab-pos" class="py-2.5 px-4 font-bold text-sm border-b-4 border-white text-white flex items-center gap-2 whitespace-nowrap">
-        <i class="fa-solid fa-cash-register"></i> Ventas POS
-      </button>
-      <button onclick="cambiarPestana('admin')" id="tab-admin" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
-        <i class="fa-solid fa-boxes-packing"></i> Menú de Ventas
-      </button>
-      <button onclick="cambiarPestana('ingredientes')" id="tab-ingredientes" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
-        <i class="fa-solid fa-carrot"></i> Catálogo de Insumos
-      </button>
-      <button onclick="cambiarPestana('costos')" id="tab-costos" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
-        <i class="fa-solid fa-calculator"></i> Recetas y Fichas
-      </button>
-      <button onclick="cambiarPestana('margenes')" id="tab-margenes" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
-        <i class="fa-solid fa-chart-line"></i> Márgenes y Ganancias
-      </button>
-      <button onclick="cambiarPestana('arqueo')" id="tab-arqueo" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
-        <i class="fa-solid fa-vault"></i> Arqueo y Cierre
-      </button>
-    </div>
+    <!-- Navegación por pestañas -->
+    <nav class="bg-amber-800/80 border-t border-amber-600/50 overflow-x-auto">
+      <div class="max-w-7xl mx-auto flex px-2">
+        <button id="tab-pos" onclick="cambiarPestana('pos')" class="py-2.5 px-4 font-bold text-sm border-b-4 border-white text-white flex items-center gap-2 whitespace-nowrap">
+          <i class="fa-solid fa-cash-register"></i> Ventas POS
+        </button>
+        <button id="tab-admin" onclick="cambiarPestana('admin')" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
+          <i class="fa-solid fa-utensils"></i> Menú de Ventas
+        </button>
+        <button id="tab-ingredientes" onclick="cambiarPestana('ingredientes')" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
+          <i class="fa-solid fa-[#carrot] fa-carrot"></i> Catálogo de Insumos
+        </button>
+        <button id="tab-costos" onclick="cambiarPestana('costos')" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
+          <i class="fa-solid fa-calculator"></i> Recetas y Fichas
+        </button>
+        <button id="tab-margenes" onclick="cambiarPestana('margenes')" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
+          <i class="fa-solid fa-chart-line"></i> Márgenes y Ganancias
+        </button>
+        <button id="tab-arqueo" onclick="cambiarPestana('arqueo')" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
+          <i class="fa-solid fa-vault"></i> Arqueo y Cierre
+        </button>
+      </div>
+    </nav>
   </header>
 
-  <main class="max-w-6xl mx-auto p-4">
+  <main class="max-w-7xl mx-auto px-4 py-6">
 
-    <!-- POS -->
-    <div id="vista-pos" class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <section class="md:col-span-2 space-y-6">
-        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-          <h2 class="text-lg font-bold text-slate-700 mb-3 flex items-center gap-2">
-            <i class="fa-solid fa-box-tissue text-amber-600"></i> Empanadas
+    <!-- VISTA 1: POS / VENTAS -->
+    <section id="vista-pos" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div class="lg:col-span-2 space-y-6">
+        <!-- Empanadas -->
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+          <h2 class="font-black text-slate-700 uppercase tracking-wide text-xs mb-3 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-amber-500"></span> Empanadas
           </h2>
-          <div id="grid-empanadas" class="grid grid-cols-1 sm:grid-cols-3 gap-3"></div>
+          <div id="grid-empanadas" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
         </div>
 
-        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-          <h2 class="text-lg font-bold text-slate-700 mb-3 flex items-center gap-2">
-            <i class="fa-solid fa-pizza-slice text-amber-600"></i> Pizzas y Viandas
+        <!-- Pizzas y Viandas -->
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+          <h2 class="font-black text-slate-700 uppercase tracking-wide text-xs mb-3 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-amber-500"></span> Pizzas & Viandas
           </h2>
-          <div id="grid-pizzas-viandas" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+          <div id="grid-pizzas-viandas" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
         </div>
 
-        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-          <h2 class="text-lg font-bold text-slate-700 mb-3 flex items-center gap-2">
-            <i class="fa-solid fa-bottle-water text-amber-600"></i> Bebidas
+        <!-- Bebidas -->
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+          <h2 class="font-black text-slate-700 uppercase tracking-wide text-xs mb-3 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-amber-500"></span> Bebidas
           </h2>
-          <div id="grid-bebidas" class="grid grid-cols-1 sm:grid-cols-3 gap-3"></div>
+          <div id="grid-bebidas" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
         </div>
-      </section>
+      </div>
 
-      <section class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col justify-between h-fit">
-        <div>
-          <h2 class="text-lg font-bold text-slate-800 border-b pb-2 mb-4 flex justify-between items-center">
-            <span>Pedido Actual</span>
-            <button onclick="vaciarCarrito()" class="text-xs text-red-500 hover:underline">Vaciar</button>
-          </h2>
-          <div id="lista-pedido" class="space-y-3 min-h-[150px] max-h-[300px] overflow-y-auto mb-4">
-            <p class="text-sm text-slate-400 text-center py-8">No hay productos en el pedido.</p>
-          </div>
+      <!-- Carrito / Detalle Pedido -->
+      <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 h-fit sticky top-24">
+        <div class="flex justify-between items-center border-b pb-3 mb-4">
+          <h2 class="font-bold text-slate-800 text-base">Pedido Actual</h2>
+          <button onclick="vaciarCarrito()" class="text-xs text-red-500 hover:text-red-700 font-semibold">Vaciar</button>
         </div>
 
-        <div class="border-t pt-4 space-y-4">
-          <div class="flex justify-between items-center text-xl font-black text-slate-800">
-            <span>Total:</span>
-            <span id="total-monto" class="text-amber-600">$0</span>
+        <div id="lista-pedido" class="space-y-3 max-h-60 overflow-y-auto pr-1 mb-4"></div>
+
+        <div class="border-t pt-3 space-y-3">
+          <div class="flex justify-between items-center">
+            <span class="text-sm font-semibold text-slate-600">Total:</span>
+            <span id="total-monto" class="text-2xl font-black text-amber-600">$0</span>
           </div>
 
           <div>
-            <label class="block text-xs font-bold text-slate-600 uppercase mb-2">Medio de Pago</label>
+            <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Medio de Pago</label>
             <div class="grid grid-cols-3 gap-2">
-              <button onclick="seleccionarPago('Efectivo')" id="btn-Efectivo" class="btn-pago border p-2 text-xs rounded-lg font-bold text-white bg-amber-600 border-amber-600">Efectivo</button>
-              <button onclick="seleccionarPago('Transferencia')" id="btn-Transferencia" class="btn-pago border p-2 text-xs rounded-lg font-bold text-slate-600 border-slate-300">Transf.</button>
-              <button onclick="seleccionarPago('Paga Luego')" id="btn-Paga Luego" class="btn-pago border p-2 text-xs rounded-lg font-bold text-slate-600 border-slate-300">Fiado</button>
+              <button id="btn-Efectivo" onclick="seleccionarPago('Efectivo')" class="btn-pago border p-2 text-xs rounded-lg font-bold text-white bg-amber-600 border-amber-600">Efectivo</button>
+              <button id="btn-Transferencia" onclick="seleccionarPago('Transferencia')" class="btn-pago border p-2 text-xs rounded-lg font-bold text-slate-600 border-slate-300">Transf.</button>
+              <button id="btn-Paga Luego" onclick="seleccionarPago('Paga Luego')" class="btn-pago border p-2 text-xs rounded-lg font-bold text-slate-600 border-slate-300">Paga Luego</button>
             </div>
           </div>
 
-          <button id="btn-guardar" onclick="registrarVenta()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl shadow-lg transition text-center flex justify-center items-center gap-2">
+          <button id="btn-guardar" onclick="registrarVenta()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-2">
             <i class="fa-solid fa-cloud-arrow-up"></i> Registrar y Sincronizar
           </button>
         </div>
-      </section>
-    </div>
+      </div>
+    </section>
 
-    <!-- ADMIN / MENÚ -->
-    <div id="vista-admin" class="hidden space-y-6">
-      <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-        <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-          <i class="fa-solid fa-plus text-amber-600"></i> Agregar Producto al Menú de Ventas
+    <!-- VISTA 2: MENÚ DE VENTAS (ADMIN PRODUCTOS) -->
+    <section id="vista-admin" class="hidden max-w-4xl mx-auto space-y-6">
+      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+        <h2 class="font-bold text-slate-800 text-lg mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-plus-circle text-amber-600"></i> Agregar Producto al Menú de Ventas
         </h2>
-        <form onsubmit="guardarNuevoProducto(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <form onsubmit="guardarNuevoProducto(event)" class="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
             <label class="block text-xs font-bold text-slate-600 mb-1">Categoría</label>
             <select id="prod-categoria" onchange="cambiarTipoFormulario()" class="w-full border p-2 rounded-lg text-sm bg-slate-50">
@@ -124,255 +126,217 @@
           </div>
           <div>
             <label class="block text-xs font-bold text-slate-600 mb-1">Nombre / Sabor</label>
-            <input type="text" id="prod-nombre" placeholder="Ej: Humita, Coca Cola" required class="w-full border p-2 rounded-lg text-sm bg-slate-50">
+            <input type="text" id="prod-nombre" placeholder="Ej: Humita, Coca Cola" class="w-full border p-2 rounded-lg text-sm bg-slate-50" required>
           </div>
           <div id="campo-litros" class="hidden">
-            <label class="block text-xs font-bold text-slate-600 mb-1">Tamaño / Litros</label>
-            <input type="text" id="prod-litros" placeholder="Ej: 1.5L, 500ml" class="w-full border p-2 rounded-lg text-sm bg-slate-50">
+            <label class="block text-xs font-bold text-slate-600 mb-1">Capacidad / Tamaño</label>
+            <input type="text" id="prod-litros" placeholder="Ej: 1.5L, Lote" class="w-full border p-2 rounded-lg text-sm bg-slate-50">
           </div>
           <div>
             <label class="block text-xs font-bold text-slate-600 mb-1">Precio de Venta ($)</label>
-            <input type="number" id="prod-precio" placeholder="2000" required class="w-full border p-2 rounded-lg text-sm bg-slate-50">
+            <input type="number" id="prod-precio" placeholder="2000" class="w-full border p-2 rounded-lg text-sm bg-slate-50" required>
           </div>
-          <div class="sm:col-span-2 flex justify-end">
-            <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 text-sm font-bold rounded-lg shadow">
-              <i class="fa-solid fa-save mr-1"></i> Guardar en Menú
+          <div class="md:col-span-4 flex justify-end">
+            <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-2 rounded-lg text-sm transition">
+              <i class="fa-solid fa-floppy-disk"></i> Guardar en Menú
             </button>
           </div>
         </form>
       </div>
 
-      <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-        <h2 class="text-lg font-bold text-slate-800 mb-4">Productos Actuales en Catálogo de Venta</h2>
+      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+        <h2 class="font-bold text-slate-800 text-lg mb-4">Productos Actuales en Catálogo de Venta</h2>
         <div id="lista-admin-productos" class="divide-y divide-slate-100"></div>
       </div>
-    </div>
+    </section>
 
-    <!-- INGREDIENTES -->
-    <div id="vista-ingredientes" class="hidden space-y-6">
-      <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-        <h2 class="text-lg font-bold text-slate-800 mb-2 flex items-center gap-2">
-          <i class="fa-solid fa-carrot text-amber-600"></i> Alta de Materia Prima / Insumo
+    <!-- VISTA 3: CATÁLOGO DE INSUMOS -->
+    <section id="vista-ingredientes" class="hidden max-w-4xl mx-auto space-y-6">
+      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+        <h2 class="font-bold text-slate-800 text-lg mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-box-open text-amber-600"></i> Registrar Insumo / Materia Prima
         </h2>
-        <p class="text-xs text-slate-500 mb-6">Agregá acá los insumos que compras con su precio. Todo lo que cargues en este catálogo aparecerá automáticamente disponible en el menú desplegable al armar tus recetas.</p>
-
-        <form onsubmit="guardarIngrediente(event)" class="grid grid-cols-1 sm:grid-cols-4 gap-4">
-          <div class="sm:col-span-1">
-            <label class="block text-xs font-bold text-slate-600 mb-1">Ingrediente / Insumo</label>
-            <input type="text" id="ing-nombre" placeholder="Ej: Harina 0000, Carne picada" required class="w-full border p-2 rounded-lg text-sm bg-slate-50">
+        <form onsubmit="guardarIngrediente(event)" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div class="md:col-span-2">
+            <label class="block text-xs font-bold text-slate-600 mb-1">Nombre del Insumo</label>
+            <input type="text" id="ing-nombre" placeholder="Ej: Queso Mozzarella, Carne Picada" class="w-full border p-2 rounded-lg text-sm bg-slate-50" required>
           </div>
           <div>
             <label class="block text-xs font-bold text-slate-600 mb-1">Cantidad Comprada</label>
-            <input type="number" step="0.01" id="ing-cantidad-paquete" placeholder="Ej: 1 (si es 1 kg) o 500 (gr)" required class="w-full border p-2 rounded-lg text-sm bg-slate-50">
+            <input type="number" step="0.01" id="ing-cantidad-paquete" placeholder="Ej: 5" class="w-full border p-2 rounded-lg text-sm bg-slate-50" required>
           </div>
           <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Unidad de Compra</label>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Unidad de Medida</label>
             <select id="ing-unidad" class="w-full border p-2 rounded-lg text-sm bg-slate-50">
               <option value="kg">Kilogramos (kg)</option>
               <option value="gr">Gramos (gr)</option>
               <option value="lt">Litros (lt)</option>
               <option value="ml">Mililitros (ml)</option>
-              <option value="unid">Unidades / Pack (unid)</option>
+              <option value="unid">Unidades (unid)</option>
             </select>
           </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Precio Total Pagado ($)</label>
-            <input type="number" step="0.01" id="ing-precio-paquete" placeholder="Ej: 1200" required class="w-full border p-2 rounded-lg text-sm bg-slate-50">
+          <div class="md:col-span-2">
+            <label class="block text-xs font-bold text-slate-600 mb-1">Costo Total Pagado ($)</label>
+            <input type="number" step="0.01" id="ing-precio-paquete" placeholder="Ej: 25000" class="w-full border p-2 rounded-lg text-sm bg-slate-50" required>
           </div>
-          <div class="sm:col-span-4 flex justify-end">
-            <button type="submit" class="bg-amber-600 hover:bg-amber-700 text-white px-6 py-2.5 text-sm font-bold rounded-lg shadow flex items-center gap-2">
-              <i class="fa-solid fa-plus"></i> Guardar en Catálogo de Insumos
+          <div class="md:col-span-2 flex items-end justify-end">
+            <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-2 rounded-lg text-sm transition">
+              <i class="fa-solid fa-plus"></i> Guardar Insumo
             </button>
           </div>
         </form>
       </div>
 
-      <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-        <h2 class="text-lg font-bold text-slate-800 mb-4">Catálogo Completo de Insumos Guardados</h2>
+      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+        <h2 class="font-bold text-slate-800 text-lg mb-4">Insumos Registrados</h2>
         <div id="lista-ingredientes-base" class="divide-y divide-slate-100"></div>
       </div>
-    </div>
+    </section>
 
-    <!-- COSTOS & RECETAS -->
-    <div id="vista-costos" class="hidden space-y-6">
-      <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-        <h2 class="text-lg font-bold text-slate-800 mb-2 flex items-center gap-2">
-          <i class="fa-solid fa-book-open text-amber-600"></i> Armador de Recetas y Fichas Técnicas
+    <!-- VISTA 4: RECETAS Y FICHAS TÉCNICAS -->
+    <section id="vista-costos" class="hidden max-w-4xl mx-auto space-y-6">
+      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+        <h2 class="font-bold text-slate-800 text-lg mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-book-open text-amber-600"></i> Crear Ficha Técnica de Receta
         </h2>
-        <p class="text-xs text-slate-500 mb-6">Seleccioná los insumos de tu catálogo en el menú desplegable, indicá la cantidad utilizada y las unidades que rinde la mezcla.</p>
-
         <form onsubmit="guardarCostosReceta(event)" class="space-y-4">
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">Nombre de la Receta / Preparación</label>
-              <input type="text" id="costo-nombre-receta" placeholder="Ej: Tapas de Empanadas, Relleno Carne" required class="w-full border p-2 rounded-lg text-sm bg-slate-50">
+              <label class="block text-xs font-bold text-slate-600 mb-1">Nombre Exacto del Producto</label>
+              <input type="text" id="costo-nombre-receta" placeholder="Ej: Carne, Pizza Muzzarella" class="w-full border p-2 rounded-lg text-sm bg-slate-50" required>
             </div>
             <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">Rendimiento (Unidades/Porciones producidas)</label>
-              <input type="number" id="costo-rendimiento" placeholder="Ej: 100 (tapas) o 12 (pizzas)" required class="w-full border p-2 rounded-lg text-sm bg-slate-50">
+              <label class="block text-xs font-bold text-slate-600 mb-1">Rendimiento (Cant. de unidades producidas)</label>
+              <input type="number" id="costo-rendimiento" placeholder="Ej: 12 (para 1 docena)" class="w-full border p-2 rounded-lg text-sm bg-slate-50" required>
             </div>
           </div>
 
-          <div>
-            <label class="block text-xs font-bold text-slate-600 mb-2">Seleccionar Insumos y Cantidades Usadas</label>
+          <div class="border-t pt-4">
+            <div class="flex justify-between items-center mb-2">
+              <label class="block text-xs font-bold text-slate-600">Insumos de la Receta</label>
+              <button type="button" onclick="agregarFilaIngredienteReceta()" class="text-xs bg-amber-100 hover:bg-amber-200 text-amber-800 font-bold px-3 py-1 rounded-lg">
+                <i class="fa-solid fa-plus"></i> Agregar Insumo
+              </button>
+            </div>
             <div id="contenedor-ingredientes-receta" class="space-y-2"></div>
-            <button type="button" onclick="agregarFilaIngredienteReceta()" class="mt-3 text-xs text-amber-700 font-bold hover:underline flex items-center gap-1">
-              <i class="fa-solid fa-plus"></i> + Agregar insumo a esta receta
-            </button>
           </div>
 
-          <div class="pt-4 border-t flex justify-end">
-            <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 text-sm font-bold rounded-lg shadow">
-              <i class="fa-solid fa-file-invoice-dollar mr-1"></i> Guardar Receta
+          <div class="flex justify-end pt-2">
+            <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-2 rounded-lg text-sm transition">
+              <i class="fa-solid fa-floppy-disk"></i> Guardar Ficha Técnica
             </button>
           </div>
         </form>
       </div>
 
-      <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-        <h2 class="text-lg font-bold text-slate-800 mb-4">Recetas y Fichas Técnicas Guardadas</h2>
+      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+        <h2 class="font-bold text-slate-800 text-lg mb-4">Fichas Técnicas Guardadas</h2>
         <div id="lista-recetas-costos" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
       </div>
-    </div>
+    </section>
 
-    <!-- MÁRGENES -->
-    <div id="vista-margenes" class="hidden space-y-6">
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
-          <div class="p-3 bg-emerald-100 text-emerald-600 rounded-lg text-xl"><i class="fa-solid fa-sack-dollar"></i></div>
-          <div>
-            <span class="text-xs text-slate-500 font-bold uppercase block">Margen Promedio</span>
-            <span id="stat-margen-promedio" class="text-2xl font-black text-slate-800">0%</span>
-          </div>
+    <!-- VISTA 5: MÁRGENES Y GANANCIAS -->
+    <section id="vista-margenes" class="hidden max-w-5xl mx-auto space-y-6">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+          <span class="text-xs font-bold text-slate-400 block">Productos Vinculados</span>
+          <span id="stat-prod-vinculados" class="text-2xl font-black text-slate-800">0 / 0</span>
         </div>
-        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
-          <div class="p-3 bg-amber-100 text-amber-600 rounded-lg text-xl"><i class="fa-solid fa-box"></i></div>
-          <div>
-            <span class="text-xs text-slate-500 font-bold uppercase block">Productos Vinculados</span>
-            <span id="stat-prod-vinculados" class="text-2xl font-black text-slate-800">0 / 0</span>
-          </div>
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+          <span class="text-xs font-bold text-slate-400 block">Margen Promedio</span>
+          <span id="stat-margen-promedio" class="text-2xl font-black text-emerald-600">0%</span>
         </div>
-        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
-          <div class="p-3 bg-blue-100 text-blue-600 rounded-lg text-xl"><i class="fa-solid fa-chart-line"></i></div>
-          <div>
-            <span class="text-xs text-slate-500 font-bold uppercase block">Ganancia Prom. x Unid</span>
-            <span id="stat-ganancia-promedio" class="text-2xl font-black text-slate-800">$0</span>
-          </div>
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+          <span class="text-xs font-bold text-slate-400 block">Ganancia Promedio / Unid</span>
+          <span id="stat-ganancia-promedio" class="text-2xl font-black text-amber-600">$0</span>
         </div>
       </div>
 
-      <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-        <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-          <i class="fa-solid fa-scale-balanced text-amber-600"></i> Análisis de Márgenes de Ganancia
-        </h2>
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="p-5 border-b">
+          <h2 class="font-bold text-slate-800 text-lg">Análisis de Márgenes por Producto</h2>
+        </div>
         <div class="overflow-x-auto">
-          <table class="w-full text-left border-collapse">
-            <thead>
-              <tr class="border-b text-xs font-bold text-slate-400 uppercase bg-slate-50">
+          <table class="w-full text-left text-sm text-slate-600">
+            <thead class="bg-slate-50 text-xs uppercase font-bold text-slate-400 border-b">
+              <tr>
                 <th class="p-3">Producto</th>
-                <th class="p-3">Precio Venta</th>
-                <th class="p-3">Origen del Costo</th>
-                <th class="p-3">Costo Directo</th>
-                <th class="p-3">Ganancia ($)</th>
-                <th class="p-3">Margen (%)</th>
+                <th class="p-3">P. Venta</th>
+                <th class="p-3">Estado Ficha</th>
+                <th class="p-3">Costo Est.</th>
+                <th class="p-3">Ganancia</th>
+                <th class="p-3">Margen %</th>
               </tr>
             </thead>
-            <tbody id="tabla-margenes-body" class="divide-y divide-slate-100 text-sm"></tbody>
+            <tbody id="tabla-margenes-body" class="divide-y divide-slate-100"></tbody>
           </table>
         </div>
       </div>
-    </div>
+    </section>
 
-    <!-- ARQUEO Y CIERRE DE CAJA -->
-    <div id="vista-arqueo" class="hidden space-y-6">
-      <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <!-- VISTA 6: ARQUEO Y CIERRE DE CAJA -->
+    <section id="vista-arqueo" class="hidden max-w-4xl mx-auto space-y-6">
+      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-wrap justify-between items-center gap-4">
         <div>
-          <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
-            <i class="fa-solid fa-vault text-amber-600"></i> Resumen de Caja y Arqueo Diario
-          </h2>
-          <p class="text-xs text-slate-500">Filtrá por fecha para consultar los cobros y realizar el balance final de la jornada.</p>
+          <h2 class="font-bold text-slate-800 text-lg">Arqueo Diarios de Ventas</h2>
+          <p class="text-xs text-slate-400">Filtra por fecha para auditar la caja</p>
         </div>
-        <div class="flex items-center gap-2">
-          <label class="text-xs font-bold text-slate-600">Fecha:</label>
-          <input type="date" id="filtro-fecha-arqueo" class="border p-2 rounded-lg text-sm bg-slate-50" onchange="cargarArqueoDia()">
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-          <span class="text-xs font-bold text-slate-400 uppercase block">Total Venta Día</span>
-          <span id="arqueo-total-ventas" class="text-2xl font-black text-amber-600">$0</span>
-          <span id="arqueo-cant-pedidos" class="text-xs text-slate-500 block mt-1">0 pedidos registrados</span>
-        </div>
-
-        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-          <div class="flex justify-between items-center">
-            <span class="text-xs font-bold text-slate-400 uppercase">Efectivo Sistema</span>
-            <i class="fa-solid fa-money-bill-wave text-emerald-600"></i>
-          </div>
-          <span id="arqueo-efectivo" class="text-2xl font-black text-slate-800">$0</span>
-        </div>
-
-        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-          <div class="flex justify-between items-center">
-            <span class="text-xs font-bold text-slate-400 uppercase">Transferencias</span>
-            <i class="fa-solid fa-mobile-screen text-blue-600"></i>
-          </div>
-          <span id="arqueo-transferencia" class="text-2xl font-black text-slate-800">$0</span>
-        </div>
-
-        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-          <div class="flex justify-between items-center">
-            <span class="text-xs font-bold text-slate-400 uppercase">Fiado / Por Cobrar</span>
-            <i class="fa-solid fa-clock text-amber-600"></i>
-          </div>
-          <span id="arqueo-fiado" class="text-2xl font-black text-slate-800">$0</span>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 space-y-4">
-          <h3 class="font-bold text-slate-800 text-base border-b pb-2 flex items-center gap-2">
-            <i class="fa-solid fa-calculator text-amber-600"></i> Conteo Físico y Cierre de Caja
-          </h3>
-          <p class="text-xs text-slate-500">Ingresá el dinero real en billetes/monedas contado al cierre para verificar diferencias.</p>
-          
-          <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Monto Físico en Caja Registradora ($)</label>
-            <input type="number" id="arqueo-efectivo-real" placeholder="Ej: 25000" oninput="calcularDiferenciaArqueo()" class="w-full border p-3 rounded-xl text-lg font-bold bg-slate-50 border-slate-300">
-          </div>
-
-          <div id="box-diferencia" class="p-4 rounded-xl border bg-slate-50 flex justify-between items-center">
-            <span class="text-sm font-bold text-slate-700">Diferencia:</span>
-            <span id="arqueo-diferencia-monto" class="text-xl font-black text-slate-600">$0</span>
-          </div>
-
-          <button id="btn-cerrar-caja" onclick="guardarCierreCaja()" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 rounded-xl shadow transition flex justify-center items-center gap-2">
-            <i class="fa-solid fa-lock"></i> Finalizar y Guardar Cierre de Caja
+        <div class="flex items-center gap-3">
+          <input type="date" id="filtro-fecha-arqueo" onchange="cargarArqueoDia()" class="border p-2 rounded-lg text-sm bg-slate-50 font-bold text-slate-700">
+          <button onclick="eliminarVentasDelDia()" class="bg-red-50 hover:bg-red-100 text-red-600 font-bold p-2.5 rounded-lg text-xs border border-red-200">
+            <i class="fa-solid fa-trash"></i> Resetear Día
           </button>
         </div>
+      </div>
 
-        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-          <div class="flex justify-between items-center mb-4 border-b pb-2">
-            <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
-              <i class="fa-solid fa-list-check text-amber-600"></i> Detalle de Ventas Registradas
-            </h3>
-            <button onclick="eliminarVentasDelDia()" class="text-xs bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1 rounded-lg font-bold transition flex items-center gap-1">
-              <i class="fa-solid fa-trash-can"></i> Borrar Ventas del Día
-            </button>
-          </div>
-          <div id="lista-ventas-arqueo" class="space-y-3 max-h-[350px] overflow-y-auto divide-y divide-slate-100">
-            <p class="text-xs text-slate-400 text-center py-6">Selecciona una fecha para ver las ventas.</p>
-          </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+          <span class="text-xs font-bold text-slate-400 block">Total Facturado</span>
+          <span id="arqueo-total-ventas" class="text-2xl font-black text-amber-600">$0</span>
+          <span id="arqueo-cant-pedidos" class="text-xs text-slate-400 block mt-1">0 pedidos registrados</span>
+        </div>
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+          <span class="text-xs font-bold text-slate-400 block">En Efectivo (Caja)</span>
+          <span id="arqueo-efectivo" class="text-2xl font-black text-emerald-600">$0</span>
+        </div>
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+          <span class="text-xs font-bold text-slate-400 block">Transferencias / MercadoPago</span>
+          <span id="arqueo-transferencia" class="text-2xl font-black text-blue-600">$0</span>
+          <span id="arqueo-fiado" class="text-xs text-amber-600 font-bold block mt-1">Paga luego: $0</span>
         </div>
       </div>
-    </div>
+
+      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+        <h3 class="font-bold text-slate-800 text-base">Cierre y Conteo de Caja Registradora</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Efectivo Contado en Caja ($)</label>
+            <input type="number" id="arqueo-efectivo-real" oninput="calcularDiferenciaArqueo()" placeholder="Ingresá lo que contaste" class="w-full border p-2.5 rounded-lg text-sm bg-slate-50 font-bold">
+          </div>
+          <div id="box-diferencia" class="p-4 rounded-xl border bg-slate-50 border-slate-200 flex justify-between items-center">
+            <span class="text-xs font-bold">Diferencia:</span>
+            <span id="arqueo-diferencia-monto" class="text-xl font-black">$0</span>
+          </div>
+        </div>
+        <button onclick="guardarCierreCaja()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-3 rounded-xl transition">
+          <i class="fa-solid fa-lock"></i> Guardar Cierre de Caja
+        </button>
+      </div>
+
+      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+        <h3 class="font-bold text-slate-800 text-base mb-4">Detalle de Ventas del Día</h3>
+        <div id="lista-ventas-arqueo" class="divide-y divide-slate-100"></div>
+      </div>
+    </section>
 
   </main>
 
+  <!-- FIREBASE ENGINE (SINCRONIZACIÓN TOTAL EN TIEMPO REAL) -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs, query, where, doc, deleteDoc, setDoc, serverTimestamp, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { 
+      getFirestore, collection, addDoc, getDocs, query, where, doc, deleteDoc, setDoc, serverTimestamp, onSnapshot 
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBLkWuMHj3hEXQ7b6Fr0I5Eu8B4I8KqlGk",
@@ -387,73 +351,102 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    let catalogo = JSON.parse(localStorage.getItem('catalogo_entrefuegos')) || [
-      { id: 1, categoria: 'Empanadas', nombre: 'Carne', precio: 2000 },
-      { id: 2, categoria: 'Empanadas', nombre: 'Pollo', precio: 2000 },
-      { id: 3, categoria: 'Empanadas', nombre: 'Jamón y Queso', precio: 2000 },
-      { id: 4, categoria: 'Pizza', nombre: 'Pizza Muzzarella', precio: 15000 },
-      { id: 5, categoria: 'Vianda', nombre: 'Vianda Diaria', precio: 18000 }
-    ];
+    // Listas globales en memoria sincronizadas dinámicamente con Firestore
+    let catalogo = [];
+    let materiasPrimas = [];
+    let recetasCostos = [];
 
-    let materiasPrimas = JSON.parse(localStorage.getItem('materias_primas_entrefuegos')) || [];
-    let recetasCostos = JSON.parse(localStorage.getItem('recetas_costos_entrefuegos')) || [];
     let carrito = [];
     let medioPagoSeleccionado = 'Efectivo';
-    let unsubArqueo = null; // Escuchador activo en tiempo real
+    let unsubArqueo = null;
+    let efectivoSistemaDia = 0;
 
     const hoy = new Date().toISOString().split('T')[0];
 
+    // --- ESCUCHADORES EN TIEMPO REAL DE FIREBASE ---
+
+    function iniciarEscuchadores() {
+      // 1. Escuchador de Productos
+      onSnapshot(collection(db, "productos"), (snapshot) => {
+        catalogo = [];
+        snapshot.forEach(docSnap => catalogo.push({ firestoreId: docSnap.id, ...docSnap.data() }));
+        
+        if (catalogo.length === 0) cargarCatalogoInicial();
+        else {
+          renderizarPOS();
+          renderizarAdminProductos();
+          renderizarMargenes();
+        }
+      });
+
+      // 2. Escuchador de Insumos / Materias Primas
+      onSnapshot(collection(db, "insumos"), (snapshot) => {
+        materiasPrimas = [];
+        snapshot.forEach(docSnap => materiasPrimas.push({ firestoreId: docSnap.id, ...docSnap.data() }));
+        renderizarIngredientesBase();
+        renderizarMargenes();
+      });
+
+      // 3. Escuchador de Recetas y Fichas
+      onSnapshot(collection(db, "recetas"), (snapshot) => {
+        recetasCostos = [];
+        snapshot.forEach(docSnap => recetasCostos.push({ firestoreId: docSnap.id, ...docSnap.data() }));
+        renderizarRecetas();
+        renderizarMargenes();
+      });
+    }
+
+    async function cargarCatalogoInicial() {
+      const iniciales = [
+        { categoria: 'Empanadas', nombre: 'Carne', precio: 2000 },
+        { categoria: 'Empanadas', nombre: 'Pollo', precio: 2000 },
+        { categoria: 'Empanadas', nombre: 'Jamón y Queso', precio: 2000 },
+        { categoria: 'Pizza', nombre: 'Pizza Muzzarella', precio: 15000 },
+        { categoria: 'Vianda', nombre: 'Vianda Diaria', precio: 18000 }
+      ];
+      for (const item of iniciales) {
+        await addDoc(collection(db, "productos"), item);
+      }
+    }
+
+    // NAVEGACIÓN
     window.cambiarPestana = function(pestana) {
-      const vPos = document.getElementById('vista-pos');
-      const vAdmin = document.getElementById('vista-admin');
-      const vIngredientes = document.getElementById('vista-ingredientes');
-      const vCostos = document.getElementById('vista-costos');
-      const vMargenes = document.getElementById('vista-margenes');
-      const vArqueo = document.getElementById('vista-arqueo');
+      const vistas = ['pos', 'admin', 'ingredientes', 'costos', 'margenes', 'arqueo'];
+      vistas.forEach(v => {
+        document.getElementById(`vista-${v}`).classList.add('hidden');
+        document.getElementById(`tab-${v}`).className = "py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap";
+      });
 
-      const tPos = document.getElementById('tab-pos');
-      const tAdmin = document.getElementById('tab-admin');
-      const tIng = document.getElementById('tab-ingredientes');
-      const tCostos = document.getElementById('tab-costos');
-      const tMargenes = document.getElementById('tab-margenes');
-      const tArqueo = document.getElementById('tab-arqueo');
+      document.getElementById(`vista-${pestana}`).classList.remove('hidden');
+      document.getElementById(`tab-${pestana}`).className = "py-2.5 px-4 font-bold text-sm border-b-4 border-white text-white flex items-center gap-2 whitespace-nowrap";
 
-      [vPos, vAdmin, vIngredientes, vCostos, vMargenes, vArqueo].forEach(el => el.classList.add('hidden'));
-
-      const inactiveStyle = "py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap";
-      const activeStyle = "py-2.5 px-4 font-bold text-sm border-b-4 border-white text-white flex items-center gap-2 whitespace-nowrap";
-
-      [tPos, tAdmin, tIng, tCostos, tMargenes, tArqueo].forEach(el => el.className = inactiveStyle);
-
-      if (pestana === 'pos') { vPos.classList.remove('hidden'); tPos.className = activeStyle; renderizarPOS(); }
-      else if (pestana === 'admin') { vAdmin.classList.remove('hidden'); tAdmin.className = activeStyle; renderizarAdminProductos(); }
-      else if (pestana === 'ingredientes') { vIngredientes.classList.remove('hidden'); tIng.className = activeStyle; renderizarIngredientesBase(); }
-      else if (pestana === 'costos') { vCostos.classList.remove('hidden'); tCostos.className = activeStyle; renderizarRecetas(); }
-      else if (pestana === 'margenes') { vMargenes.classList.remove('hidden'); tMargenes.className = activeStyle; renderizarMargenes(); }
+      if (pestana === 'pos') renderizarPOS();
+      else if (pestana === 'admin') renderizarAdminProductos();
+      else if (pestana === 'ingredientes') renderizarIngredientesBase();
+      else if (pestana === 'costos') renderizarRecetas();
+      else if (pestana === 'margenes') renderizarMargenes();
       else if (pestana === 'arqueo') {
-        vArqueo.classList.remove('hidden');
-        tArqueo.className = activeStyle;
         document.getElementById('filtro-fecha-arqueo').value = hoy;
         window.cargarArqueoDia();
       }
     };
 
-    // POS Y VENTAS
+    // --- POS Y VENTAS ---
     function renderizarPOS() {
       const gridEmp = document.getElementById('grid-empanadas');
       const gridPiz = document.getElementById('grid-pizzas-viandas');
       const gridBeb = document.getElementById('grid-bebidas');
 
-      gridEmp.innerHTML = '';
-      gridPiz.innerHTML = '';
-      gridBeb.innerHTML = '';
+      if (!gridEmp || !gridPiz || !gridBeb) return;
+
+      gridEmp.innerHTML = ''; gridPiz.innerHTML = ''; gridBeb.innerHTML = '';
 
       catalogo.forEach(prod => {
         const btnHtml = `
-          <button onclick="agregarAlCarrito(${prod.id})" class="p-3 bg-slate-50 hover:bg-amber-50 border border-slate-200 rounded-lg font-semibold text-left transition flex justify-between items-center">
+          <button onclick="agregarAlCarrito('${prod.firestoreId}')" class="p-3 bg-slate-50 hover:bg-amber-50 border border-slate-200 rounded-lg font-semibold text-left transition flex justify-between items-center">
             <div>
               <div class="text-xs font-bold text-slate-800">${prod.nombre} ${prod.litros ? `(${prod.litros})` : ''}</div>
-              <div class="text-xs text-amber-600 font-black">$${prod.precio.toLocaleString()}</div>
+              <div class="text-xs text-amber-600 font-black">$${(prod.precio || 0).toLocaleString()}</div>
             </div>
             <i class="fa-solid fa-plus text-amber-600 text-xs"></i>
           </button>
@@ -464,27 +457,20 @@
       });
     }
 
-    window.agregarAlCarrito = function(id) {
-      const prod = catalogo.find(p => p.id === id);
+    window.agregarAlCarrito = function(firestoreId) {
+      const prod = catalogo.find(p => p.firestoreId === firestoreId);
       if (!prod) return;
-      const itemExistente = carrito.find(item => item.id === id);
-      if (itemExistente) {
-        itemExistente.cantidad++;
-      } else {
-        carrito.push({ ...prod, cantidad: 1 });
-      }
+      const itemExistente = carrito.find(item => item.firestoreId === firestoreId);
+      if (itemExistente) itemExistente.cantidad++;
+      else carrito.push({ ...prod, cantidad: 1 });
       renderizarCarrito();
     };
 
     window.seleccionarPago = function(metodo) {
       medioPagoSeleccionado = metodo;
-      document.querySelectorAll('.btn-pago').forEach(btn => {
-        btn.className = "btn-pago border p-2 text-xs rounded-lg font-bold text-slate-600 border-slate-300";
-      });
+      document.querySelectorAll('.btn-pago').forEach(btn => btn.className = "btn-pago border p-2 text-xs rounded-lg font-bold text-slate-600 border-slate-300");
       const btnActivo = document.getElementById(`btn-${metodo}`);
-      if (btnActivo) {
-        btnActivo.className = "btn-pago border p-2 text-xs rounded-lg font-bold text-white bg-amber-600 border-amber-600";
-      }
+      if (btnActivo) btnActivo.className = "btn-pago border p-2 text-xs rounded-lg font-bold text-white bg-amber-600 border-amber-600";
     };
 
     window.registrarVenta = async function() {
@@ -511,7 +497,7 @@
         window.vaciarCarrito();
       } catch (err) {
         console.error("Error al registrar venta: ", err);
-        alert('Ocurrió un error al guardar la venta en Firebase.');
+        alert('Ocurrió un error al guardar la venta.');
       } finally {
         const btnGuardar = document.getElementById('btn-guardar');
         btnGuardar.disabled = false;
@@ -553,7 +539,7 @@
       document.getElementById('total-monto').innerText = `$${total.toLocaleString()}`;
     }
 
-    // GESTIÓN DE PRODUCTOS
+    // --- MENÚ DE VENTAS (FIREBASE) ---
     window.cambiarTipoFormulario = function() {
       const cat = document.getElementById('prod-categoria').value;
       const campoLitros = document.getElementById('campo-litros');
@@ -561,31 +547,34 @@
       else campoLitros.classList.add('hidden');
     };
 
-    window.guardarNuevoProducto = function(e) {
+    window.guardarNuevoProducto = async function(e) {
       e.preventDefault();
       const categoria = document.getElementById('prod-categoria').value;
       const nombre = document.getElementById('prod-nombre').value.trim();
       const litros = document.getElementById('prod-litros').value.trim();
       const precio = parseFloat(document.getElementById('prod-precio').value);
 
-      const nuevo = { id: Date.now(), categoria, nombre, litros, precio };
-      catalogo.push(nuevo);
-      localStorage.setItem('catalogo_entrefuegos', JSON.stringify(catalogo));
-
-      e.target.reset();
-      window.cambiarTipoFormulario();
-      renderizarAdminProductos();
-      alert('Producto agregado al menú');
+      try {
+        await addDoc(collection(db, "productos"), { categoria, nombre, litros, precio });
+        e.target.reset();
+        window.cambiarTipoFormulario();
+      } catch (err) {
+        alert('Error al guardar el producto.');
+      }
     };
 
-    window.eliminarProducto = function(id) {
-      catalogo = catalogo.filter(p => p.id !== id);
-      localStorage.setItem('catalogo_entrefuegos', JSON.stringify(catalogo));
-      renderizarAdminProductos();
+    window.eliminarProducto = async function(firestoreId) {
+      if (!confirm('¿Seguro que querés borrar este producto?')) return;
+      try {
+        await deleteDoc(doc(db, "productos", firestoreId));
+      } catch (err) {
+        alert('Error al borrar el producto.');
+      }
     };
 
     function renderizarAdminProductos() {
       const cont = document.getElementById('lista-admin-productos');
+      if (!cont) return;
       if (catalogo.length === 0) {
         cont.innerHTML = `<p class="text-xs text-slate-400 py-4">No hay productos guardados.</p>`;
         return;
@@ -593,51 +582,51 @@
       cont.innerHTML = '';
       catalogo.forEach(p => {
         cont.innerHTML += `
-          <div class="py-3 flex justify-between items-center">
+          <div class="py-3 flex justify-between items-center border-b border-slate-100">
             <div>
               <span class="text-xs font-bold bg-amber-100 text-amber-800 px-2 py-0.5 rounded mr-2">${p.categoria}</span>
               <span class="font-bold text-slate-700">${p.nombre} ${p.litros ? `(${p.litros})` : ''}</span>
             </div>
             <div class="flex items-center gap-4">
-              <span class="font-black text-emerald-600">$${p.precio.toLocaleString()}</span>
-              <button onclick="eliminarProducto(${p.id})" class="text-red-500 hover:text-red-700 text-xs font-bold"><i class="fa-solid fa-trash"></i> Borrar</button>
+              <span class="font-black text-emerald-600">$${(p.precio || 0).toLocaleString()}</span>
+              <button onclick="eliminarProducto('${p.firestoreId}')" class="text-red-500 hover:text-red-700 text-xs font-bold"><i class="fa-solid fa-trash"></i> Borrar</button>
             </div>
           </div>
         `;
       });
     }
 
-    // INGREDIENTES
-    window.guardarIngrediente = function(e) {
+    // --- INSUMOS / MATERIAS PRIMAS (FIREBASE) ---
+    window.guardarIngrediente = async function(e) {
       e.preventDefault();
       const nombre = document.getElementById('ing-nombre').value.trim();
       const cantidad = parseFloat(document.getElementById('ing-cantidad-paquete').value);
       const unidad = document.getElementById('ing-unidad').value;
       const precio = parseFloat(document.getElementById('ing-precio-paquete').value);
 
-      let factorConversion = 1;
-      if (unidad === 'kg' || unidad === 'lt') factorConversion = cantidad * 1000;
-      else factorConversion = cantidad;
-
+      let factorConversion = (unidad === 'kg' || unidad === 'lt') ? cantidad * 1000 : cantidad;
       const costoUnitarioStandard = precio / factorConversion;
 
-      const nuevoIng = { id: Date.now(), nombre, cantidad, unidad, precio, costoUnitarioStandard };
-      materiasPrimas.push(nuevoIng);
-      localStorage.setItem('materias_primas_entrefuegos', JSON.stringify(materiasPrimas));
-
-      e.target.reset();
-      renderizarIngredientesBase();
-      alert('Insumo guardado');
+      try {
+        await addDoc(collection(db, "insumos"), { nombre, cantidad, unidad, precio, costoUnitarioStandard });
+        e.target.reset();
+      } catch (err) {
+        alert('Error al guardar el insumo.');
+      }
     };
 
-    window.eliminarIngrediente = function(id) {
-      materiasPrimas = materiasPrimas.filter(m => m.id !== id);
-      localStorage.setItem('materias_primas_entrefuegos', JSON.stringify(materiasPrimas));
-      renderizarIngredientesBase();
+    window.eliminarIngrediente = async function(firestoreId) {
+      if (!confirm('¿Seguro que querés borrar este insumo?')) return;
+      try {
+        await deleteDoc(doc(db, "insumos", firestoreId));
+      } catch (err) {
+        alert('Error al borrar el insumo.');
+      }
     };
 
     function renderizarIngredientesBase() {
       const cont = document.getElementById('lista-ingredientes-base');
+      if (!cont) return;
       if (materiasPrimas.length === 0) {
         cont.innerHTML = `<p class="text-xs text-slate-400 py-4">No hay insumos registrados.</p>`;
         return;
@@ -653,21 +642,21 @@
             </div>
             <div class="flex items-center gap-4">
               <span class="text-xs bg-amber-50 text-amber-800 px-2.5 py-1 rounded-lg border border-amber-200 font-bold">
-                $${m.costoUnitarioStandard.toFixed(2)} / ${unidadStd}
+                $${(m.costoUnitarioStandard || 0).toFixed(2)} / ${unidadStd}
               </span>
-              <button onclick="eliminarIngrediente(${m.id})" class="text-red-500 hover:text-red-700 text-xs font-bold"><i class="fa-solid fa-trash"></i></button>
+              <button onclick="eliminarIngrediente('${m.firestoreId}')" class="text-red-500 hover:text-red-700 text-xs font-bold"><i class="fa-solid fa-trash"></i></button>
             </div>
           </div>
         `;
       });
     }
 
-    // COSTOS Y RECETAS
+    // --- RECETAS Y FICHAS TÉCNICAS (FIREBASE) ---
     window.agregarFilaIngredienteReceta = function() {
       const cont = document.getElementById('contenedor-ingredientes-receta');
       let opcionesInsumos = materiasPrimas.length === 0 
         ? `<option value="">Cargá insumos primero en el Catálogo</option>`
-        : materiasPrimas.map(m => `<option value="${m.id}">${m.nombre} (por ${m.unidad})</option>`).join('');
+        : materiasPrimas.map(m => `<option value="${m.firestoreId}">${m.nombre} (por ${m.unidad})</option>`).join('');
 
       const div = document.createElement('div');
       div.className = "flex gap-2 items-center fila-ingrediente-receta";
@@ -679,7 +668,7 @@
       cont.appendChild(div);
     };
 
-    window.guardarCostosReceta = function(e) {
+    window.guardarCostosReceta = async function(e) {
       e.preventDefault();
       const nombre = document.getElementById('costo-nombre-receta').value.trim();
       const rendimiento = parseFloat(document.getElementById('costo-rendimiento').value);
@@ -691,10 +680,10 @@
       let insumosDetalle = [];
 
       filas.forEach(f => {
-        const insumoId = parseFloat(f.querySelector('.sel-insumo').value);
+        const insumoId = f.querySelector('.sel-insumo').value;
         const cantUsada = parseFloat(f.querySelector('.input-cant-usada').value);
 
-        const insumoObj = materiasPrimas.find(m => m.id === insumoId);
+        const insumoObj = materiasPrimas.find(m => m.firestoreId === insumoId);
         if (insumoObj) {
           let factor = (insumoObj.unidad === 'kg' || insumoObj.unidad === 'lt') ? cantUsada * 1000 : cantUsada;
           let costoSub = factor * insumoObj.costoUnitarioStandard;
@@ -704,25 +693,28 @@
       });
 
       const costoUnitario = costoTotalReceta / rendimiento;
-      const nuevaReceta = { id: Date.now(), nombre, rendimiento, costoTotal: costoTotalReceta, costoUnitario, insumosDetalle };
 
-      recetasCostos.push(nuevaReceta);
-      localStorage.setItem('recetas_costos_entrefuegos', JSON.stringify(recetasCostos));
-
-      e.target.reset();
-      document.getElementById('contenedor-ingredientes-receta').innerHTML = '';
-      renderizarRecetas();
-      alert('Receta guardada exitosamente');
+      try {
+        await addDoc(collection(db, "recetas"), { nombre, rendimiento, costoTotal: costoTotalReceta, costoUnitario, insumosDetalle });
+        e.target.reset();
+        document.getElementById('contenedor-ingredientes-receta').innerHTML = '';
+      } catch (err) {
+        alert('Error al guardar la receta.');
+      }
     };
 
-    window.eliminarReceta = function(id) {
-      recetasCostos = recetasCostos.filter(r => r.id !== id);
-      localStorage.setItem('recetas_costos_entrefuegos', JSON.stringify(recetasCostos));
-      renderizarRecetas();
+    window.eliminarReceta = async function(firestoreId) {
+      if (!confirm('¿Seguro que querés borrar esta receta?')) return;
+      try {
+        await deleteDoc(doc(db, "recetas", firestoreId));
+      } catch (err) {
+        alert('Error al borrar la receta.');
+      }
     };
 
     function renderizarRecetas() {
       const cont = document.getElementById('lista-recetas-costos');
+      if (!cont) return;
       if (recetasCostos.length === 0) {
         cont.innerHTML = `<p class="text-xs text-slate-400 py-4 col-span-2">No hay recetas armadas.</p>`;
         return;
@@ -731,12 +723,12 @@
       recetasCostos.forEach(r => {
         cont.innerHTML += `
           <div class="border rounded-xl p-4 bg-slate-50 border-slate-200 flex flex-col justify-between space-y-3 relative shadow-sm">
-            <button onclick="eliminarReceta(${r.id})" class="absolute top-3 right-3 text-red-500 hover:text-red-700 text-xs"><i class="fa-solid fa-trash"></i></button>
+            <button onclick="eliminarReceta('${r.firestoreId}')" class="absolute top-3 right-3 text-red-500 hover:text-red-700 text-xs"><i class="fa-solid fa-trash"></i></button>
             <div>
               <h3 class="font-bold text-slate-800 text-base pr-6">${r.nombre}</h3>
               <div class="grid grid-cols-2 gap-2 mt-2 bg-white p-2.5 rounded-lg border border-slate-100 text-xs">
                 <div><span class="text-slate-500 block">Rendimiento:</span> <strong>${r.rendimiento} unidades</strong></div>
-                <div><span class="text-slate-500 block">Costo Unitario:</span> <strong class="text-amber-600 text-sm">$${Math.round(r.costoUnitario).toLocaleString()} c/u</strong></div>
+                <div><span class="text-slate-500 block">Costo Unitario:</span> <strong class="text-amber-600 text-sm">$${Math.round(r.costoUnitario || 0).toLocaleString()} c/u</strong></div>
               </div>
             </div>
           </div>
@@ -744,9 +736,10 @@
       });
     }
 
-    // MÁRGENES
+    // --- MÁRGENES ---
     function renderizarMargenes() {
       const tbody = document.getElementById('tabla-margenes-body');
+      if (!tbody) return;
       tbody.innerHTML = '';
 
       let vinculados = 0;
@@ -782,21 +775,17 @@
       document.getElementById('stat-ganancia-promedio').innerText = vinculados > 0 ? `$${Math.round(sumaGanancias / vinculados).toLocaleString()}` : '$0';
     }
 
-    // ARQUEO CON REALTIME SNAPSHOT
-    let efectivoSistemaDia = 0;
-
+    // --- ARQUEO CON TIEMPO REAL ---
     window.cargarArqueoDia = function() {
       const fecha = document.getElementById('filtro-fecha-arqueo').value;
       const cont = document.getElementById('lista-ventas-arqueo');
 
-      // Si ya hay una suscripción activa, la cerramos antes de abrir la nueva
       if (unsubArqueo) unsubArqueo();
 
-      cont.innerHTML = `<p class="text-xs text-slate-400 text-center py-6"><i class="fa-solid fa-spinner animate-spin mr-1"></i> Sincronizando en tiempo real...</p>`;
+      cont.innerHTML = `<p class="text-xs text-slate-400 text-center py-6"><i class="fa-solid fa-spinner animate-spin mr-1"></i> Sincronizando...</p>`;
 
       const q = query(collection(db, "ventas"), where("fechaStr", "==", fecha));
 
-      // Escuchador en vivo
       unsubArqueo = onSnapshot(q, (querySnapshot) => {
         let total = 0;
         let efectivo = 0;
@@ -828,9 +817,7 @@
           `;
         });
 
-        if (cant === 0) {
-          cont.innerHTML = `<p class="text-xs text-slate-400 text-center py-6">No hay ventas en la fecha seleccionada.</p>`;
-        }
+        if (cant === 0) cont.innerHTML = `<p class="text-xs text-slate-400 text-center py-6">No hay ventas en la fecha seleccionada.</p>`;
 
         efectivoSistemaDia = efectivo;
 
@@ -838,12 +825,9 @@
         document.getElementById('arqueo-cant-pedidos').innerText = `${cant} pedidos registrados`;
         document.getElementById('arqueo-efectivo').innerText = `$${efectivo.toLocaleString()}`;
         document.getElementById('arqueo-transferencia').innerText = `$${transf.toLocaleString()}`;
-        document.getElementById('arqueo-fiado').innerText = `$${fiado.toLocaleString()}`;
+        document.getElementById('arqueo-fiado').innerText = `Paga luego: $${fiado.toLocaleString()}`;
 
         window.calcularDiferenciaArqueo();
-      }, (err) => {
-        console.error("Error al escuchar ventas en vivo: ", err);
-        cont.innerHTML = `<p class="text-xs text-red-500 text-center py-6">Error en la conexión en tiempo real.</p>`;
       });
     };
 
@@ -854,22 +838,20 @@
       const elDiff = document.getElementById('arqueo-diferencia-monto');
       const boxDiff = document.getElementById('box-diferencia');
 
+      if (!elDiff || !boxDiff) return;
+
       elDiff.innerText = `$${diff.toLocaleString()}`;
 
-      if (diff === 0) {
-        boxDiff.className = "p-4 rounded-xl border bg-emerald-50 border-emerald-200 flex justify-between items-center text-emerald-800";
-      } else if (diff < 0) {
-        boxDiff.className = "p-4 rounded-xl border bg-red-50 border-red-200 flex justify-between items-center text-red-800";
-      } else {
-        boxDiff.className = "p-4 rounded-xl border bg-blue-50 border-blue-200 flex justify-between items-center text-blue-800";
-      }
+      if (diff === 0) boxDiff.className = "p-4 rounded-xl border bg-emerald-50 border-emerald-200 flex justify-between items-center text-emerald-800";
+      else if (diff < 0) boxDiff.className = "p-4 rounded-xl border bg-red-50 border-red-200 flex justify-between items-center text-red-800";
+      else boxDiff.className = "p-4 rounded-xl border bg-blue-50 border-blue-200 flex justify-between items-center text-blue-800";
     };
 
     window.guardarCierreCaja = async function() {
       const fecha = document.getElementById('filtro-fecha-arqueo').value;
       const realInput = parseFloat(document.getElementById('arqueo-efectivo-real').value);
 
-      if (isNaN(realInput)) return alert('Ingresá el monto contado en la caja registradora.');
+      if (isNaN(realInput)) return alert('Ingresá el monto contado en la caja.');
 
       const diff = realInput - efectivoSistemaDia;
 
@@ -883,33 +865,30 @@
         });
         alert('Cierre de caja guardado con éxito.');
       } catch (e) {
-        console.error("Error al guardar cierre: ", e);
-        alert('Ocurrió un error al guardar el cierre.');
+        alert('Error al guardar el cierre.');
       }
     };
 
     window.eliminarVentasDelDia = async function() {
       const fecha = document.getElementById('filtro-fecha-arqueo').value;
-      if (!confirm(`¿Seguro que querés borrar TODAS las ventas del día ${fecha}? Esta acción no se puede deshacer.`)) return;
+      if (!confirm(`¿Seguro que querés borrar TODAS las ventas del día ${fecha}?`)) return;
 
       try {
         const q = query(collection(db, "ventas"), where("fechaStr", "==", fecha));
         const querySnapshot = await getDocs(q);
 
         const deletes = [];
-        querySnapshot.forEach((docSnap) => {
-          deletes.push(deleteDoc(doc(db, "ventas", docSnap.id)));
-        });
+        querySnapshot.forEach((docSnap) => deletes.push(deleteDoc(doc(db, "ventas", docSnap.id))));
 
         await Promise.all(deletes);
         alert('Ventas borradas correctamente.');
       } catch (e) {
-        console.error("Error al borrar ventas: ", e);
         alert('Error al borrar las ventas.');
       }
     };
 
-    // Inicializar primera pestaña
+    // Inicialización global de listeners
+    iniciarEscuchadores();
     window.cambiarPestana('pos');
   </script>
 </body>
