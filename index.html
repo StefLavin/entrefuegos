@@ -32,7 +32,7 @@
           <i class="fa-solid fa-utensils"></i> Menú de Ventas
         </button>
         <button id="tab-ingredientes" onclick="cambiarPestana('ingredientes')" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
-          <i class="fa-solid fa-[#carrot] fa-carrot"></i> Catálogo de Insumos
+          <i class="fa-solid fa-carrot"></i> Catálogo de Insumos & Stock
         </button>
         <button id="tab-costos" onclick="cambiarPestana('costos')" class="py-2.5 px-4 font-bold text-sm border-b-4 border-transparent text-amber-200 hover:text-white flex items-center gap-2 whitespace-nowrap">
           <i class="fa-solid fa-calculator"></i> Recetas y Fichas
@@ -108,7 +108,7 @@
       </div>
     </section>
 
-    <!-- VISTA 2: MENÚ DE VENTAS (ADMIN PRODUCTOS) -->
+    <!-- VISTA 2: MENÚ DE VENTAS -->
     <section id="vista-admin" class="hidden max-w-4xl mx-auto space-y-6">
       <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
         <h2 class="font-bold text-slate-800 text-lg mb-4 flex items-center gap-2">
@@ -150,23 +150,23 @@
       </div>
     </section>
 
-    <!-- VISTA 3: CATÁLOGO DE INSUMOS -->
-    <section id="vista-ingredientes" class="hidden max-w-4xl mx-auto space-y-6">
+    <!-- VISTA 3: CATÁLOGO DE INSUMOS Y CONTROL DE STOCK -->
+    <section id="vista-ingredientes" class="hidden max-w-5xl mx-auto space-y-6">
       <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
         <h2 class="font-bold text-slate-800 text-lg mb-4 flex items-center gap-2">
           <i class="fa-solid fa-box-open text-amber-600"></i> Registrar Insumo / Materia Prima
         </h2>
-        <form onsubmit="guardarIngrediente(event)" class="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div class="md:col-span-2">
+        <form onsubmit="guardarIngrediente(event)" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          <div class="lg:col-span-2">
             <label class="block text-xs font-bold text-slate-600 mb-1">Nombre del Insumo</label>
-            <input type="text" id="ing-nombre" placeholder="Ej: Queso Mozzarella, Carne Picada" class="w-full border p-2 rounded-lg text-sm bg-slate-50" required>
+            <input type="text" id="ing-nombre" placeholder="Ej: Queso Mozzarella" class="w-full border p-2 rounded-lg text-sm bg-slate-50" required>
           </div>
           <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Cantidad Comprada</label>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Cant. Paquete/Compra</label>
             <input type="number" step="0.01" id="ing-cantidad-paquete" placeholder="Ej: 5" class="w-full border p-2 rounded-lg text-sm bg-slate-50" required>
           </div>
           <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Unidad de Medida</label>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Unidad Medida</label>
             <select id="ing-unidad" class="w-full border p-2 rounded-lg text-sm bg-slate-50">
               <option value="kg">Kilogramos (kg)</option>
               <option value="gr">Gramos (gr)</option>
@@ -175,11 +175,19 @@
               <option value="unid">Unidades (unid)</option>
             </select>
           </div>
-          <div class="md:col-span-2">
-            <label class="block text-xs font-bold text-slate-600 mb-1">Costo Total Pagado ($)</label>
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Costo Paquete ($)</label>
             <input type="number" step="0.01" id="ing-precio-paquete" placeholder="Ej: 25000" class="w-full border p-2 rounded-lg text-sm bg-slate-50" required>
           </div>
-          <div class="md:col-span-2 flex items-end justify-end">
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Stock Inicial</label>
+            <input type="number" step="0.01" id="ing-stock-actual" placeholder="Ej: 10" class="w-full border p-2 rounded-lg text-sm bg-slate-50" required>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Stock Mínimo (Alerta)</label>
+            <input type="number" step="0.01" id="ing-stock-minimo" placeholder="Ej: 2" class="w-full border p-2 rounded-lg text-sm bg-slate-50" value="0">
+          </div>
+          <div class="lg:col-span-5 flex items-end justify-end">
             <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-2 rounded-lg text-sm transition">
               <i class="fa-solid fa-plus"></i> Guardar Insumo
             </button>
@@ -188,13 +196,13 @@
       </div>
 
       <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-        <h2 class="font-bold text-slate-800 text-lg mb-4">Insumos Registrados</h2>
+        <h2 class="font-bold text-slate-800 text-lg mb-4">Insumos y Estado de Inventario</h2>
         <div id="lista-ingredientes-base" class="divide-y divide-slate-100"></div>
       </div>
     </section>
 
     <!-- VISTA 4: RECETAS Y FICHAS TÉCNICAS -->
-    <section id="vista-costos" class="hidden max-w-4xl mx-auto space-y-6">
+    <section id="vista-costos" class="hidden max-w-5xl mx-auto space-y-6">
       <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
         <h2 class="font-bold text-slate-800 text-lg mb-4 flex items-center gap-2">
           <i class="fa-solid fa-book-open text-amber-600"></i> Crear Ficha Técnica de Receta
@@ -206,7 +214,7 @@
               <input type="text" id="costo-nombre-receta" placeholder="Ej: Carne, Pizza Muzzarella" class="w-full border p-2 rounded-lg text-sm bg-slate-50" required>
             </div>
             <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">Rendimiento (Cant. de unidades producidas)</label>
+              <label class="block text-xs font-bold text-slate-600 mb-1">Rendimiento (Cant. producida por receta)</label>
               <input type="number" id="costo-rendimiento" placeholder="Ej: 12 (para 1 docena)" class="w-full border p-2 rounded-lg text-sm bg-slate-50" required>
             </div>
           </div>
@@ -331,11 +339,11 @@
 
   </main>
 
-  <!-- FIREBASE ENGINE (SINCRONIZACIÓN TOTAL EN TIEMPO REAL) -->
+  <!-- FIREBASE ENGINE (SINCRONIZACIÓN TOTAL EN TIEMPO REAL CON CONTROL DE STOCK) -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { 
-      getFirestore, collection, addDoc, getDocs, query, where, doc, deleteDoc, setDoc, serverTimestamp, onSnapshot 
+      getFirestore, collection, addDoc, getDocs, query, where, doc, deleteDoc, setDoc, updateDoc, serverTimestamp, onSnapshot 
     } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -351,7 +359,7 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // Listas globales en memoria sincronizadas dinámicamente con Firestore
+    // Listas globales sincronizadas
     let catalogo = [];
     let materiasPrimas = [];
     let recetasCostos = [];
@@ -363,14 +371,13 @@
 
     const hoy = new Date().toISOString().split('T')[0];
 
-    // --- ESCUCHADORES EN TIEMPO REAL DE FIREBASE ---
+    // --- ESCUCHADORES DE FIREBASE EN TIEMPO REAL ---
 
     function iniciarEscuchadores() {
-      // 1. Escuchador de Productos
+      // 1. Productos
       onSnapshot(collection(db, "productos"), (snapshot) => {
         catalogo = [];
         snapshot.forEach(docSnap => catalogo.push({ firestoreId: docSnap.id, ...docSnap.data() }));
-        
         if (catalogo.length === 0) cargarCatalogoInicial();
         else {
           renderizarPOS();
@@ -379,7 +386,7 @@
         }
       });
 
-      // 2. Escuchador de Insumos / Materias Primas
+      // 2. Insumos con Control de Stock
       onSnapshot(collection(db, "insumos"), (snapshot) => {
         materiasPrimas = [];
         snapshot.forEach(docSnap => materiasPrimas.push({ firestoreId: docSnap.id, ...docSnap.data() }));
@@ -387,7 +394,7 @@
         renderizarMargenes();
       });
 
-      // 3. Escuchador de Recetas y Fichas
+      // 3. Recetas
       onSnapshot(collection(db, "recetas"), (snapshot) => {
         recetasCostos = [];
         snapshot.forEach(docSnap => recetasCostos.push({ firestoreId: docSnap.id, ...docSnap.data() }));
@@ -539,7 +546,7 @@
       document.getElementById('total-monto').innerText = `$${total.toLocaleString()}`;
     }
 
-    // --- MENÚ DE VENTAS (FIREBASE) ---
+    // --- MENÚ DE VENTAS ---
     window.cambiarTipoFormulario = function() {
       const cat = document.getElementById('prod-categoria').value;
       const campoLitros = document.getElementById('campo-litros');
@@ -596,22 +603,38 @@
       });
     }
 
-    // --- INSUMOS / MATERIAS PRIMAS (FIREBASE) ---
+    // --- INSUMOS CON CONTROL Y AJUSTE DE STOCK ---
     window.guardarIngrediente = async function(e) {
       e.preventDefault();
       const nombre = document.getElementById('ing-nombre').value.trim();
       const cantidad = parseFloat(document.getElementById('ing-cantidad-paquete').value);
       const unidad = document.getElementById('ing-unidad').value;
       const precio = parseFloat(document.getElementById('ing-precio-paquete').value);
+      const stockActual = parseFloat(document.getElementById('ing-stock-actual').value) || 0;
+      const stockMinimo = parseFloat(document.getElementById('ing-stock-minimo').value) || 0;
 
       let factorConversion = (unidad === 'kg' || unidad === 'lt') ? cantidad * 1000 : cantidad;
       const costoUnitarioStandard = precio / factorConversion;
 
       try {
-        await addDoc(collection(db, "insumos"), { nombre, cantidad, unidad, precio, costoUnitarioStandard });
+        await addDoc(collection(db, "insumos"), { 
+          nombre, cantidad, unidad, precio, costoUnitarioStandard, stockActual, stockMinimo 
+        });
         e.target.reset();
       } catch (err) {
         alert('Error al guardar el insumo.');
+      }
+    };
+
+    window.ajustarStockRapido = async function(firestoreId, delta) {
+      const insumo = materiasPrimas.find(m => m.firestoreId === firestoreId);
+      if (!insumo) return;
+
+      const nuevoStock = Math.max(0, (insumo.stockActual || 0) + delta);
+      try {
+        await updateDoc(doc(db, "insumos", firestoreId), { stockActual: nuevoStock });
+      } catch (e) {
+        alert('Error al actualizar stock.');
       }
     };
 
@@ -634,16 +657,35 @@
       cont.innerHTML = '';
       materiasPrimas.forEach(m => {
         let unidadStd = (m.unidad === 'kg' || m.unidad === 'gr') ? 'gr' : (m.unidad === 'lt' || m.unidad === 'ml' ? 'ml' : 'unid');
+        const stActual = m.stockActual || 0;
+        const stMin = m.stockMinimo || 0;
+
+        // Identificación visual por Estado del Stock
+        let badgeStock = `<span class="bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] font-black px-2 py-0.5 rounded-full uppercase">Stock OK</span>`;
+        if (stActual <= 0) {
+          badgeStock = `<span class="bg-red-100 text-red-800 border border-red-300 text-[10px] font-black px-2 py-0.5 rounded-full uppercase animate-pulse">Sin Stock</span>`;
+        } else if (stActual <= stMin) {
+          badgeStock = `<span class="bg-amber-100 text-amber-800 border border-amber-300 text-[10px] font-black px-2 py-0.5 rounded-full uppercase">Poco Stock</span>`;
+        }
+
         cont.innerHTML += `
-          <div class="py-3 flex justify-between items-center">
+          <div class="py-3 flex flex-wrap justify-between items-center gap-3">
             <div>
-              <span class="font-bold text-slate-800 text-sm block">${m.nombre}</span>
-              <span class="text-xs text-slate-500">Compra: ${m.cantidad} ${m.unidad} x $${m.precio.toLocaleString()}</span>
+              <div class="flex items-center gap-2">
+                <span class="font-bold text-slate-800 text-sm">${m.nombre}</span>
+                ${badgeStock}
+              </div>
+              <span class="text-xs text-slate-500 block">Compra: ${m.cantidad} ${m.unidad} x $${m.precio.toLocaleString()} ($${(m.costoUnitarioStandard || 0).toFixed(2)} / ${unidadStd})</span>
             </div>
+
             <div class="flex items-center gap-4">
-              <span class="text-xs bg-amber-50 text-amber-800 px-2.5 py-1 rounded-lg border border-amber-200 font-bold">
-                $${(m.costoUnitarioStandard || 0).toFixed(2)} / ${unidadStd}
-              </span>
+              <!-- Control Rápido de Stock -->
+              <div class="flex items-center gap-1 bg-slate-100 p-1 rounded-lg border border-slate-200">
+                <button onclick="ajustarStockRapido('${m.firestoreId}', -1)" class="w-6 h-6 bg-white border border-slate-300 rounded font-bold text-xs hover:bg-slate-200 text-slate-700 flex items-center justify-center">-</button>
+                <span class="text-xs font-black text-slate-800 px-2">${stActual} ${m.unidad}</span>
+                <button onclick="ajustarStockRapido('${m.firestoreId}', 1)" class="w-6 h-6 bg-white border border-slate-300 rounded font-bold text-xs hover:bg-slate-200 text-slate-700 flex items-center justify-center">+</button>
+              </div>
+
               <button onclick="eliminarIngrediente('${m.firestoreId}')" class="text-red-500 hover:text-red-700 text-xs font-bold"><i class="fa-solid fa-trash"></i></button>
             </div>
           </div>
@@ -651,7 +693,7 @@
       });
     }
 
-    // --- RECETAS Y FICHAS TÉCNICAS (FIREBASE) ---
+    // --- RECETAS Y DESCUENTO MANUAL DE STOCK ---
     window.agregarFilaIngredienteReceta = function() {
       const cont = document.getElementById('contenedor-ingredientes-receta');
       let opcionesInsumos = materiasPrimas.length === 0 
@@ -688,7 +730,7 @@
           let factor = (insumoObj.unidad === 'kg' || insumoObj.unidad === 'lt') ? cantUsada * 1000 : cantUsada;
           let costoSub = factor * insumoObj.costoUnitarioStandard;
           costoTotalReceta += costoSub;
-          insumosDetalle.push({ nombre: insumoObj.nombre, cantUsada, costoSub });
+          insumosDetalle.push({ insumoId: insumoObj.firestoreId, nombre: insumoObj.nombre, cantUsada, unidad: insumoObj.unidad, costoSub });
         }
       });
 
@@ -700,6 +742,38 @@
         document.getElementById('contenedor-ingredientes-receta').innerHTML = '';
       } catch (err) {
         alert('Error al guardar la receta.');
+      }
+    };
+
+    // Descuento manual de stock al elaborar un lote de recetas
+    window.elaborarRecetaYDescontarStock = async function(firestoreId) {
+      const receta = recetasCostos.find(r => r.firestoreId === firestoreId);
+      if (!receta) return;
+
+      const cantProducidaStr = prompt(`¿Cuántas unidades produjiste/elaboraste de "${receta.nombre}"?`, receta.rendimiento);
+      if (!cantProducidaStr) return;
+
+      const cantProducida = parseFloat(cantProducidaStr);
+      if (isNaN(cantProducida) || cantProducida <= 0) return alert('Cantidad inválida.');
+
+      const proporcion = cantProducida / receta.rendimiento;
+
+      try {
+        const actualizaciones = receta.insumosDetalle.map(item => {
+          const insumoDb = materiasPrimas.find(m => m.firestoreId === item.insumoId || m.nombre === item.nombre);
+          if (insumoDb) {
+            const descuento = item.cantUsada * proporcion;
+            const nuevoStock = Math.max(0, (insumoDb.stockActual || 0) - descuento);
+            return updateDoc(doc(db, "insumos", insumoDb.firestoreId), { stockActual: nuevoStock });
+          }
+          return Promise.resolve();
+        });
+
+        await Promise.all(actualizaciones);
+        alert(`¡Stock descontado con éxito para ${cantProducida} unidades de ${receta.nombre}!`);
+      } catch (e) {
+        console.error(e);
+        alert('Error al descontar el stock.');
       }
     };
 
@@ -727,10 +801,13 @@
             <div>
               <h3 class="font-bold text-slate-800 text-base pr-6">${r.nombre}</h3>
               <div class="grid grid-cols-2 gap-2 mt-2 bg-white p-2.5 rounded-lg border border-slate-100 text-xs">
-                <div><span class="text-slate-500 block">Rendimiento:</span> <strong>${r.rendimiento} unidades</strong></div>
+                <div><span class="text-slate-500 block">Rendimiento:</span> <strong>${r.rendimiento} unid.</strong></div>
                 <div><span class="text-slate-500 block">Costo Unitario:</span> <strong class="text-amber-600 text-sm">$${Math.round(r.costoUnitario || 0).toLocaleString()} c/u</strong></div>
               </div>
             </div>
+            <button onclick="elaborarRecetaYDescontarStock('${r.firestoreId}')" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-2 rounded-lg text-xs transition flex items-center justify-center gap-2">
+              <i class="fa-solid fa-kitchen-set"></i> Registrar Preparación y Descontar Stock
+            </button>
           </div>
         `;
       });
@@ -775,7 +852,7 @@
       document.getElementById('stat-ganancia-promedio').innerText = vinculados > 0 ? `$${Math.round(sumaGanancias / vinculados).toLocaleString()}` : '$0';
     }
 
-    // --- ARQUEO CON TIEMPO REAL ---
+    // --- ARQUEO Y CIERRE ---
     window.cargarArqueoDia = function() {
       const fecha = document.getElementById('filtro-fecha-arqueo').value;
       const cont = document.getElementById('lista-ventas-arqueo');
@@ -887,7 +964,7 @@
       }
     };
 
-    // Inicialización global de listeners
+    // Inicializar escuchadores globales
     iniciarEscuchadores();
     window.cambiarPestana('pos');
   </script>
